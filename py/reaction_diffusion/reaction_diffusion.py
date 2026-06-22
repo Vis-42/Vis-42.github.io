@@ -189,5 +189,65 @@ def _(mo):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Pearson (F, k) phase diagram
+
+    Sweep a 10x10 grid of feed rate F and kill rate k, run Gray-Scott to near-steady state on a
+    small grid, and map the final pattern variance. High variance = patterned; low = uniform.
+    Reproduces the broad structure of Pearson's 1993 classification.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    pearson_btn = mo.ui.run_button(label="Compute Pearson diagram (10x10 grid)")
+    mo.md(f"Takes ~15 seconds. {pearson_btn}")
+    return (pearson_btn,)
+
+
+@app.cell(hide_code=True)
+def _(gray_scott, mo, np, pearson_btn):
+    mo.stop(not pearson_btn.value, mo.md("Press **Compute** to run the scan."))
+    _F_vals = np.linspace(0.010, 0.062, 10)
+    _k_vals = np.linspace(0.045, 0.075, 10)
+    _std_map = np.zeros((10, 10))
+    for _fi, _F in enumerate(_F_vals):
+        for _ki, _k in enumerate(_k_vals):
+            _frames = gray_scott(n=32, F=float(_F), k=float(_k), steps=2000, store_every=2000)
+            _std_map[_fi, _ki] = float(_frames[-1].std())
+    pearson_data = {"F_vals": _F_vals.tolist(), "k_vals": _k_vals.tolist(), "std_map": _std_map.tolist()}
+    return (pearson_data,)
+
+
+@app.cell(hide_code=True)
+def _(mo, pearson_data, plt):
+    import numpy as _np
+    _F = pearson_data["F_vals"]
+    _k = pearson_data["k_vals"]
+    _Z = _np.array(pearson_data["std_map"])
+    fig_p, ax_p = plt.subplots(figsize=(5.5, 4.2))
+    _im = ax_p.pcolormesh(_k, _F, _Z, cmap="viridis", shading="nearest", vmin=0)
+    fig_p.colorbar(_im, ax=ax_p, label="pattern variance sigma(v)")
+    ax_p.set_xlabel("kill rate k")
+    ax_p.set_ylabel("feed rate F")
+    ax_p.set_title("Pearson (F, k) diagram: pattern intensity")
+    _presets = [
+        (0.065, 0.035, "spots"), (0.061, 0.026, "mitosis"),
+        (0.057, 0.030, "stripes"), (0.058, 0.039, "holes"),
+    ]
+    for _kv, _fv, _lbl in _presets:
+        ax_p.plot(_kv, _fv, "o", color="white", ms=4, mew=0)
+        ax_p.text(_kv + 0.001, _fv, _lbl, color="white", fontsize=7, va="center")
+    fig_p.tight_layout()
+    mo.vstack([
+        mo.md("White dots mark named Pearson presets. Bright = patterned; dark = uniform steady state."),
+        fig_p,
+    ])
+    return
+
+
 if __name__ == "__main__":
     app.run()

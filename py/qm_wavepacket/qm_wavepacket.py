@@ -31,20 +31,24 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     pot_sl = mo.ui.dropdown(
-        ["free", "barrier", "well", "harmonic", "double-barrier", "step"],
+        ["free", "barrier", "well", "harmonic", "double-barrier", "step", "custom"],
         value="barrier",
         label="potential",
     )
-    A_sl = mo.ui.slider(0.1, 3.0, value=0.8, step=0.05, label="amplitude A (x KE)", show_value=True)
-    w_sl = mo.ui.slider(0.2, 4.0, value=1.0, step=0.1, label="barrier width w", show_value=True)
-    k0_sl = mo.ui.slider(1.0, 6.0, value=3.0, step=0.25, label="wavenumber k0", show_value=True)
-    spf_sl = mo.ui.slider(1, 20, value=6, step=1, label="steps per frame", show_value=True)
-    mo.hstack([pot_sl, A_sl, w_sl, k0_sl, spf_sl], justify="start", gap=2)
-    return A_sl, k0_sl, pot_sl, spf_sl, w_sl
+    A_sl   = mo.ui.slider(0.1, 3.0, value=0.8, step=0.05, label="amplitude A (x KE)", show_value=True)
+    w_sl   = mo.ui.slider(0.2, 4.0, value=1.0, step=0.1,  label="barrier width w",    show_value=True)
+    k0_sl  = mo.ui.slider(1.0, 6.0, value=3.0, step=0.25, label="wavenumber k0",      show_value=True)
+    spf_sl = mo.ui.slider(1, 20,    value=6,   step=1,    label="steps per frame",    show_value=True)
+    Vx_sl  = mo.ui.text(value="3 * x**2", label="custom V(x)  (use x, np)")
+    mo.vstack([
+        mo.hstack([pot_sl, A_sl, w_sl, k0_sl, spf_sl], justify="start", gap=2),
+        mo.md(f"Custom V(x) expression (active when potential = custom): {Vx_sl}"),
+    ])
+    return A_sl, k0_sl, Vx_sl, pot_sl, spf_sl, w_sl
 
 
 @app.cell(hide_code=True)
-def _(np, A_sl, k0_sl, pot_sl, spf_sl, w_sl):
+def _(np, A_sl, k0_sl, Vx_sl, pot_sl, spf_sl, w_sl):
     _pot  = pot_sl.value
     _A    = float(A_sl.value)
     _w    = float(w_sl.value)
@@ -67,7 +71,15 @@ def _(np, A_sl, k0_sl, pot_sl, spf_sl, w_sl):
     # ── Potential (in units where KE = k0^2/2) ───────────────────────────
     _E   = 0.5 * _k0 ** 2
     _V   = np.zeros(_N)
-    if _pot == "barrier":
+    if _pot == "custom":
+        try:
+            _V = np.clip(
+                eval(Vx_sl.value, {"np": np, "x": _x, "__builtins__": {}}),
+                -20.0, 20.0,
+            ).astype(float)
+        except Exception:
+            _V = np.zeros_like(_x)
+    elif _pot == "barrier":
         _V[np.abs(_x) < _w / 2] = _A * _E
     elif _pot == "well":
         _V[np.abs(_x) < _w / 2] = -_A * _E

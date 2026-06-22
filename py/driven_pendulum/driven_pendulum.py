@@ -267,5 +267,112 @@ def _(mo):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Bifurcation diagram
+
+    Sweep the drive amplitude $\tau_0$ from 0 to 12 N·m. At each amplitude record
+    $\theta_1$ stroboscopically (once per drive period $T_d = 2\pi/\omega_d$) after
+    discarding a transient. A single point means periodic motion; a vertical cloud means
+    chaos via period-doubling.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    bif_btn = mo.ui.run_button(label="Compute bifurcation diagram")
+    mo.md(f"""The sweep takes a few seconds. {bif_btn}""")
+    return (bif_btn,)
+
+
+@app.cell(hide_code=True)
+def _(bif_btn, mo, np, omega_sl, b_sl):
+    mo.stop(not bif_btn.value, mo.md("Press **Compute** above."))
+    _g   = 9.81
+    _L   = [0.40, 0.35, 0.30, 0.25]
+    _m   = [1.0,  1.0,  1.0,  1.0]
+    _b   = float(b_sl.value)
+    _wd  = float(omega_sl.value)
+    _Td  = 2 * np.pi / _wd
+    _DT  = 0.01
+    _N_TRANS = 20   # periods discarded
+    _N_REC   = 30   # periods recorded
+
+    def _M4(th):
+        Mm = np.zeros((4, 4))
+        cmsum = [sum(_m[k:]) for k in range(4)]
+        for i in range(4):
+            Mm[i, i] = cmsum[i] * _L[i] ** 2
+        for i in range(4):
+            for j in range(i + 1, 4):
+                v = sum(_m[k] for k in range(j, 4)) * _L[i] * _L[j] * np.cos(th[i] - th[j])
+                Mm[i, j] = Mm[j, i] = v
+        return Mm
+
+    def _F4(th, om, t, tau0):
+        F = np.zeros(4)
+        cmsum = [sum(_m[k:]) for k in range(4)]
+        for i in range(4):
+            F[i] -= cmsum[i] * _g * _L[i] * np.sin(th[i])
+        for i in range(4):
+            for j in range(4):
+                if i == j: continue
+                c = sum(_m[k] for k in range(max(i, j), 4)) * _L[i] * _L[j]
+                if j < i:
+                    F[i] += c * om[j] ** 2 * np.sin(th[j] - th[i])
+                else:
+                    F[i] -= c * om[j] ** 2 * np.sin(th[i] - th[j])
+        F[0] += tau0 * np.cos(_wd * t)
+        F -= _b * om
+        return F
+
+    def _rk4b(t, y, dt, tau0):
+        def d(t_, y_): return np.concatenate([y_[4:], np.linalg.solve(_M4(y_[:4]), _F4(y_[:4], y_[4:], t_, tau0))])
+        k1 = d(t, y); k2 = d(t+dt/2, y+dt/2*k1); k3 = d(t+dt/2, y+dt/2*k2); k4 = d(t+dt, y+dt*k3)
+        return y + (dt/6)*(k1+2*k2+2*k3+k4)
+
+    _tau_vals = np.linspace(0, 12, 80)
+    _bif_tau  = []
+    _bif_th1  = []
+    for _tau0 in _tau_vals:
+        _y = np.zeros(8); _y[0] = 0.3; _y[1] = 0.1
+        _t = 0.0
+        # transient
+        _n_trans = int(_N_TRANS * _Td / _DT)
+        for _ in range(_n_trans):
+            _y = _rk4b(_t, _y, _DT, _tau0); _t += _DT
+        # record stroboscopic samples
+        _n_rec = int(_N_REC * _Td / _DT)
+        _step  = max(1, int(_Td / _DT))
+        for _i in range(_n_rec):
+            _y = _rk4b(_t, _y, _DT, _tau0); _t += _DT
+            if _i % _step == 0:
+                _bif_tau.append(float(_tau0))
+                _bif_th1.append(float((_y[0] + np.pi) % (2 * np.pi) - np.pi))
+
+    bif_data = {"tau": _bif_tau, "th1": _bif_th1}
+    return (bif_data,)
+
+
+@app.cell(hide_code=True)
+def _(bif_data, mo, plt):
+    fig_bif, ax_bif = plt.subplots(figsize=(7, 3.5))
+    ax_bif.scatter(bif_data["tau"], bif_data["th1"],
+                   s=0.6, color="#7dd3fc", alpha=0.5, linewidths=0)
+    ax_bif.set_xlabel("drive amplitude tau_0 (N m)")
+    ax_bif.set_ylabel("theta_1 stroboscopic (rad)")
+    ax_bif.set_title("bifurcation diagram: period-doubling route to chaos in theta_1")
+    ax_bif.set_xlim(0, 12)
+    ax_bif.set_ylim(-np.pi, np.pi)
+    fig_bif.tight_layout()
+    mo.vstack([
+        mo.md("Single point per tau_0 = periodic; vertical band = period-doubled; dense cloud = chaos."),
+        fig_bif,
+    ])
+    return
+
+
 if __name__ == "__main__":
     app.run()

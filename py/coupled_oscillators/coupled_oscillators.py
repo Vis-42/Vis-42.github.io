@@ -482,6 +482,42 @@ function drawPanel(p,pi,lx,ly,lw,lh){
     ctx.fillStyle="#4a5568";ctx.font=(9*DPR)+"px monospace";ctx.textAlign="left";ctx.fillText("drag to orbit · scroll zoom",px+5*DPR,py+ph-7*DPR);
   }
 
+  /* ─────────────── SPACE-TIME (chimera heatmap building frame-by-frame) ─── */
+  else if(p.kind==="space_time"){
+    const T=p.T,N2=p.N;
+    if(!p._off){p._off=document.createElement("canvas");p._off.width=N2;p._off.height=T;p._oct=p._off.getContext("2d");const img=p._oct.createImageData(N2,T);const d=img.data,rgb=p.rgb;for(let i=0;i<T*N2;i++){d[4*i]=rgb[3*i];d[4*i+1]=rgb[3*i+1];d[4*i+2]=rgb[3*i+2];d[4*i+3]=255;}p._oct.putImageData(img,0,0);}
+    const fShow=Math.min(f+1,T);
+    const pL=36*DPR,pR=6*DPR,pT=20*DPR,pB=24*DPR;
+    const mx=px+pL,my=py+pT,mw=pw-pL-pR,mh=ph-pT-pB;
+    ctx.save();ctx.beginPath();ctx.rect(mx,my,mw,mh);ctx.clip();
+    ctx.imageSmoothingEnabled=false;
+    ctx.drawImage(p._off,0,0,N2,fShow,mx,my,mw,mh*fShow/T);
+    ctx.strokeStyle="#f97316";ctx.lineWidth=1.5*DPR;ctx.beginPath();ctx.moveTo(mx,my+mh*fShow/T);ctx.lineTo(mx+mw,my+mh*fShow/T);ctx.stroke();
+    ctx.restore();
+    ctx.fillStyle="#9aa3b0";ctx.font=(10*DPR)+"px monospace";ctx.textAlign="center";
+    if(p.title)ctx.fillText(p.title,px+pw/2,py+13*DPR);
+    ctx.fillText("oscillator i",mx+mw/2,py+ph-2*DPR);
+    ctx.save();ctx.translate(px+11*DPR,my+mh/2);ctx.rotate(-Math.PI/2);ctx.textAlign="center";ctx.fillText("time",0,0);ctx.restore();
+    ctx.fillStyle="#8a93a6";ctx.font=(8*DPR)+"px monospace";ctx.textAlign="center";
+    [0,Math.round(N2/2),N2].forEach(v=>{ctx.fillText(v,mx+mw*v/N2,py+ph-4*DPR);});
+    ctx.textAlign="right";[0,Math.round(T/2),T].forEach(v=>{ctx.fillText(v,mx-2*DPR,my+mh*(1-v/T)+3*DPR);});
+  }
+
+  /* ─────────────── LOCAL_R_FRAME (local order param bar chart at current frame) ─── */
+  else if(p.kind==="local_r_frame"){
+    const T=p.T,N2=p.N,t_=Math.min(f,T-1);
+    const lr=p.lr[t_],ymax=1.05;
+    const xd={min:0,max:N2,log:false},yd={min:0,max:ymax,log:false};
+    const{mx,my,mw,mh,toX,toY}=axes2D(p,lx,ly,lw,lh,xd,yd,{zoom:1,px:0,py:0});
+    ctx.save();ctx.beginPath();ctx.rect(mx,my,mw,mh);ctx.clip();
+    const mean_r=lr.reduce((a,b)=>a+b,0)/N2;
+    ctx.strokeStyle="#9c3b2c";ctx.lineWidth=1*DPR;ctx.setLineDash([4,4]);
+    const ym=toY(mean_r);ctx.beginPath();ctx.moveTo(mx,ym);ctx.lineTo(mx+mw,ym);ctx.stroke();ctx.setLineDash([]);
+    const bw=Math.max(1.5,mw/N2*0.8);
+    for(let i=0;i<N2;i++){const x=toX(i+0.5),y=toY(lr[i]),yb=toY(0);ctx.fillStyle="#7dd3fc";ctx.fillRect(x-bw/2,y,bw,yb-y);}
+    ctx.restore();
+  }
+
   /* ─────────────── PASS-THROUGH (let panel handle its own draw) ─── */
   else if(typeof p._draw==="function"){p._draw(ctx,px,py,pw,ph,f,DPR);}
 
@@ -693,7 +729,20 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(Kch_sl, Nch_sl, R_sl, alp_sl, np, plt):
+def _(np):
+    def ks_step(th, N, K, R, alp, dt):
+        dth = np.zeros(N)
+        for k in range(-R, R + 1):
+            if k == 0:
+                continue
+            dth += np.sin(np.roll(th, -k) - th - alp)
+        return th + dt * (K / (2 * R)) * dth
+    return (ks_step,)
+
+
+@app.cell(hide_code=True)
+def _(Kch_sl, Nch_sl, R_sl, alp_sl, ks_step, np):
+    import matplotlib.cm as _cm
     _N   = int(Nch_sl.value)
     _K   = float(Kch_sl.value)
     _R   = int(R_sl.value)
@@ -701,59 +750,62 @@ def _(Kch_sl, Nch_sl, R_sl, alp_sl, np, plt):
     _dt  = 0.05
     _T_WARM = 300
     _T_REC  = 200
-    _rng3 = np.random.default_rng(1)
-    _omega3 = np.zeros(_N)
-    _theta3 = _rng3.uniform(-np.pi, np.pi, _N)
-
-    def _ks_step(th, N, K, R, alp, dt):
-        dth = np.zeros(N)
-        for i in range(N):
-            nbrs = [(i + k) % N for k in range(-R, R + 1) if k != 0]
-            dth[i] = (K / (2 * R)) * sum(np.sin(th[j] - th[i] - alp) for j in nbrs)
-        return th + dth * dt
+    _theta3 = np.random.default_rng(1).uniform(-np.pi, np.pi, _N)
 
     for _ in range(_T_WARM):
-        _theta3 = _ks_step(_theta3, _N, _K, _R, _alp, _dt)
+        _theta3 = ks_step(_theta3, _N, _K, _R, _alp, _dt)
 
     _history = []
     for _ in range(_T_REC):
-        _theta3 = _ks_step(_theta3, _N, _K, _R, _alp, _dt)
+        _theta3 = ks_step(_theta3, _N, _K, _R, _alp, _dt)
         _history.append(_theta3.copy())
-
     _history = np.array(_history)
+
+    # space-time RGB (HSV colormap: hue = theta mod 2pi)
+    _ht_norm = (_history % (2 * np.pi)) / (2 * np.pi)
+    _rgba    = _cm.hsv(_ht_norm)
+    _st_rgb  = (_rgba[:, :, :3] * 255).clip(0, 255).astype(np.uint8).flatten().tolist()
+
+    # local order parameter at every time step (T x N), vectorised
+    _nbr_idx   = np.array([(np.arange(i - _R, i + _R + 1) % _N) for i in range(_N)])
+    _th_nbr    = _history[:, _nbr_idx]                              # (T, N, 2R+1)
+    _local_r_f = np.abs(np.mean(np.exp(1j * _th_nbr), axis=2))     # (T, N)
+
     _theta_final = _history[-1]
+    _global_r    = float(np.abs(np.mean(np.exp(1j * _theta_final))))
+    _sigma_r     = float(np.std(_local_r_f[-1]))
+    _is_chimera  = _sigma_r > 0.08 and _global_r < 0.85
 
-    # local order parameter
-    _local_r = np.array([
-        np.abs(np.mean(np.exp(1j * _theta_final[[(i + k) % _N for k in range(-_R, _R + 1)]])))
-        for i in range(_N)
-    ])
-    _global_r = float(np.abs(np.mean(np.exp(1j * _theta_final))))
-    _sigma_r  = float(np.std(_local_r))
-    _is_chimera = _sigma_r > 0.08 and _global_r < 0.85
-
-    fig_ch, (ax1, ax2) = plt.subplots(1, 2, figsize=(8.5, 3.2))
-    _ht = _history % (2 * np.pi)
-    ax1.imshow(_ht.T, aspect="auto", cmap="hsv", vmin=0, vmax=2*np.pi,
-               origin="lower", extent=[0, _T_REC, 0, _N])
-    ax1.set_xlabel("time step"); ax1.set_ylabel("oscillator i")
-    ax1.set_title("space-time (θ mod 2π)")
-    ax2.plot(np.arange(_N), _local_r, color="#7dd3fc")
-    ax2.axhline(np.mean(_local_r), color="#9c3b2c", lw=1, ls="--")
-    ax2.set_ylim(0, 1); ax2.set_xlabel("oscillator i"); ax2.set_ylabel("|r_i|")
-    ax2.set_title("local order parameter")
-    fig_ch.tight_layout()
-    _label = f"CHIMERA (σ_r = {_sigma_r:.2f}, |Z| = {_global_r:.2f})" if _is_chimera else f"not chimera (σ_r = {_sigma_r:.2f}, |Z| = {_global_r:.2f})"
-    chimera_fig = fig_ch
-    chimera_label = _label
-    return chimera_fig, chimera_label
+    chimera_data  = {
+        "T": _T_REC, "N": _N, "R": _R,
+        "st_rgb": _st_rgb,
+        "local_r_f": _local_r_f.tolist(),
+    }
+    chimera_label = (
+        f"CHIMERA (σ_r = {_sigma_r:.2f}, |Z| = {_global_r:.2f})"
+        if _is_chimera else
+        f"not chimera (σ_r = {_sigma_r:.2f}, |Z| = {_global_r:.2f})"
+    )
+    return chimera_data, chimera_label
 
 
 @app.cell(hide_code=True)
-def _(chimera_fig, chimera_label, mo):
+def _(canvas_anim, chimera_data, chimera_label, mo):
+    _d = chimera_data
+    _spec_ch = {
+        "frames": _d["T"], "dt": 60,
+        "panels": [
+            {"kind": "space_time", "T": _d["T"], "N": _d["N"],
+             "rgb": _d["st_rgb"], "title": "theta mod 2pi (space-time)"},
+            {"kind": "local_r_frame", "T": _d["T"], "N": _d["N"],
+             "lr": _d["local_r_f"],
+             "title": "|r_i| local order", "xlabel": "oscillator i"},
+        ],
+        "layout": [[0.0, 0.0, 0.60, 1.0], [0.60, 0.0, 0.40, 1.0]],
+    }
     mo.vstack([
         mo.md(f"**{chimera_label}**"),
-        chimera_fig,
+        canvas_anim(_spec_ch, height="420px"),
     ])
     return
 
@@ -770,6 +822,70 @@ def _(mo):
         geometric, not from disorder. Try $\alpha \approx 1.46$, $K \approx 1.5$, $R = 8$.
         """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md("## Part 3: (K, R) phase diagram")
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    kr_btn = mo.ui.run_button(label="Scan 6x6 (K, R) grid")
+    mo.md(
+        f"""
+        Compute the chimera measure across a 6x6 grid of coupling K and neighbour range R
+        at fixed alpha. Bright cells support chimera states.
+
+        {kr_btn}
+        """
+    )
+    return (kr_btn,)
+
+
+@app.cell(hide_code=True)
+def _(alp_sl, ks_step, kr_btn, mo, np):
+    mo.stop(not kr_btn.value, mo.md("Press **Scan** to compute the (K, R) diagram."))
+    _alp_kr  = float(alp_sl.value)
+    _K_vals  = np.linspace(0.5, 3.5, 6)
+    _R_vals  = [2, 4, 6, 8, 12, 16]
+    _N_kr    = 40
+    _T_KR    = 200
+    _dt_kr   = 0.05
+    _cmap_kr = np.zeros((6, 6))
+    for _ki, _K in enumerate(_K_vals):
+        for _ri, _R in enumerate(_R_vals):
+            _th = np.random.default_rng(1).uniform(-np.pi, np.pi, _N_kr)
+            for _ in range(_T_KR):
+                _th = ks_step(_th, _N_kr, float(_K), int(_R), _alp_kr, _dt_kr)
+            _nbr = np.array([(np.arange(i - int(_R), i + int(_R) + 1) % _N_kr) for i in range(_N_kr)])
+            _lr  = np.abs(np.mean(np.exp(1j * _th[_nbr]), axis=1))
+            _gr  = np.abs(np.mean(np.exp(1j * _th)))
+            _cmap_kr[_ki, _ri] = float(np.std(_lr)) * (1.0 - float(_gr))
+    kr_data = {"K_vals": _K_vals.tolist(), "R_vals": _R_vals, "cmap": _cmap_kr.tolist()}
+    return (kr_data,)
+
+
+@app.cell(hide_code=True)
+def _(kr_data, mo, plt):
+    _K  = kr_data["K_vals"]
+    _R  = kr_data["R_vals"]
+    _cm = kr_data["cmap"]
+    fig_kr, ax_kr = plt.subplots(figsize=(5.5, 3.8))
+    _im = ax_kr.pcolormesh(_R, _K, _cm, cmap="magma", shading="nearest", vmin=0)
+    fig_kr.colorbar(_im, ax=ax_kr, label="chimera measure sigma(|r_i|) x (1-|Z|)")
+    ax_kr.set_xlabel("neighbour range R")
+    ax_kr.set_ylabel("coupling K")
+    ax_kr.set_title("(K, R) phase diagram (alpha fixed, N = 40)")
+    ax_kr.set_xticks(_R)
+    ax_kr.set_yticks([round(v, 2) for v in _K])
+    fig_kr.tight_layout()
+    mo.vstack([
+        mo.md("Bright = chimera-supporting. Chimera measure = sigma(|r_i|) x (1-|Z|); zero = fully sync or fully incoherent."),
+        fig_kr,
+    ])
     return
 
 
