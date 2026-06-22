@@ -619,12 +619,13 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    eta_sl = mo.ui.slider(0.0, 6.0,  value=1.5,  step=0.1,  label="noise η",    show_value=True)
-    rho_sl = mo.ui.slider(0.5, 4.0,  value=2.0,  step=0.25, label="density ρ",  show_value=True)
-    N_sl   = mo.ui.slider(40,  240,   value=120,  step=20,   label="particles N", show_value=True)
-    v0_sl  = mo.ui.slider(0.05, 0.4,  value=0.15, step=0.05, label="speed v₀",  show_value=True)
-    mo.hstack([eta_sl, rho_sl, N_sl, v0_sl], justify="start", gap=2)
-    return N_sl, eta_sl, rho_sl, v0_sl
+    eta_sl = mo.ui.slider(0.0, 6.0,  value=1.5,  step=0.1,  label="noise η",         show_value=True)
+    rho_sl = mo.ui.slider(0.5, 4.0,  value=2.0,  step=0.25, label="density ρ",       show_value=True)
+    N_sl   = mo.ui.slider(40,  240,   value=120,  step=20,   label="particles N",     show_value=True)
+    v0_sl  = mo.ui.slider(0.05, 0.4,  value=0.15, step=0.05, label="speed v₀",       show_value=True)
+    obsr_sl = mo.ui.slider(0.02, 0.25, value=0.08, step=0.01, label="obstacle r / L", show_value=True)
+    mo.hstack([eta_sl, rho_sl, N_sl, v0_sl, obsr_sl], justify="start", gap=2)
+    return N_sl, eta_sl, obsr_sl, rho_sl, v0_sl
 
 
 @app.cell(hide_code=True)
@@ -705,12 +706,12 @@ def _(np, vicsek_core):
 
 
 @app.cell(hide_code=True)
-def _(canvas_anim, mo, vicsek_data):
+def _(canvas_anim, mo, obsr_sl, vicsek_data):
     _d = vicsek_data
     _panels = [
         {"kind": "live_vicsek",
          "N": _d["N"], "L": _d["L"], "v0": _d["v0"], "eta": _d["eta"],
-         "R": 1.0, "obs_r": max(0.8, float(_d["L"]) * 0.08)},
+         "R": 1.0, "obs_r": max(0.3, float(_d["L"]) * float(obsr_sl.value))},
         {"kind": "phi_t", "phi": _d["phi"]},
     ]
     _layout = [[0.0, 0.0, 0.50, 1.00], [0.50, 0.0, 0.50, 1.00]]
