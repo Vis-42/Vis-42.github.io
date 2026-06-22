@@ -44,7 +44,7 @@ jobs:
         working-directory: ./website
         env:
           HUGO_ENVIRONMENT: production
-          HUGO_BUILD_ID: "2e6a9ec"
+          HUGO_BUILD_ID: "5503efa"
         run: hugo --minify --baseURL "https://parthbhargava.net/"
 
       - name: Upload Pages artifact
