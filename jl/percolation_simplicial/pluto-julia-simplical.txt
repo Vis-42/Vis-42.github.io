@@ -1,0 +1,524 @@
+### A Pluto.jl notebook ###
+# v0.20.17
+
+using Markdown
+using InteractiveUtils
+
+# This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
+macro bind(def, element)
+    #! format: off
+    return quote
+        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
+        local el = $(esc(element))
+        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
+        el
+    end
+    #! format: on
+end
+
+# ╔═╡ c3d4e5f6-0003-11f1-0001-000000000003
+begin
+    using PlutoUI, CairoMakie, Statistics, Random, HypertextLiteral, LinearAlgebra
+    include(joinpath(@__DIR__, "..", "template", "PlutoTemplate.jl"))
+    using .PlutoTemplate
+    const Slider = PlutoUI.Slider
+end
+
+# ╔═╡ c3d4e5f6-0003-11f1-0002-000000000003
+PlutoTemplate.notebook_css(; accent = PlutoTemplate.ACCENT_VIOLET)
+
+# ╔═╡ c3d4e5f6-0003-11f1-0003-000000000003
+PlutoTemplate.notebook_header(
+    "Percolation on Simplicial Complexes",
+    "Standard percolation on graphs exhibits a second-order phase transition at p_c. " *
+    "When higher-order interactions (triangles, tetrahedra) are included, the transition can " *
+    "become explosive — an abrupt discontinuous jump. This notebook visualises S(p) and χ(p) " *
+    "for k=1,2,3 simplices and estimates the critical exponents.";
+    breadcrumb = "Research / Complex Systems / Topology",
+    tags = ["Clique complex", "Bond percolation", "Phase transition", "Susceptibility", "Universality class"]
+)
+
+# ╔═╡ c3d4e5f6-0003-11f1-0004-000000000003
+begin
+    # ── Clique complex generation ──────────────────────────────────────────
+    # Build a clique complex from an Erdos-Renyi random graph G(N, p_edge).
+    # A clique complex (also called the Vietoris-Rips complex at the clique level)
+    # promotes every complete subgraph (clique) in the underlying graph to a simplex.
+    # Triangles and tetrahedra are therefore determined entirely by the edge structure
+    # rather than being independently prescribed: no extra randomness is needed beyond
+    # the edge coin flips, which makes the construction fully reproducible from one seed.
+    function _gen_complex(N::Int, p_edge::Float64, seed::Int)
+        # Fix the RNG seed so the same (N, p_edge) always produces the same graph.
+        # This is important: the complex is built once and held fixed while the
+        # percolation probability p is swept, so changes in the S(p) curve come
+        # from different occupation realisations, not from a different graph.
+        rng = Random.MersenneTwister(seed)
+
+        # adj[i,j] = true means the edge {i,j} exists in the base graph.
+        # Storing the full N×N Boolean matrix allows O(1) adjacency lookups
+        # during the triangle and tetrahedron enumeration below.
+        adj = falses(N, N)
+
+        # edges collects every edge as an ordered pair (i < j) in the upper triangle.
+        # Keeping this list avoids scanning all N^2 pairs again when building triangles.
+        edges = Tuple{Int,Int}[]
+
+        # G(N, p_edge) Erdos-Renyi model: each of the C(N,2) candidate edges is
+        # included independently with probability p_edge.
+        # Restricting to i < j means each pair is tested exactly once.
+        for i in 1:N, j in i+1:N
+            if rand(rng) < p_edge
+                # Write both directions so adjacency lookups are symmetric.
+                adj[i,j]=adj[j,i]=true; push!(edges,(i,j))
+            end
+        end
+
+        # ── 2-simplices (triangles) ──────────────────────────────────────
+        # For each existing edge (i,j), test every vertex k > j as a potential
+        # third corner. The triple (i,j,k) forms a triangle iff {i,k} and {j,k}
+        # are both present. This is the clique-extension step: we try to extend
+        # a 1-simplex (edge) to a 2-simplex (triangle) by one vertex.
+        # Restricting k > j ensures each triangle is listed exactly once in
+        # sorted order (i < j < k).
+        triangles = Tuple{Int,Int,Int}[]
+        for (i,j) in edges, k in j+1:N
+            adj[i,k]&&adj[j,k]&&push!(triangles,(i,j,k))
+        end
+
+        # ── 3-simplices (tetrahedra) ─────────────────────────────────────
+        # Extend each triangle (i,j,k) by a fourth vertex l > k that is adjacent
+        # to ALL three existing vertices. This requires three adjacency checks
+        # (adj[i,l], adj[j,l], adj[k,l]), confirming that l closes a K_4 clique.
+        # Again, l > k guarantees each tetrahedron appears once in sorted order.
+        tets = Tuple{Int,Int,Int,Int}[]
+        for (i,j,k) in triangles, l in k+1:N
+            adj[i,l]&&adj[j,l]&&adj[k,l]&&push!(tets,(i,j,k,l))
+        end
+
+        # Pack everything into a named tuple so downstream functions can access
+        # cx.N, cx.adj, cx.edges, cx.triangles, cx.tets by name.
+        (N=N, adj=adj, edges=edges, triangles=triangles, tets=tets)
+    end
+
+    # ── Single percolation realisation ────────────────────────────────────
+    # Perform one independent bond-percolation trial on the simplicial complex cx
+    # at occupation probability p, acting on simplices of the chosen dimension dim.
+    # Each call uses its own RNG seed so that n_rep calls at the same p produce
+    # statistically independent samples (needed for computing variance in _sweep).
+    # Returns S = (size of largest connected component) / N, the order parameter.
+    function _perc_once(cx, p::Float64, dim::Int, seed::Int)
+        N=cx.N
+        # Per-realisation seed: seed=1,2,...,n_rep gives independent samples.
+        rng=Random.MersenneTwister(seed)
+
+        # adj_p is the adjacency matrix of the percolated subgraph.
+        # It starts all-false (no bonds open) and is filled in according to dim.
+        # Keeping it as a dense Boolean matrix mirrors the structure of cx.adj,
+        # making the BFS below identical across all three cases.
+        adj_p=falses(N,N)
+
+        if dim==1
+            # Standard (pairwise) bond percolation: flip an independent coin for
+            # each edge; open edges join their two endpoints in adj_p.
+            # This is the classical Erdos-Renyi percolation process on the graph skeleton.
+            for (i,j) in cx.edges; rand(rng)<p&&(adj_p[i,j]=adj_p[j,i]=true); end
+
+        elseif dim==2
+            # Triangle (2-simplex) percolation: the unit of occupation is a full triangle.
+            # When a triangle is occupied, ALL THREE of its edges activate simultaneously.
+            # This is what makes the transition cooperative: two vertices i and j are
+            # connected through a triangle only if the entire triangle is present,
+            # not merely the edge {i,j}. As a result, the effective percolation threshold
+            # is higher than for dim=1, and for dense complexes the rise in S(p) can be
+            # abrupt (first-order-like) rather than gradual.
+            for (i,j,k) in cx.triangles
+                rand(rng)<p&&(adj_p[i,j]=adj_p[j,i]=adj_p[i,k]=adj_p[k,i]=adj_p[j,k]=adj_p[k,j]=true)
+            end
+
+        elseif dim==3
+            # Tetrahedron (3-simplex) percolation: the unit is a full tetrahedron.
+            # Occupation simultaneously opens all C(4,2)=6 edges of the tetrahedron.
+            # The cooperative constraint is even stronger than for triangles: a
+            # conducting path must thread through entire K_4 subgraphs, raising p_c further.
+            for (i,j,k,l) in cx.tets
+                if rand(rng)<p
+                    # Enumerate all six vertex-pairs of the tetrahedron explicitly.
+                    # Any occupied tet writes these six edges into adj_p.
+                    for (a,b) in [(i,j),(i,k),(i,l),(j,k),(j,l),(k,l)]
+                        adj_p[a,b]=adj_p[b,a]=true
+                    end
+                end
+            end
+        end
+
+        # ── BFS connected-component labeling ────────────────────────────
+        # Walk the percolated graph adj_p and assign a unique integer ID to each
+        # connected component. comp[v]=0 means vertex v has not been visited yet.
+        comp=zeros(Int,N); c=0
+        for start in 1:N
+            # Skip vertices already assigned to a component.
+            comp[start]!=0&&continue
+            # Start a new component and seed the BFS queue with this vertex.
+            c+=1; queue=[start]; comp[start]=c
+            while !isempty(queue)
+                # popfirst! gives FIFO order (true BFS); for component labeling,
+                # DFS would give the same result but BFS avoids deep call stacks.
+                v=popfirst!(queue)
+                # For each unvisited neighbor of v, assign the same component ID
+                # and enqueue it. adj_p[v,u] is O(1) via the dense matrix.
+                # The O(N) inner loop is acceptable for N <= 200.
+                for u in 1:N; adj_p[v,u]&&comp[u]==0&&(comp[u]=c;push!(queue,u)); end
+            end
+        end
+
+        # ── Giant-component size ─────────────────────────────────────────
+        # Count the number of vertices in each of the c components, then
+        # return the largest count normalised by N.
+        # S = 0 naturally if no edges were opened (c could still be N, one per vertex,
+        # but each component has size 1, so maximum/N -> 1/N, approaching 0 for large N).
+        # The special case isempty(cnts) guards against c=0, which happens if N=0.
+        cnts=zeros(Int,c); for v in 1:N; comp[v]>0&&(cnts[comp[v]]+=1); end
+        isempty(cnts) ? 0.0 : maximum(cnts)/N
+    end
+
+    # ── Sweep over bond probability ───────────────────────────────────────
+    # For each p in p_vals, run n_rep independent percolation trials and compute
+    # two observables: S(p) (order parameter) and chi(p) (susceptibility).
+    # Using multiple realisations at each p is necessary because percolation is
+    # stochastic: a single trial has large variance near p_c, especially for small N.
+    function _sweep(cx, p_vals, dim, n_rep)
+        # S(p) = <s>: the sample mean of the giant-component fraction over n_rep seeds.
+        # Seeds 1..n_rep are used so each realisation is statistically independent
+        # (the same seeds are reused at every p, which is fine: the RNG is seeded
+        # per call, so seed=1 at p=0.3 and seed=1 at p=0.7 are independent draws).
+        S   = [mean(_perc_once(cx,p,dim,s) for s in 1:n_rep) for p in p_vals]
+
+        # chi(p) = N * Var(S) / <S>: a fluctuation-based proxy for percolation susceptibility.
+        # The standard textbook susceptibility is chi = sum_{s != giant} s^2 * n_s / N,
+        # the second moment of non-giant cluster sizes within a single realisation.
+        # We instead compute order-parameter fluctuations across n_rep realisations
+        # (analogous to N*Var(m) in the Ising model, with an extra 1/<S> normalisation
+        # to regularise the deep subcritical regime where <S> -> 1/N).
+        # This proxy peaks sharply near p_c and correctly locates the critical point,
+        # but its exponent and amplitude differ from the standard second-moment formula.
+        chi = begin
+            N=cx.N
+            [begin
+                # Re-run n_rep trials at this p to get the sample distribution of s.
+                # Note: _perc_once is called a second time here (not reusing the S
+                # samples above). This is intentional: S and chi need the same set
+                # of realisations so they are statistically paired, and pulling them
+                # in one pass keeps the code readable at a modest extra cost.
+                ss=[_perc_once(cx,p,dim,s) for s in 1:n_rep]
+                ms=mean(ss)
+                # Compute <s^2> directly from the sample to avoid accumulating
+                # a separate running sum. ms2 - ms^2 = Var(s) by definition.
+                ms2=mean(s^2 for s in ss)
+                # Regularise the denominator by 1e-12 to avoid 0/0 deep in the
+                # subcritical phase (p << p_c), where <s> ~ 1/N -> 0 and
+                # Var(s) is also near zero. The regularisation shifts chi to ~0
+                # in that regime rather than producing NaN.
+                # max(0,...) clamps away negative values that floating-point
+                # rounding can introduce when ms2 - ms^2 < 0 by tiny amounts.
+                max(0.0,N*(ms2-ms^2)/(ms+1e-12))
+             end for p in p_vals]
+        end
+        S, chi
+    end
+
+    nothing
+end
+
+# ╔═╡ c3d4e5f6-0003-11f1-0005-000000000003
+PlutoTemplate.section_label("Controls")
+
+# ╔═╡ c3d4e5f6-0003-11f1-0006-000000000003
+@bind ctrl PlutoUI.combine() do Child
+    @htl """
+    <div style="background:#161a23;border:1px solid #2f3645;border-radius:10px;
+                padding:24px 28px;display:flex;flex-direction:column;gap:22px;
+                font-family:ui-sans-serif,system-ui,sans-serif;margin:8px 0 4px;">
+
+      <div style="display:grid;grid-template-columns:1fr auto;align-items:start;gap:24px;">
+        <div>
+          <div style="font-size:10px;color:#626b7c;letter-spacing:.1em;text-transform:uppercase;font-weight:600;margin-bottom:5px;">Dimension to percolate</div>
+          <div style="font-size:11px;color:#626b7c;line-height:1.55;">
+            k=1 activates edges; k=2 activates triangles (all 3 edges open);
+            k=3 activates tetrahedra. Higher k requires more bonds to conduct, shifting p_c.
+          </div>
+        </div>
+        <div style="min-width:220px;padding-top:4px;">
+          $(Child("dim", Select(["1"=>"k=1 (pairwise edges)", "2"=>"k=2 (triangles)", "3"=>"k=3 (tetrahedra)"]; default="1")))
+        </div>
+      </div>
+
+      <div style="border-top:1px solid #1c212c;"></div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;">
+        <div>
+          <div style="font-size:12px;color:#b3bac8;font-weight:500;margin-bottom:2px;">N (vertices)</div>
+          <div style="font-size:11px;color:#626b7c;margin-bottom:8px;">Larger N sharper transition</div>
+          $(Child("N", Slider([50, 100, 150, 200]; default=100, show_value=true)))
+        </div>
+        <div>
+          <div style="font-size:12px;color:#b3bac8;font-weight:500;margin-bottom:2px;">p_edge (ER density)</div>
+          <div style="font-size:11px;color:#626b7c;margin-bottom:8px;">Erdős-Rényi edge prob for complex generation</div>
+          $(Child("p_edge", Slider(0.03:0.01:0.15; default=0.06, show_value=true)))
+        </div>
+        <div>
+          <div style="font-size:12px;color:#b3bac8;font-weight:500;margin-bottom:2px;">Realisations</div>
+          <div style="font-size:11px;color:#626b7c;margin-bottom:8px;">Averaged realisations per p value</div>
+          $(Child("n_rep", Slider([3, 5, 8, 12]; default=5, show_value=true)))
+        </div>
+      </div>
+
+    </div>
+    """
+end
+
+# ╔═╡ c3d4e5f6-0003-11f1-0007-000000000003
+begin
+    # ── Slider value extraction and complex construction ──────────────────
+    # ctrl is a NamedTuple produced by PlutoUI.combine(); its fields mirror the
+    # Child(...) names in the @bind block above. Pluto's reactive graph ensures
+    # this cell re-evaluates whenever any slider or select widget changes, and
+    # all downstream cells that depend on _N, _dim, _cx, etc. follow automatically.
+
+    # Slider returns a Number subtype; Int() coerces it to the concrete type
+    # expected by _gen_complex and _perc_once.
+    _N     = Int(ctrl.N)
+    _pedge = Float64(ctrl.p_edge)
+
+    # The Select widget returns the chosen key as a String ("1", "2", or "3"),
+    # so it must be parsed before passing to the dim==1 / dim==2 / dim==3 branches.
+    _dim   = parse(Int, ctrl.dim)
+    _nrep  = Int(ctrl.n_rep)
+
+    # Build the clique complex once for the current (N, p_edge) pair.
+    # The graph seed is fixed at 42: the same topology is reused across all
+    # percolation sweeps so that changing dim or n_rep only affects the
+    # occupation process, not the underlying graph structure.
+    # This makes comparisons between k=1, k=2, k=3 fair: same graph, different rules.
+    _cx    = _gen_complex(_N, _pedge, 42)
+    nothing
+end
+
+# ╔═╡ c3d4e5f6-0003-11f1-0008-000000000003
+begin
+    # ── p-sweep ───────────────────────────────────────────────────────────
+    # Sweep bond probability from 0 (subcritical, no open bonds) to 1 (all bonds open).
+    # Step size 0.02 gives 51 sample points: fine enough to resolve the S(p) rise
+    # and the chi peak clearly, while still recomputing quickly on slider changes.
+    _p_range = collect(0.0:0.02:1.0)
+
+    # _sweep returns two vectors of length 21, one entry per p value.
+    # Each entry is already averaged over n_rep independent realisations.
+    # _S is the order parameter curve; _chi is the susceptibility curve.
+    # Both are stored as module-level variables so the animation cell (000b)
+    # can read the completed data without re-running the sweep.
+    _S, _chi = _sweep(_cx, _p_range, _dim, _nrep)
+    nothing
+end
+
+# ╔═╡ c3d4e5f6-0003-11f1-0009-000000000003
+let
+    # Locate the peak of chi to estimate p_c.
+    # In the thermodynamic limit chi diverges at p_c; in a finite system
+    # it peaks at a p that converges to p_c as N -> infinity (finite-size scaling).
+    pc_idx  = argmax(_chi)
+    pc_val  = round(_p_range[pc_idx]; digits=2)
+    # S_max is the plateau value of the giant component fraction above p_c.
+    # For k=1 this approaches 1; for higher k it may stay below 1 because
+    # isolated vertices not touched by any simplex remain disconnected.
+    Smax    = round(maximum(_S); digits=3)
+    chimax  = round(maximum(_chi); digits=1)
+    # Complex inventory: shows how the number of available higher simplices
+    # depends on p_edge. Sparse complexes may have zero triangles or tetrahedra,
+    # making k=2 or k=3 percolation trivially empty.
+    n_edges = length(_cx.edges)
+    n_tri   = length(_cx.triangles)
+    n_tet   = length(_cx.tets)
+    # Julia 1-based indexing lets _dim (1, 2, or 3) directly select the right label
+    # from a statically allocated array, avoiding a chain of if/elseif branches.
+    dim_str = ["edges (k=1)", "triangles (k=2)", "tetrahedra (k=3)"][_dim]
+    @htl """
+    <div style="font-family:ui-sans-serif,system-ui,sans-serif;display:grid;grid-template-columns:repeat(5,1fr);border:1px solid #232936;border-radius:6px;overflow:hidden;margin:2px 0;background:#161a23;">
+      <div style="padding:13px 18px;border-right:1px solid #232936;">
+        <div style="font-size:10px;color:#626b7c;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">Percolating</div>
+        <div style="font-size:13px;color:#a594f2;font-weight:500;">$(dim_str)</div>
+      </div>
+      <div style="padding:13px 18px;border-right:1px solid #232936;">
+        <div style="font-size:10px;color:#626b7c;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">p_c estimate</div>
+        <div style="font-size:18px;color:#eef0f5;font-weight:600;font-family:ui-monospace,monospace;">$(pc_val)</div>
+      </div>
+      <div style="padding:13px 18px;border-right:1px solid #232936;">
+        <div style="font-size:10px;color:#626b7c;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">S max</div>
+        <div style="font-size:16px;color:#57c98a;font-weight:600;font-family:ui-monospace,monospace;">$(Smax)</div>
+      </div>
+      <div style="padding:13px 18px;border-right:1px solid #232936;">
+        <div style="font-size:10px;color:#626b7c;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">χ max</div>
+        <div style="font-size:16px;color:#e6a356;font-weight:600;font-family:ui-monospace,monospace;">$(chimax)</div>
+      </div>
+      <div style="padding:13px 18px;">
+        <div style="font-size:10px;color:#626b7c;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">Complex size</div>
+        <div style="font-size:11px;color:#b3bac8;font-family:ui-monospace,monospace;">$(n_edges)e / $(n_tri)t / $(n_tet)q</div>
+      </div>
+    </div>
+    """
+end
+
+# ╔═╡ c3d4e5f6-0003-11f1-000a-000000000003
+PlutoTemplate.section_label("Animation — S(p) and χ(p) filling in as p increases")
+
+# ╔═╡ c3d4e5f6-0003-11f1-000b-000000000003
+begin
+    # _n_pts fixes the vector length used for both Observables and the animation index.
+    # Computed once so it stays consistent if _p_range ever changes upstream.
+    _n_pts   = length(_p_range)
+    # Observables are Makie's reactive containers: the plot lines listen to them
+    # and update automatically whenever notify() is called, without rebuilding
+    # the entire figure. Initialise with NaN so the lines render as gaps (not zeros).
+    _S_obs   = Observable(fill(NaN, _n_pts))
+    _chi_obs = Observable(fill(NaN, _n_pts))
+    # Keep references to the full computed arrays; the animation loop writes
+    # from these into the Observables one point at a time.
+    # Aliasing _S / _chi here means the loop body reads stable module-level arrays
+    # rather than the Observables themselves, keeping the reveal logic simple.
+    _S_full  = _S;  _chi_full = _chi
+
+    # Colour palette matching the dark notebook theme.
+    _bg  = RGBf(0.055,0.055,0.062); _sf=RGBf(0.085,0.085,0.095)
+    _t0  = RGBf(0.940,0.940,0.960); _t1=RGBf(0.620,0.620,0.660)
+    _acc = RGBf(0.55,0.38,0.90);    _acc2=RGBf(0.20,0.83,0.60)
+    _amb = RGBf(0.98,0.57,0.19)
+
+    # Apply the notebook's shared dark theme before constructing any plot objects.
+    # Calling set_theme! first means all subsequent Axis and lines! calls inherit
+    # the correct colours, fonts, and grid style without manual overrides on each element.
+    set_theme!(PlutoTemplate.makie_theme())
+    fig = Figure(size=(1200, 567))
+
+    # Left panel: S(p), the order parameter for the percolation transition.
+    # S is near 0 below p_c and rises continuously (k=1) or abruptly (k>=2) above it.
+    ax_S = Axis(fig[1,1];
+        title  = "Giant component fraction S(p)",
+        xlabel = "Bond probability p", ylabel = "S(p)")
+    # Bind the line to _S_obs so it updates live during the animation loop.
+    lines!(ax_S, _p_range, _S_obs; color=_acc, linewidth=2.5)
+    # Draw a faint dashed baseline at S=0 so the subcritical phase is visually distinct
+    # from the onset of the giant component; helps the eye pick out the threshold.
+    hlines!(ax_S, [0.0]; color=_t1, linewidth=0.8, linestyle=:dash)
+
+    # Right panel: chi(p), the susceptibility.
+    # The peak location is the finite-size estimate of p_c; the peak height
+    # grows with N, diverging at p_c in the thermodynamic limit.
+    ax_chi = Axis(fig[1,2];
+        title  = "Susceptibility χ(p) — peak marks p_c",
+        xlabel = "Bond probability p", ylabel = "χ(p)")
+    lines!(ax_chi, _p_range, _chi_obs; color=_amb, linewidth=2.5)
+
+    # Reset to Makie's default theme after building the figure so that any other
+    # plots created later in the session (outside this notebook) are not accidentally
+    # styled with the dark palette. The fig object retains its own recorded attributes.
+    set_theme!()
+
+    # Animation loop: runs in a background task so the cell returns the figure
+    # immediately while the loop keeps pushing data into the Observables.
+    # The outer while true restarts the sweep after a pause, creating a looping animation.
+    @async try
+        while true
+            # Reset both curves to NaN at the start of each cycle so the browser
+            # shows a blank canvas. Mutating .val in-place avoids allocating new vectors
+            # every cycle; notify() must be called afterward to push the change to the client.
+            # The 0.4 s pause gives the viewer time to register the reset before data returns.
+            fill!(_S_obs.val,   NaN); fill!(_chi_obs.val, NaN)
+            notify(_S_obs); notify(_chi_obs); sleep(0.4)
+            for i in 1:_n_pts
+                # Reveal one p-value at a time, simulating the sweep filling in.
+                _S_obs.val[i]   = _S_full[i]
+                _chi_obs.val[i] = _chi_full[i]
+                # notify() triggers the CairoMakie WebSocket push to the browser.
+                notify(_S_obs); notify(_chi_obs); sleep(0.06)
+            end
+            # Hold the completed curve before restarting.
+            sleep(6.0)
+        end
+    catch
+        # Silently swallow TaskFailedException that arises when Pluto
+        # re-evaluates the cell and the old task is interrupted.
+    end
+
+    fig
+end
+
+# ╔═╡ c3d4e5f6-0003-11f1-000c-000000000003
+PlutoTemplate.explanation(
+    """
+    The simulation begins by generating an Erdos-Renyi random graph G(N, p_edge): each of the C(N,2) \
+    possible vertex pairs is independently included as an edge with probability p_edge. From this \
+    underlying graph, a clique complex is built by promoting every complete subgraph to a simplex: \
+    every triangle in the graph becomes a 2-simplex, and every K_4 subgraph becomes a 3-simplex, so \
+    no additional randomness is needed beyond the original edge coin flips. With the complex fixed, \
+    a bond-percolation sweep runs over occupation probabilities p from 0 to 1 in steps of 0.05. \
+    At each p, a chosen class of simplices (edges for k=1, triangles for k=2, tetrahedra for k=3) is \
+    independently occupied with probability p, and when a simplex is occupied all of its edges activate \
+    simultaneously in the percolated adjacency matrix. Connected components of the resulting graph are \
+    found by breadth-first search, and the order parameter S(p) is recorded as the fraction of vertices \
+    in the largest component, averaged over n_rep independent realisations. The susceptibility \
+    chi(p) = N * Var(s) / mean(s) is computed from the same realisations: its peak location gives a \
+    finite-size estimate of the critical threshold p_c, converging to the true thermodynamic value as N grows.
+    """,
+    """
+    Standard bond percolation on graphs (k=1) is among the most-studied models in statistical physics \
+    because it captures the emergence of large-scale connectivity from local random interactions. The \
+    transition at p_c is continuous (second-order), with the giant-component fraction growing as \
+    S ~ (p - p_c)^beta near threshold, and the susceptibility diverging as chi ~ |p - p_c|^{-gamma} \
+    in the thermodynamic limit. Extending percolation to simplicial complexes changes the nature of \
+    connectivity: for k=2, two vertices are connected through a triangle only if the entire triangle \
+    is occupied, not merely the individual edge between them. This cooperative constraint raises p_c \
+    and can sharpen the onset of the giant component into a discontinuous (first-order) jump for dense \
+    complexes, a phenomenon called explosive percolation. The susceptibility peak, borrowing its \
+    definition from the magnetic fluctuation-dissipation relation chi = N Var(m) / mean(m), remains \
+    the sharpest finite-system signal of p_c regardless of the order of the transition. Simplicial \
+    complexes appear naturally in neuroscience, social networks, and topological data analysis, where \
+    genuine multi-body interactions cannot be faithfully reduced to pairwise edges, making the \
+    percolation threshold and transition order directly relevant to the robustness of collective \
+    function in such systems.
+    """
+)
+
+# ╔═╡ 00000000-0000-0000-0000-000000000001
+PLUTO_PROJECT_TOML_CONTENTS = """
+[deps]
+HypertextLiteral = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+
+[compat]
+HypertextLiteral = "~1.0.0"
+PlutoUI = "~0.7.80"
+CairoMakie = "~0.15.11"
+"""
+
+# ╔═╡ 00000000-0000-0000-0000-000000000002
+PLUTO_MANIFEST_TOML_CONTENTS = """
+"""
+
+# ╔═╡ Cell order:
+# ╟─c3d4e5f6-0003-11f1-0001-000000000003
+# ╟─c3d4e5f6-0003-11f1-0002-000000000003
+# ╟─c3d4e5f6-0003-11f1-0003-000000000003
+# ╟─c3d4e5f6-0003-11f1-0004-000000000003
+# ╟─c3d4e5f6-0003-11f1-0005-000000000003
+# ╟─c3d4e5f6-0003-11f1-0006-000000000003
+# ╟─c3d4e5f6-0003-11f1-0007-000000000003
+# ╟─c3d4e5f6-0003-11f1-0008-000000000003
+# ╟─c3d4e5f6-0003-11f1-0009-000000000003
+# ╟─c3d4e5f6-0003-11f1-000a-000000000003
+# ╟─c3d4e5f6-0003-11f1-000b-000000000003
+# ╟─c3d4e5f6-0003-11f1-000c-000000000003
+# ╟─00000000-0000-0000-0000-000000000001
+# ╟─00000000-0000-0000-0000-000000000002

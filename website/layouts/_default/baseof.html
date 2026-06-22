@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.LanguageCode }}">
+<head>
+  <meta charset="utf-8">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <title>{{ if .IsHome }}Parth Bhargava{{ else }}{{ .Title }} | Parth Bhargava{{ end }}</title>
+  <meta name="description" content="{{ if .Description }}{{ .Description }}{{ else }}{{ .Site.Params.description }}{{ end }}">
+  <meta name="author" content="{{ .Site.Params.profile.name }}">
+  <meta name="keywords" content="physics, academic, research, experimental physics, complex systems, nonlinear dynamics, NUS">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ .Site.BaseURL }}">
+  <meta property="og:title" content="{{ .Site.Title }}">
+  <meta property="og:description" content="{{ .Site.Params.description }}">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary">
+  <meta property="twitter:title" content="{{ .Site.Title }}">
+  <meta property="twitter:description" content="{{ .Site.Params.description }}">
+
+  <!-- Typography: serif body, mono for labels & marginalia -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       A SCHOLAR'S NOTEBOOK  ·  light = aged paper · dark = chalkboard
+       Hand-tuned single stylesheet. No framework, no trackers.
+       ============================================================ */
+
+    :root {
+      /* Paper (light) */
+      --ink:        #2c2620;
+      --ink-2:      #574c3d;
+      --ink-muted:  #8a7c66;
+      --accent:     #9c3b2c;   /* oxblood — links, rules, marks */
+      --accent-2:   #3c5469;   /* faded ink-blue */
+      --accent-soft:#e7dcc6;
+      --paper:      #ece2cd;   /* page base */
+      --paper-2:    #f4ecdb;   /* cards / raised */
+      --paper-3:    #e3d7be;   /* sunk / wells */
+      --rule:       #b9a787;
+      --rule-soft:  #d3c4a4;
+      --margin-line:#c1584a;   /* the red notebook margin rule */
+      --tape:       rgba(200, 182, 140, 0.55);
+      --header-bg:  rgba(236, 226, 205, 0.94);
+      --shadow:     rgba(60, 48, 30, 0.16);
+    }
+
+    [data-theme="dark"] {
+      /* Chalkboard (dark) */
+      --ink:        #ece5d4;
+      --ink-2:      #c7bfaa;
+      --ink-muted:  #8f9a8c;
+      --accent:     #e6a463;   /* chalk amber */
+      --accent-2:   #9ec3ad;   /* chalk green */
+      --accent-soft:rgba(230, 164, 99, 0.16);
+      --paper:      #1b231f;
+      --paper-2:    #232d28;
+      --paper-3:    #161d1a;
+      --rule:       #45524a;
+      --rule-soft:  #313c36;
+      --margin-line:#7d5b46;
+      --tape:       rgba(160, 150, 120, 0.18);
+      --header-bg:  rgba(24, 31, 27, 0.95);
+      --shadow:     rgba(0, 0, 0, 0.45);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
+      font-size: 17.5px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'IBM Plex Serif', 'Iowan Old Style', Georgia, serif;
+      font-weight: 400;
+      color: var(--ink);
+      line-height: 1.72;
+      background-color: var(--paper);
+      /* aged-paper fibre texture, multiplied over the base tone */
+      background-image: url('/textures/paper-subtle.jpg');
+      background-size: 360px;
+      background-repeat: repeat;
+      background-attachment: fixed;
+      background-blend-mode: multiply;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      overflow-x: hidden;
+    }
+
+    [data-theme="dark"] body {
+      /* faint chalk grid on slate */
+      background-image:
+        linear-gradient(rgba(158, 195, 173, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(158, 195, 173, 0.05) 1px, transparent 1px);
+      background-size: 30px 30px;
+      background-blend-mode: normal;
+    }
+
+    /* mono for structural chrome */
+    .ledger-header, .margin-rail, .colophon, .project-links, .contact,
+    .catalog-no, .classification, .section-index, .meta, .stamp,
+    .theme-toggle, .menu-toggle, .nav-links, .card-tab, .toc-link,
+    .experiments-toggle, .assignments-toggle, .webring {
+      font-family: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+    }
+
+    ::selection { background: var(--accent-soft); color: var(--ink); }
+    a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+    a:hover { color: var(--accent-2); }
+
+    /* ============================== LEDGER HEADER ============================== */
+    .ledger-header {
+      position: sticky; top: 0; z-index: 50;
+      background: var(--header-bg);
+      backdrop-filter: blur(6px);
+      border-bottom: 3px double var(--rule);
+    }
+    .ledger-header nav {
+      max-width: 1240px; margin: 0 auto;
+      display: flex; align-items: center; gap: 1.2rem;
+      padding: 0.55rem 1.4rem;
+    }
+    .nameplate {
+      font-weight: 600; font-size: 0.82rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--ink); text-decoration: none;
+      white-space: nowrap;
+    }
+    .nameplate .mark { color: var(--accent); }
+    .nav-links {
+      list-style: none; display: flex; gap: 0.2rem; margin-left: auto;
+      font-size: 0.72rem; letter-spacing: 0.06em;
+    }
+    .nav-links a {
+      display: block; padding: 0.3rem 0.7rem; color: var(--ink-2);
+      text-decoration: none; text-transform: uppercase; border-radius: 2px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--accent); background: var(--accent-soft);
+    }
+    .nav-actions { display: flex; align-items: center; gap: 0.5rem; }
+    .theme-toggle, .menu-toggle {
+      cursor: pointer; background: transparent;
+      border: 1px solid var(--rule); color: var(--ink-2);
+      padding: 0.3rem 0.7rem; font-size: 0.68rem; letter-spacing: 0.08em;
+      text-transform: uppercase; border-radius: 2px; transition: all 0.15s;
+    }
+    .theme-toggle:hover, .menu-toggle:hover { border-color: var(--accent); color: var(--accent); }
+    .menu-toggle { display: none; }
+
+    /* ============================== MAIN GRID ============================== */
+    main {
+      max-width: 1240px; margin: 0 auto; padding: 0 1.4rem;
+      display: grid; grid-template-columns: 200px minmax(0, 1fr);
+      gap: 2.4rem; align-items: start;
+      counter-reset: sec;
+    }
+
+    /* the sticky lab-notebook spine */
+    .margin-rail {
+      position: sticky; top: 5.2rem;
+      padding-top: 2.6rem;
+      font-size: 0.72rem; color: var(--ink-muted);
+      border-right: 1px solid var(--rule-soft);
+      padding-right: 1.2rem; text-align: right;
+      min-height: 60vh;
+    }
+    .rail-label {
+      text-transform: uppercase; letter-spacing: 0.18em;
+      font-size: 0.62rem; color: var(--accent); margin-bottom: 0.8rem;
+    }
+    .section-index { list-style: none; display: flex; flex-direction: column; gap: 0.1rem; }
+    .toc-link {
+      display: block; padding: 0.25rem 0; color: var(--ink-2);
+      text-decoration: none; letter-spacing: 0.04em;
+      border-right: 2px solid transparent; padding-right: 0.6rem;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .toc-link:hover, .toc-link.active { color: var(--accent); border-right-color: var(--accent); }
+    .toc-link .num { color: var(--ink-muted); margin-right: 0.4em; }
+    .rail-note {
+      margin-top: 2rem; padding-top: 1rem; border-top: 1px dashed var(--rule-soft);
+      font-style: italic; font-family: 'IBM Plex Serif', serif; line-height: 1.5;
+      color: var(--ink-muted); font-size: 0.78rem;
+    }
+    .rail-stamp {
+      margin-top: 1.6rem; font-size: 0.6rem; letter-spacing: 0.1em;
+      color: var(--ink-muted); text-transform: uppercase;
+    }
+
+    /* the page column — notebook leaf with red margin rule */
+    .page-column {
+      border-left: 2px solid var(--margin-line);
+      padding-left: 2rem; padding-bottom: 4rem;
+      position: relative;
+    }
+
+    /* ============================== MASTHEAD ============================== */
+    .hero { position: relative; padding: 3rem 0 2.2rem; min-height: 380px; }
+    .classification {
+      font-size: 0.64rem; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--ink-muted); margin-bottom: 1.2rem;
+      display: flex; gap: 0.6rem; align-items: center;
+    }
+    .classification .sep { color: var(--accent); }
+    .hero-inner { display: flex; gap: 2.2rem; align-items: flex-start; }
+    .hero-photo {
+      flex: 0 0 auto; width: 150px; transform: rotate(-2.2deg);
+      background: var(--paper-2); padding: 9px 9px 34px;
+      box-shadow: 0 6px 18px var(--shadow);
+      border: 1px solid var(--rule-soft); position: relative;
+    }
+    .hero-photo::before {
+      content: ""; position: absolute; top: -12px; left: 50%;
+      transform: translateX(-50%) rotate(3deg);
+      width: 74px; height: 26px; background: var(--tape);
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+    .hero-photo::after {
+      content: ""; position: absolute; bottom: 9px; left: 0; right: 0;
+      text-align: center; font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.56rem; letter-spacing: 0.04em; color: var(--ink-muted);
+    }
+    .hero-photo img { width: 100%; display: block; filter: grayscale(0.18) contrast(1.02); }
+    .hero-content { flex: 1 1 auto; min-width: 0; }
+    .hero-content h1 {
+      font-family: 'IBM Plex Serif', serif; font-weight: 700;
+      font-size: 2.9rem; line-height: 1.04; letter-spacing: -0.01em;
+      color: var(--ink); margin-bottom: 0.3rem;
+    }
+    .subtitle {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem;
+      letter-spacing: 0.04em; color: var(--ink-2); margin-bottom: 1rem;
+    }
+    .purpose-statement {
+      font-style: italic; font-size: 1.04rem; color: var(--ink-2);
+      max-width: 38ch; margin-bottom: 1.4rem;
+      border-left: 2px solid var(--accent-soft); padding-left: 1rem;
+    }
+    .contact {
+      display: flex; flex-wrap: wrap; gap: 0.4rem 0.5rem; font-size: 0.74rem;
+    }
+    .contact a {
+      text-decoration: none; color: var(--accent-2);
+      border: 1px solid var(--rule-soft); border-radius: 2px;
+      padding: 0.28rem 0.7rem; background: var(--paper-2);
+      transition: all 0.15s; letter-spacing: 0.03em;
+    }
+    .contact a:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+
+    /* ============================== SECTIONS ============================== */
+    .section-split { padding: 2.4rem 0 0.6rem; scroll-margin-top: 5rem; }
+    .section-title { margin-bottom: 1.4rem; }
+    .section-title h2 {
+      font-family: 'IBM Plex Serif', serif; font-weight: 600;
+      font-size: 1.7rem; color: var(--ink); display: flex; align-items: baseline;
+      gap: 0.6rem; padding-bottom: 0.5rem; position: relative;
+    }
+    .section-title h2::before {
+      counter-increment: sec; content: "§" counter(sec);
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.92rem;
+      color: var(--accent); font-weight: 500; letter-spacing: 0.02em;
+    }
+    .section-title h2::after {
+      content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 4px;
+      background:
+        repeating-linear-gradient(90deg, var(--rule) 0 8px, transparent 8px 14px);
+      opacity: 0.7;
+    }
+    .summary-lead { font-size: 1.12rem; color: var(--ink); margin-bottom: 1rem; }
+    .section-body p { margin-bottom: 0.9rem; color: var(--ink-2); }
+    .section-body > p:last-child { margin-bottom: 0; }
+    .section-placeholder {
+      color: var(--ink-muted); font-style: italic;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.84rem;
+      padding: 0.9rem 0; border-top: 1px solid var(--rule-soft);
+    }
+    /* ---- shared pieces for Publications / Blog / Photographs ---- */
+    .section-note { color: var(--ink-muted); font-style: italic; font-size: 0.86rem; margin-bottom: 1.2rem; }
+    .section-action { margin-top: 1.4rem; font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; }
+    .section-action a { color: var(--accent-2); text-decoration: none; }
+    .section-action a:hover { color: var(--accent); }
+    /* a ghost slot that shows the format a real entry will take */
+    .is-placeholder { opacity: 0.7; }
+    .ph-tag {
+      display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 0.56rem;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted);
+      border: 1px dashed var(--rule); border-radius: 2px; padding: 1px 6px; margin-bottom: 0.5rem;
+    }
+    /* show-more toggle (used in several sections) */
+    .show-more { margin-top: 1.2rem; }
+    .show-more > summary {
+      display: inline-block; cursor: pointer; list-style: none;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.06em;
+      color: var(--accent-2); border: 1px solid var(--rule-soft); border-radius: 2px; padding: 0.32rem 0.85rem;
+      transition: all 0.15s;
+    }
+    .show-more > summary::-webkit-details-marker { display: none; }
+    .show-more > summary:hover { border-color: var(--accent); color: var(--accent); }
+    .show-more[open] > summary { margin-bottom: 1.3rem; }
+    .show-more[open] > summary .more-label::after { content: "less ↑"; }
+    .show-more > summary .more-label::after { content: "show more ↓"; }
+    /* Publications: numbered reference list */
+    .pub-list { list-style: none; display: flex; flex-direction: column; gap: 1.4rem; }
+    .pub-item { display: grid; grid-template-columns: 2.2rem 1fr; gap: 0.5rem; }
+    .pub-marker { font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; color: var(--accent); padding-top: 0.15rem; }
+    .pub-title { font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 1.02rem; color: var(--ink); margin-bottom: 0.2rem; line-height: 1.3; }
+    .pub-meta { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--ink-muted); margin-bottom: 0.4rem; }
+    .pub-meta .pub-authors { color: var(--ink-2); }
+    .pub-abstract { font-size: 0.88rem; color: var(--ink-2); line-height: 1.55; margin-bottom: 0.45rem; }
+    .pub-links { display: flex; gap: 0.7rem; font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; }
+    .pub-links a { color: var(--accent-2); text-decoration: none; }
+    .pub-links a:hover { color: var(--accent); }
+    /* Blog: dated entries */
+    .post-list { list-style: none; display: flex; flex-direction: column; gap: 1.5rem; }
+    .post-item { border-left: 2px solid var(--rule-soft); padding-left: 1.1rem; }
+    .post-date { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.05em; color: var(--accent-2); text-transform: uppercase; }
+    .post-title { font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 1.05rem; color: var(--ink); margin: 0.2rem 0 0.35rem; }
+    .post-excerpt { font-size: 0.9rem; color: var(--ink-2); line-height: 1.6; margin-bottom: 0.4rem; }
+    .post-readmore { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: var(--accent-2); }
+    .post-date-line { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; letter-spacing: 0.05em; color: var(--accent-2); text-transform: uppercase; margin: 0 0 2rem; }
+    .post-title a { color: inherit; text-decoration: none; }
+    .post-title a:hover { text-decoration: underline; }
+    /* Photographs: captioned tile grid */
+    .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.9rem; }
+    .photo-item { margin: 0; }
+    .photo-frame {
+      aspect-ratio: 4 / 3; background: var(--paper-3); border: 1px solid var(--rule-soft);
+      border-radius: 2px; display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .photo-frame::after { content: "▦"; color: var(--rule); font-size: 1.5rem; }
+    .photo-frame img { width: 100%; height: 100%; object-fit: cover; }
+    .photo-item figcaption { font-family: 'IBM Plex Mono', monospace; font-size: 0.64rem; color: var(--ink-muted); margin-top: 0.4rem; }
+
+    h3 {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent-2);
+      margin: 2rem 0 1rem; padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--rule-soft);
+    }
+    .coursework-subsection + .coursework-subsection { margin-top: 1rem; }
+
+    /* ============================== INDEX-CARD PROJECTS ============================== */
+    .projects-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.4rem; margin-top: 0.6rem;
+    }
+    .project-card {
+      background: var(--paper-2);
+      border: 1px solid var(--rule-soft);
+      border-top: 3px solid var(--accent-2);
+      border-radius: 2px; position: relative;
+      box-shadow: 0 2px 6px var(--shadow);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      display: flex; flex-direction: column;
+    }
+    .project-card:hover { transform: translateY(-3px); box-shadow: 0 10px 22px var(--shadow); }
+    /* a strip of "tape" in the top corner */
+    .project-card::before {
+      content: ""; position: absolute; top: -7px; right: 16px;
+      width: 52px; height: 18px; background: var(--tape);
+      transform: rotate(4deg); border: 1px solid rgba(0,0,0,0.04);
+      pointer-events: none;
+    }
+    .card-thumb {
+      overflow: hidden; border-bottom: 1px solid var(--rule-soft);
+      background: var(--paper-3); height: 172px; flex: 0 0 172px;
+    }
+    .card-thumb img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      filter: contrast(1.02) saturate(0.96);
+      transition: transform 0.4s ease;
+    }
+    .project-card:hover .card-thumb img { transform: scale(1.035); }
+    .card-content { padding: 1rem 1.1rem 1.1rem; display: flex; flex-direction: column; flex: 1; }
+    .card-content h4 {
+      font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 1.06rem;
+      line-height: 1.25; margin-bottom: 0.5rem; color: var(--ink);
+      text-transform: lowercase;
+      /* clamp the title to 2 lines so every card lines up */
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      overflow: hidden; min-height: 2.65em;
+    }
+    .card-content h4 a { color: var(--ink); text-decoration: none; }
+    .card-content h4 a:hover { color: var(--accent); }
+    /* fixed-height teaser: the full write-up lives on the project page, so the
+       card shows the opening and fades out to signal "there's more inside". */
+    .card-content > p {
+      font-size: 0.84rem; color: var(--ink-2); line-height: 1.55;
+      height: 4.65em; overflow: hidden; margin-bottom: 0.7rem;
+      -webkit-mask-image: linear-gradient(to bottom, #000 58%, transparent 100%);
+      mask-image: linear-gradient(to bottom, #000 58%, transparent 100%);
+    }
+    /* "read more" cue, only on project cards that open a detail page */
+    #projects .card-content::after {
+      content: "read the full write-up →"; margin-top: auto;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.66rem;
+      letter-spacing: 0.03em; color: var(--accent-2);
+    }
+    #projects .project-card:hover .card-content::after { color: var(--accent); }
+    .project-links {
+      margin-top: auto; display: flex; flex-wrap: wrap; gap: 0.4rem;
+      font-size: 0.66rem; letter-spacing: 0.02em;
+    }
+    .project-links a {
+      text-decoration: none; color: var(--accent-2);
+      border: 1px solid var(--rule-soft); border-radius: 2px;
+      padding: 0.18rem 0.5rem; background: var(--paper);
+      transition: all 0.15s;
+    }
+    .project-links a::before { content: "→ "; color: var(--ink-muted); }
+    .project-links a:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* collapsibles */
+    .experiments-collapsible, .assignments-collapsible { margin-top: 1.4rem; }
+    .experiments-toggle, .assignments-toggle {
+      cursor: pointer; display: inline-block; list-style: none;
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--accent); border: 1px dashed var(--rule);
+      padding: 0.4rem 0.9rem; border-radius: 2px; background: var(--paper-2);
+      transition: all 0.15s;
+    }
+    .experiments-toggle:hover, .assignments-toggle:hover {
+      border-style: solid; border-color: var(--accent); background: var(--accent-soft);
+    }
+    .experiments-toggle::before, .assignments-toggle::before { content: "▸ "; }
+    details[open] .experiments-toggle::before, details[open] .assignments-toggle::before { content: "▾ "; }
+    .experiments-collapsible[open] .experiments-toggle,
+    .assignments-collapsible[open] .assignments-toggle { margin-bottom: 1.2rem; }
+    .experiments-toggle::-webkit-details-marker, .assignments-toggle::-webkit-details-marker { display: none; }
+
+    /* notes / assignments */
+    .notes-list h4 {
+      font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 0.98rem;
+      text-transform: none; letter-spacing: 0; color: var(--ink);
+      border: none; margin: 1.2rem 0 0.5rem;
+    }
+    .notes-list ul {
+      list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem;
+    }
+    .notes-list li a {
+      display: block; font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
+      text-decoration: none; color: var(--accent-2);
+      border: 1px solid var(--rule-soft); border-radius: 2px;
+      padding: 0.2rem 0.55rem; background: var(--paper-2); transition: all 0.15s;
+    }
+    .notes-list li a:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ============================== COLOPHON FOOTER ============================== */
+    .colophon {
+      max-width: 1240px; margin: 2rem auto 0; padding: 2rem 1.4rem 3rem;
+      border-top: 3px double var(--rule);
+      font-size: 0.72rem; color: var(--ink-muted);
+      display: grid; grid-template-columns: 1fr auto; gap: 1.4rem; align-items: end;
+    }
+    .colophon p { margin-bottom: 0.4rem; line-height: 1.6; }
+    .colophon .accent { color: var(--accent); }
+    .webring { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: flex-end; }
+    .webring a {
+      text-decoration: none; color: var(--accent-2);
+      border: 1px solid var(--rule-soft); border-radius: 2px;
+      padding: 0.22rem 0.6rem; transition: all 0.15s;
+    }
+    .webring a:hover { border-color: var(--accent); color: var(--accent); }
+    .stamp {
+      display: inline-block; transform: rotate(-4deg);
+      border: 2px solid var(--accent); color: var(--accent);
+      padding: 0.2rem 0.6rem; border-radius: 3px; letter-spacing: 0.08em;
+      font-size: 0.64rem; text-transform: uppercase; opacity: 0.78;
+    }
+
+    /* ============================== STICKERS (digital ephemera) ============================== */
+    .sticker-field { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
+    .sticker {
+      position: absolute; pointer-events: auto; cursor: grab;
+      width: 96px; opacity: 0.9; color: var(--accent-2);
+      filter: drop-shadow(0 2px 4px var(--shadow));
+      transition: opacity 0.2s ease;
+      touch-action: none; user-select: none;
+    }
+    .sticker:hover { opacity: 1; color: var(--accent); }
+    .sticker:active { cursor: grabbing; }
+    .sticker svg, .sticker img { width: 100%; height: auto; display: block; pointer-events: none; }
+    .sticker figcaption {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.56rem;
+      letter-spacing: 0.03em; text-align: center; color: var(--ink-muted);
+      margin-top: 0.2rem; pointer-events: none;
+    }
+    /* line-art glyph: the SVG is used as a theme-colored mask — transparent,
+       non-rectangular, recolors for light/dark like the rest of the ink. */
+    .sticker.line { filter: drop-shadow(0 1px 3px var(--shadow)); }
+    .sticker.line .glyph {
+      width: 100%; aspect-ratio: 1 / 1; background-color: currentColor;
+      -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+      -webkit-mask-position: center; mask-position: center;
+      -webkit-mask-size: contain; mask-size: contain;
+      pointer-events: none;
+    }
+    /* photo specimen — a taped print of a real physical artifact, organic (non-rectangular) edge */
+    .sticker.photo {
+      background: var(--paper-2); padding: 7px;
+      box-shadow: 0 4px 12px var(--shadow);
+      border-radius: 46% 54% 67% 33% / 36% 44% 56% 64%;
+    }
+    .sticker.photo::before {
+      content: ""; position: absolute; top: -8px; left: 50%;
+      transform: translateX(-50%) rotate(-4deg);
+      width: 52px; height: 18px; background: var(--tape);
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+    .sticker.photo img {
+      filter: contrast(1.04) saturate(0.92);
+      border-radius: 44% 56% 63% 37% / 38% 46% 54% 62%;
+      display: block;
+    }
+    .sticker.photo figcaption { margin-top: 0.3rem; }
+
+    /* ============================== PROJECT DETAIL PAGE ============================== */
+    .project-page { padding: 2.6rem 0 1rem; max-width: 730px; }
+    .project-title {
+      font-family: 'IBM Plex Serif', serif; font-weight: 700;
+      font-size: 2.2rem; line-height: 1.08; color: var(--ink);
+      margin: 0.35rem 0 1.3rem; text-transform: lowercase;
+    }
+    .project-figure {
+      margin: 0 0 1.8rem; border: 1px solid var(--rule-soft);
+      background: var(--paper-3); border-radius: 2px; overflow: hidden;
+      box-shadow: 0 4px 14px var(--shadow);
+    }
+    .project-figure img { width: 100%; display: block; }
+    .project-figure figcaption {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+      color: var(--ink-muted); padding: 0.45rem 0.8rem;
+      border-top: 1px solid var(--rule-soft); letter-spacing: 0.03em;
+    }
+    .explainer {
+      margin: 0 0 2.2rem; border: 1px solid var(--rule-soft);
+      background: #0b0d10; border-radius: 2px; overflow: hidden;
+      box-shadow: 0 4px 14px var(--shadow);
+    }
+    .explainer video { width: 100%; display: block; background: #0b0d10; }
+    .explainer figcaption {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
+      color: var(--ink-muted); padding: 0.45rem 0.8rem;
+      border-top: 1px solid var(--rule-soft); letter-spacing: 0.03em;
+      background: var(--paper-3);
+    }
+    .live-app { margin: 0 0 2.4rem; }
+    .live-app-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
+    .app-fullscreen { font-family: 'IBM Plex Mono', monospace; font-size: 0.74rem; color: var(--accent-2); text-decoration: none; white-space: nowrap; }
+    .app-fullscreen:hover { color: var(--accent); }
+    .app-frame {
+      width: 100%; height: 82vh; min-height: 680px; margin-top: 0.6rem;
+      border: 1px solid var(--rule-soft); border-radius: 4px; background: #fff;
+      box-shadow: 0 4px 14px var(--shadow);
+    }
+    .sim-widget-section { margin: 0 0 2.4rem; }
+    .sim-widget {
+      width: 100%; border: 1px solid var(--rule-soft); border-radius: 4px;
+      background: #0f1117; min-height: 620px; display: block;
+      box-shadow: 0 4px 14px var(--shadow);
+    }
+    .sim-widget-note {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+      color: var(--ink-muted); margin-top: 0.5rem; letter-spacing: 0.02em;
+    }
+    .project-prose { font-size: 1.06rem; color: var(--ink-2); line-height: 1.78; margin-bottom: 2.2rem; }
+    .project-prose em { color: var(--ink); font-style: italic; }
+    .links-panel { border-top: 3px double var(--rule); padding-top: 1.5rem; }
+    .links-head {
+      font-family: 'IBM Plex Mono', monospace; text-transform: uppercase;
+      letter-spacing: 0.12em; font-size: 0.72rem; color: var(--accent);
+      border: none; margin: 0 0 1rem;
+    }
+    .links-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .links-list li a {
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.84rem;
+      text-decoration: none; color: var(--accent-2);
+      background: var(--paper-2); border: 1px solid var(--rule-soft);
+      border-radius: 2px; padding: 0.62rem 0.95rem; transition: all 0.15s;
+    }
+    .links-list li a:hover { border-color: var(--accent); color: var(--accent); transform: translateX(3px); }
+    .links-list li a.lk-primary {
+      background: var(--accent); color: var(--paper); border-color: var(--accent);
+      font-weight: 600;
+    }
+    .links-list li a.lk-primary .lk-arrow { color: var(--paper); }
+    .links-list li a.lk-primary:hover { filter: brightness(1.08); color: var(--paper); transform: translateX(3px); }
+    .lk-arrow { color: var(--ink-muted); }
+    .links-list li a:hover .lk-arrow { color: var(--accent); }
+    .project-back { margin-top: 1.8rem; font-family: 'IBM Plex Mono', monospace; font-size: 0.76rem; }
+    .project-back a { text-decoration: none; color: var(--ink-muted); }
+    .project-back a:hover { color: var(--accent); }
+
+    /* whole project card is clickable (stretched title link) */
+    .project-card { position: relative; }
+    .project-card h4 a::after { content: ""; position: absolute; inset: 0; z-index: 2; }
+    .project-card:has(h4 a) { cursor: pointer; }
+
+    /* ============================== RESPONSIVE ============================== */
+    @media (max-width: 1024px) {
+      main { grid-template-columns: minmax(0, 1fr); gap: 0; }
+      .margin-rail { display: none; }
+      .page-column { padding-left: 1.4rem; }
+    }
+    @media (max-width: 720px) {
+      html { font-size: 16px; }
+      .menu-toggle { display: inline-block; }
+      .nav-links {
+        display: none; position: absolute; top: 100%; left: 0; right: 0;
+        flex-direction: column; gap: 0; background: var(--header-bg);
+        border-bottom: 3px double var(--rule); padding: 0.5rem 1.4rem 1rem;
+        margin-left: 0;
+      }
+      .nav-links.active { display: flex; }
+      .nav-links a { padding: 0.6rem 0; }
+      .ledger-header nav { gap: 0.7rem; }
+      .hero-inner { flex-direction: column; gap: 1.4rem; }
+      .hero-content h1 { font-size: 2.2rem; }
+      .colophon { grid-template-columns: 1fr; }
+      .webring { justify-content: flex-start; }
+      .sticker-field { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; scroll-behavior: auto !important; }
+    }
+    @media print {
+      .ledger-header, .colophon, .margin-rail, .sticker-field { display: none; }
+      .page-column { border-left: none; padding-left: 0; }
+      body { background: #fff; }
+    }
+  </style>
+</head>
+<body>
+  <header class="ledger-header">
+    <nav>
+      <a href="/" class="nameplate">P.&nbsp;Bhargava <span class="mark">·</span> working notebook</a>
+      <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">Menu</button>
+      <ul class="nav-links">
+        <li><a href="/#about">about</a></li>
+        <li><a href="/#explorations">explorations</a></li>
+        <li><a href="/projects/">projects</a></li>
+        <li><a href="/#coursework">coursework</a></li>
+        <li><a href="/#publications">publications</a></li>
+        <li><a href="/blog/">blog</a></li>
+        <li><a href="/photographs/">photographs</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="theme-toggle" aria-label="Toggle dark mode"><span class="theme-text">Chalkboard</span></button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <aside class="margin-rail" aria-label="Page index">
+      {{ if .IsHome }}
+      <div class="rail-label">Index</div>
+      <ul class="section-index">
+        <li><a class="toc-link" href="#about"><span class="num">§1</span>about</a></li>
+        <li><a class="toc-link" href="#explorations"><span class="num">§2</span>explorations</a></li>
+        <li><a class="toc-link" href="/projects/"><span class="num">§3</span>projects</a></li>
+        <li><a class="toc-link" href="#coursework"><span class="num">§4</span>coursework</a></li>
+        <li><a class="toc-link" href="#publications"><span class="num">§5</span>publications</a></li>
+        <li><a class="toc-link" href="/blog/"><span class="num">→</span>blog</a></li>
+        <li><a class="toc-link" href="/photographs/"><span class="num">→</span>photographs</a></li>
+      </ul>
+      <p class="rail-note">“What I cannot create, I do not understand.” Drag the doodles, they come loose.</p>
+      <div class="rail-stamp">NUS · Physics<br>est. 2024</div>
+      {{ else }}
+      <div class="rail-label">Filed under</div>
+      {{ with .Params.filed }}<p class="rail-note" style="font-style:normal">{{ . }}</p>{{ end }}
+      <ul class="section-index">
+        <li><a class="toc-link" href="/#explorations"><span class="num">←</span>explorations</a></li>
+        <li><a class="toc-link" href="/">Home</a></li>
+      </ul>
+      <div class="rail-stamp">NUS · Physics<br>est. 2024</div>
+      {{ end }}
+    </aside>
+
+    <div class="page-column">
+      {{ block "main" . }}{{ end }}
+    </div>
+  </main>
+
+  <footer class="colophon">
+    <div>
+      <p><span class="accent">Colophon.</span> Set in IBM&nbsp;Plex Serif &amp; Mono. HTML/CSS
+         built with <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>, served from GitHub Pages.</p>
+      <p>No trackers, no cookies, no analytics. Just a notebook left open on the internet.</p>
+      <p>&copy; {{ now.Year }} {{ .Site.Title }} · last revised {{ now.Format "Jan 2006" }}</p>
+    </div>
+    <div>
+      <div class="webring">
+        <a href="https://github.com/Vis-42" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/--parth" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="mailto:bhargava.parth07@gmail.com">Mail</a>
+        <a href="/pdfs/cv.pdf" target="_blank">CV</a>
+      </div>
+      <div style="text-align:right; margin-top:0.9rem;"><span class="stamp">Best viewed with curiosity</span></div>
+    </div>
+  </footer>
+
+  <script>
+    // Dark / light ("Chalkboard" / "Paper") toggle
+    (function() {
+      const themeToggle = document.querySelector('.theme-toggle');
+      const themeText = document.querySelector('.theme-text');
+      const html = document.documentElement;
+      const label = t => t === 'dark' ? 'Paper' : 'Chalkboard';
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      if (savedTheme === 'dark') html.setAttribute('data-theme', 'dark');
+      if (themeText) themeText.textContent = label(savedTheme);
+      if (themeToggle && themeText) {
+        themeToggle.addEventListener('click', function() {
+          const newTheme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+          html.setAttribute('data-theme', newTheme);
+          localStorage.setItem('theme', newTheme);
+          themeText.textContent = label(newTheme);
+        });
+      }
+    })();
+
+    // Mobile menu
+    (function() {
+      const menuToggle = document.querySelector('.menu-toggle');
+      const navLinks = document.querySelector('.nav-links');
+      if (menuToggle && navLinks) {
+        menuToggle.addEventListener('click', function() {
+          const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+          menuToggle.setAttribute('aria-expanded', !isExpanded);
+          navLinks.classList.toggle('active');
+        });
+        navLinks.querySelectorAll('a').forEach(link => {
+          link.addEventListener('click', function() {
+            navLinks.classList.remove('active');
+            menuToggle.setAttribute('aria-expanded', 'false');
+          });
+        });
+      }
+    })();
+
+    // Scroll-spy: highlight nav + rail TOC by section in view
+    (function() {
+      const links = document.querySelectorAll('.nav-links a[href^="#"], .toc-link[href^="#"]');
+      if (!links.length || !('IntersectionObserver' in window)) return;
+      const byId = {};
+      links.forEach((link) => {
+        const id = link.getAttribute('href')?.slice(1);
+        if (id) (byId[id] = byId[id] || []).push(link);
+      });
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          links.forEach((l) => l.classList.remove('active'));
+          (byId[entry.target.id] || []).forEach((l) => l.classList.add('active'));
+        });
+      }, { rootMargin: '-40% 0px -55% 0px', threshold: 0.01 });
+      document.querySelectorAll('section[id]').forEach((s) => observer.observe(s));
+    })();
+
+    // Smooth scroll for in-page anchors
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+        if (href === '#') return;
+        const target = document.querySelector(href);
+        if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      });
+    });
+
+    // Draggable stickers — pick them up and move them around
+    (function() {
+      document.querySelectorAll('.sticker').forEach(function(el) {
+        var dx = 0, dy = 0, startX = 0, startY = 0, dragging = false;
+        var rot = el.dataset.rot || '0';
+        function onStart(e) {
+          dragging = true;
+          var cx = e.touches ? e.touches[0].clientX : e.clientX;
+          var cy = e.touches ? e.touches[0].clientY : e.clientY;
+          startX = cx - dx; startY = cy - dy;
+          el.style.transition = 'none'; el.style.zIndex = 20; el.style.cursor = 'grabbing';
+          e.preventDefault();
+        }
+        function onMove(e) {
+          if (!dragging) return;
+          var cx = e.touches ? e.touches[0].clientX : e.clientX;
+          var cy = e.touches ? e.touches[0].clientY : e.clientY;
+          dx = cx - startX; dy = cy - startY;
+          el.style.transform = 'translate(' + dx + 'px,' + dy + 'px) rotate(' + rot + 'deg)';
+          e.preventDefault();
+        }
+        function onEnd() { dragging = false; el.style.cursor = 'grab'; }
+        el.addEventListener('mousedown', onStart);
+        el.addEventListener('touchstart', onStart, { passive: false });
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('touchmove', onMove, { passive: false });
+        document.addEventListener('mouseup', onEnd);
+        document.addEventListener('touchend', onEnd);
+      });
+    })();
+  </script>
+</body>
+</html>

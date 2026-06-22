@@ -1,0 +1,13 @@
+{{ define "main" }}
+<article class="project-page">
+  <p class="classification">{{ with .Params.tags }}{{ delimit . " · " }}{{ else }}Writing{{ end }}</p>
+  <h1 class="project-title">{{ .Title }}</h1>
+  <p class="post-date-line">{{ .Date.Format "2 January 2006" }}</p>
+
+  <div class="project-prose">
+    {{ .Content }}
+  </div>
+
+  <p class="project-back"><a href="/blog/">← back to blog</a></p>
+</article>
+{{ end }}

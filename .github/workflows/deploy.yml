@@ -1,0 +1,64 @@
+name: Deploy Website to GitHub Pages
+
+# Publishes the Hugo build through GitHub’s official Pages API (upload-pages-artifact +
+# deploy-pages). That updates the site when Pages is set to “GitHub Actions”, which is why
+# peaceiris-only gh-branch pushes did not replace an older Actions deploy (stale hall.png).
+#
+# This job runs only on Vis-42/Vis-42.github.io so pushes to Vis-42/_space do not deploy a
+# duplicate project site. After changing the website, run: git push origin main && git push parthb main
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "website/**"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.repository == 'Vis-42/Vis-42.github.io'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: "latest"
+          extended: true
+
+      - name: Build site
+        working-directory: ./website
+        env:
+          HUGO_ENVIRONMENT: production
+          HUGO_BUILD_ID: "2e6a9ec"
+        run: hugo --minify --baseURL "https://parthbhargava.net/"
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./website/public
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,5 @@
+Spin Glass NN — Spiral Dataset (N=160, 2 hidden layers of 20 units)
+Final loss: 0.6516
+Final IPR: 0.1406
+Initial IPR: 0.1086
+IPR decreased from 0.109 to 0.141 during training

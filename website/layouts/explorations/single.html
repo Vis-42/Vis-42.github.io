@@ -1,0 +1,61 @@
+{{ define "main" }}
+<article class="project-page">
+  <p class="classification">{{ with .Params.filed }}{{ . }}{{ else }}Computational project{{ end }}</p>
+  <h1 class="project-title">{{ .Title }}</h1>
+
+  {{ with .Params.thumb }}
+  <figure class="project-figure">
+    <img src="{{ . }}" alt="{{ $.Title }}" loading="lazy">
+    <figcaption>fig. {{ $.Title }}</figcaption>
+  </figure>
+  {{ end }}
+
+  {{ with .Params.app }}
+  <section class="live-app">
+    <div class="live-app-head">
+      <h2 class="links-head">The notebook · live in your browser, code and all</h2>
+      <a href="{{ . }}?theme=dark" target="_blank" rel="noopener" class="app-fullscreen">open full screen ↗</a>
+    </div>
+    <iframe class="app-frame" src="{{ . }}?theme=dark" title="Interactive notebook for {{ $.Title }}" loading="lazy"></iframe>
+    <p class="sim-widget-note">The notebook runs on its own once it loads, so give it about 10 seconds while Python starts up in your browser, and the simulations begin animating. Move the sliders and everything recomputes live. The code is shown alongside the output so you can read exactly how it works; the full editable source is linked below.</p>
+  </section>
+  {{ end }}
+
+  {{ with .Params.widget }}
+  <section class="sim-widget-section">
+    <h2 class="links-head">Interactive · runs live in your browser</h2>
+    <iframe class="sim-widget" src="{{ . }}" loading="lazy" title="Interactive simulation for {{ $.Title }}"
+      scrolling="no"
+      onload="try{this.style.height=(this.contentWindow.document.body.scrollHeight+8)+'px'}catch(e){}"></iframe>
+    <p class="sim-widget-note">Drag the sliders and the simulation responds in real time, right here. No install, nothing to run.</p>
+  </section>
+  {{ end }}
+
+  <div class="project-prose">
+    {{ .Content }}
+  </div>
+
+  {{ with .Params.explainer }}
+  <figure class="explainer">
+    <video controls preload="none" playsinline poster="{{ $.Params.thumb }}">
+      <source src="{{ . }}" type="video/mp4">
+    </video>
+    <figcaption>fig. animated walkthrough · the figures from the notebook, in motion</figcaption>
+  </figure>
+  {{ end }}
+
+  <section class="links-panel">
+    <h2 class="links-head">Code &amp; resources</h2>
+    <ul class="links-list">
+      {{ range $i, $l := .Params.links }}
+      <li><a href="{{ $l.url }}"{{ if hasPrefix $l.url "http" }} target="_blank" rel="noopener"{{ end }}{{ if eq $i 0 }} class="lk-primary"{{ end }}>
+        <span class="lk-label">{{ $l.label }}</span>
+        <span class="lk-arrow">{{ if hasPrefix $l.url "http" }}↗{{ else }}→{{ end }}</span>
+      </a></li>
+      {{ end }}
+    </ul>
+  </section>
+
+  <p class="project-back"><a href="/#explorations">← back to explorations</a></p>
+</article>
+{{ end }}

@@ -1,0 +1,673 @@
+ERROR: LoadError: Failed to resolve arg1:
+[ComputeEdge] arg1 = compute_identity((linesgments_shifted, ), changed, cached)
+  @ /Users/parthbhargava/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:743
+[ComputeEdge] linesgments_shifted = (::MapFunctionWrapper(#2995))((linesegments, lineindices, preprojection, model_f32c, positions_transformed_f32c, model_clip_planes, space, ), changed, cached)
+  @ unknown method location
+[ComputeEdge] glyphcollections, glyphindices, font_per_char, glyph_origins, glyph_extents, text_blocks, text_color, text_rotation, text_scales, text_strokewidth, text_strokecolor, linesegments, linewidths, linecolors, lineindices = #2973((input_text, fontsize, selected_font, align, rotation, justification, lineheight, word_wrap_width, offset, fonts, computed_color, strokecolor, strokewidth, ), changed, cached)
+  @ /Users/parthbhargava/.julia/packages/Makie/WKgwk/src/basic_recipes/text.jl:323
+  with edge inputs:
+    input_text = LaTeXStrings.LaTeXString[L"\rho = $(round(ρ_p;digits=3))"]
+    fontsize = 18.0f0
+    selected_font = FTFont (family = TeX Gyre Heros Makie, style = Regular)
+    align = (:left, :bottom)
+    rotation = 1.0 + 0.0im + 0.0jm + 0.0km
+    justification = Makie.Automatic()
+    lineheight = 1.0
+    word_wrap_width = -1
+    offset = Float32[0.0, 0.0, 0.0]
+    fonts = Attributes()
+    computed_color = RGBA{Float32}(0.8, 0.8, 0.3, 1.0)
+    strokecolor = RGBA{Float32}(0.0, 0.0, 0.0, 0.0)
+    strokewidth = 0.0f0
+Triggered by update of:
+  alpha, strokecolor, position, colormap, colorscale, text, fonts, highclip, word_wrap_width, justification, font, align, nan_color, strokewidth, rotation, arg1, lineheight, colorrange, offset, color, fontsize, arg2 or lowclip
+Due to ERROR: TeXParseError: unexpected end of input
+at position 29 (string index 28)
+\rho = $(round(ρ_p;digits=3))
+                           ^
+Stack
+[3] TeXExpr :inline_math
+├─ TeXExpr :delimiter '('
+├─ TeXExpr :char 'r'
+├─ TeXExpr :char 'o'
+├─ TeXExpr :char 'u'
+├─ TeXExpr :char 'n'
+├─ TeXExpr :char 'd'
+├─ TeXExpr :delimiter '('
+├─ TeXExpr :decorated
+│  ├─ TeXExpr :symbol 'ρ'
+│  ├─ TeXExpr :char 'p'
+│  └─ nothing
+├─ TeXExpr :punctuation ';'
+├─ TeXExpr :char 'd'
+├─ TeXExpr :char 'i'
+├─ TeXExpr :char 'g'
+├─ TeXExpr :char 'i'
+├─ TeXExpr :char 't'
+├─ TeXExpr :char 's'
+├─ TeXExpr :spaced
+│  └─ TeXExpr :symbol '='
+├─ TeXExpr :digit '3'
+├─ TeXExpr :delimiter ')'
+└─ TeXExpr :delimiter ')'
+[2] TeXExpr :line
+├─ TeXExpr :symbol 'ρ'
+├─ TeXExpr :char ' '
+├─ TeXExpr :spaced
+│  └─ TeXExpr :symbol '='
+└─ TeXExpr :char ' '
+[1] TeXExpr :lines
+
+TeX expression tokenized as
+index : token_type [length]
+1 : command [4]
+5 : char [1]
+6 : char [1]
+7 : char [1]
+8 : dollar [1]
+9 : char [1]
+10 : char [1]
+11 : char [1]
+12 : char [1]
+13 : char [1]
+14 : char [1]
+15 : char [1]
+16 : char [1]
+17 : char [1]
+18 : underscore [1]
+19 : char [1]
+20 : char [1]
+21 : char [1]
+22 : char [1]
+23 : char [1]
+24 : char [1]
+25 : char [1]
+26 : char [1]
+27 : char [1]
+28 : char [1]
+29 : char [1]
+30 : char [1]
+
+
+Stacktrace:
+  [1] texparse(tex::LaTeXStrings.LaTeXString; root::MathTeXEngine.TeXExpr, showdebug::Bool)
+    @ MathTeXEngine ~/.julia/packages/MathTeXEngine/Zd227/src/parser/parser.jl:251
+  [2] texparse
+    @ ~/.julia/packages/MathTeXEngine/Zd227/src/parser/parser.jl:138 [inlined]
+  [3] generate_tex_elements(str::LaTeXStrings.LaTeXString, font_family::MathTeXEngine.FontFamily)
+    @ MathTeXEngine ~/.julia/packages/MathTeXEngine/Zd227/src/engine/layout.jl:890
+  [4] generate_tex_elements
+    @ ~/.julia/packages/MathTeXEngine/Zd227/src/engine/layout.jl:890 [inlined]
+  [5] texelems_and_glyph_collection(str::LaTeXStrings.LaTeXString, fontscale_px::Float32, align::Tuple{Symbol, Symbol}, rotation::Quaternion{Float64}, color::ColorTypes.RGBA{Float32}, strokecolor::ColorTypes.RGBA{Float32}, strokewidth::Float32, word_wrap_width::Int64)
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/basic_recipes/text.jl:778
+  [6] convert_text_string!(outputs::@NamedTuple{glyphcollections::Vector{Makie.GlyphCollection}, glyphindices::Vector{UInt64}, font_per_char::Vector{FreeTypeAbstraction.FTFont}, glyph_origins::Vector{Point{3, Float32}}, glyph_extents::Vector{Makie.GlyphExtent}, text_blocks::Vector{UnitRange{Int64}}, text_color::Vector{ColorTypes.RGBA{Float32}}, text_rotation::Vector{Quaternionf}, text_scales::Vector{Vec{2, Float32}}, text_strokewidth::Vector{Float32}, text_strokecolor::Vector{ColorTypes.RGBA{Float32}}, linesegments::Vector{Point{3, Float32}}, linewidths::Vector{Float32}, linecolors::Vector{ColorTypes.RGBA{Float32}}, lineindices::Vector{Pair{Int64, Int64}}}, input_text::LaTeXStrings.LaTeXString, i::Int64, N::Int64, fontsize::Float32, font::FreeTypeAbstraction.FTFont, align::Tuple{Symbol, Symbol}, rotation::Quaternion{Float64}, justification::Makie.Automatic, lineheight::Float64, word_wrap_width::Int64, offset::Vec{3, Float32}, fonts::Attributes, color::ColorTypes.RGBA{Float32}, strokecolor::ColorTypes.RGBA{Float32}, strokewidth::Float32)
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/basic_recipes/text.jl:249
+  [7] (::Makie.var"#2973#2974")(::@NamedTuple{input_text::Vector{LaTeXStrings.LaTeXString}, fontsize::Float32, selected_font::FreeTypeAbstraction.FTFont, align::Tuple{Symbol, Symbol}, rotation::Quaternion{Float64}, justification::Makie.Automatic, lineheight::Float64, word_wrap_width::Int64, offset::Vec{3, Float32}, fonts::Attributes, computed_color::ColorTypes.RGBA{Float32}, strokecolor::ColorTypes.RGBA{Float32}, strokewidth::Float32}, changed::@NamedTuple{input_text::Bool, fontsize::Bool, selected_font::Bool, align::Bool, rotation::Bool, justification::Bool, lineheight::Bool, word_wrap_width::Bool, offset::Bool, fonts::Bool, computed_color::Bool, strokecolor::Bool, strokewidth::Bool}, cached::Nothing)
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/basic_recipes/text.jl:344
+  [8] ComputePipeline.TypedEdge(edge::ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph}, f::Makie.var"#2973#2974", inputs::@NamedTuple{input_text::Base.RefValue{Any}, fontsize::Base.RefValue{Float32}, selected_font::Base.RefValue{FreeTypeAbstraction.FTFont}, align::Base.RefValue{Any}, rotation::Base.RefValue{Quaternion{Float64}}, justification::Base.RefValue{Makie.Automatic}, lineheight::Base.RefValue{Float64}, word_wrap_width::Base.RefValue{Int64}, offset::Base.RefValue{Vec{3, Float32}}, fonts::Base.RefValue{Attributes}, computed_color::Base.RefValue{ColorTypes.RGBA{Float32}}, strokecolor::Base.RefValue{ColorTypes.RGBA{Float32}}, strokewidth::Base.RefValue{Float32}})
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:126
+  [9] #invokelatest#2
+    @ ./essentials.jl:1055 [inlined]
+ [10] invokelatest
+    @ ./essentials.jl:1052 [inlined]
+ [11] ComputePipeline.TypedEdge(edge::ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph})
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:120
+ [12] (::ComputePipeline.var"#52#54"{ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph}})()
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:670
+ [13] lock(f::ComputePipeline.var"#52#54"{ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph}}, l::ReentrantLock)
+    @ Base ./lock.jl:232
+ [14] resolve!(edge::ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph})
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:665
+ [15] _resolve!(computed::ComputePipeline.Computed)
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:658
+ [16] foreach
+    @ ./abstractarray.jl:3187 [inlined]
+ [17] (::ComputePipeline.var"#52#54"{ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph}})()
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:667
+ [18] lock(f::ComputePipeline.var"#52#54"{ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph}}, l::ReentrantLock)
+    @ Base ./lock.jl:232
+ [19] resolve!(edge::ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph})
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:665
+ [20] _resolve!(computed::ComputePipeline.Computed)
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:658
+ [21] foreach
+    @ ./abstractarray.jl:3187 [inlined]
+ [22] (::ComputePipeline.var"#52#54"{ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph}})()
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:667
+ [23] lock(f::ComputePipeline.var"#52#54"{ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph}}, l::ReentrantLock)
+    @ Base ./lock.jl:232
+ [24] resolve!(edge::ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph})
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:665
+ [25] _resolve!(computed::ComputePipeline.Computed)
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:658
+ [26] resolve!(computed::ComputePipeline.Computed)
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:650
+ [27] getindex
+    @ ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:563 [inlined]
+ [28] #508
+    @ ~/.julia/packages/Makie/WKgwk/src/compute-plots.jl:399 [inlined]
+ [29] iterate
+    @ ./generator.jl:48 [inlined]
+ [30] _collect(c::Vector{Symbol}, itr::Base.Generator{Vector{Symbol}, Makie.var"#508#510"{ComputePipeline.ComputeGraph}}, ::Base.EltypeUnknown, isz::Base.HasShape{1})
+    @ Base ./array.jl:811
+ [31] collect_similar
+    @ ./array.jl:720 [inlined]
+ [32] map
+    @ ./abstractarray.jl:3371 [inlined]
+ [33] _register_expand_arguments!(::Type{LineSegments}, attr::ComputePipeline.ComputeGraph, inputs::Vector{Symbol}, is_merged::Bool)
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/compute-plots.jl:399
+ [34] _register_expand_arguments!
+    @ ~/.julia/packages/Makie/WKgwk/src/compute-plots.jl:395 [inlined]
+ [35] register_arguments!
+    @ ~/.julia/packages/Makie/WKgwk/src/compute-plots.jl:373 [inlined]
+ [36] (LineSegments)(user_args::Tuple{ComputePipeline.Computed}, user_attributes::Dict{Symbol, Any})
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/compute-plots.jl:769
+ [37] _create_plot!(F::Function, attributes::Dict{Symbol, Any}, scene::Makie.Text{Tuple{Vector{Point{2, Float64}}}}, args::ComputePipeline.Computed)
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/figureplotting.jl:552
+ [38] linesegments!(::Makie.Text{Tuple{Vector{Point{2, Float64}}}}, ::Vararg{Any}; kw::@Kwargs{linewidth::ComputePipeline.Computed, color::ComputePipeline.Computed, space::ComputePipeline.Computed})
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/recipes.jl:550
+ [39] tex_linesegments!(plot::Makie.Text{Tuple{Vector{Point{2, Float64}}}})
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/basic_recipes/text.jl:443
+ [40] calculated_attributes!
+    @ ~/.julia/packages/Makie/WKgwk/src/basic_recipes/text.jl:422 [inlined]
+ [41] connect_plot!(parent::Scene, plot::Makie.Text{Tuple{Vector{Point{2, Float64}}}})
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/compute-plots.jl:841
+ [42] plot!
+    @ ~/.julia/packages/Makie/WKgwk/src/interfaces.jl:211 [inlined]
+ [43] plot!(ax::Axis, plot::Makie.Text{Tuple{Vector{Point{2, Float64}}}})
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/figureplotting.jl:573
+ [44] _create_plot!(::Function, ::Dict{Symbol, Any}, ::Axis, ::Float64, ::Vararg{Float64})
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/figureplotting.jl:543
+ [45] text!(::Axis, ::Vararg{Any}; kw::@Kwargs{text::LaTeXStrings.LaTeXString, color::ColorTypes.RGB{Float32}, fontsize::Int64})
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/recipes.jl:550
+ [46] top-level scope
+    @ ~/-space/jl/physics_discovery/animations/s05_kernel_invariant.jl:52
+in expression starting at /Users/parthbhargava/-space/jl/physics_discovery/animations/s05_kernel_invariant.jl:52
+Running kernel conservation law discovery ...
+Sweeping γ ...
+ERROR: LoadError: Failed to resolve arg1:
+[ComputeEdge] arg1 = compute_identity((linesgments_shifted, ), changed, cached)
+  @ /Users/parthbhargava/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:743
+[ComputeEdge] linesgments_shifted = (::MapFunctionWrapper(#2995))((linesegments, lineindices, preprojection, model_f32c, positions_transformed_f32c, model_clip_planes, space, ), changed, cached)
+  @ unknown method location
+[ComputeEdge] glyphcollections, glyphindices, font_per_char, glyph_origins, glyph_extents, text_blocks, text_color, text_rotation, text_scales, text_strokewidth, text_strokecolor, linesegments, linewidths, linecolors, lineindices = #2973((input_text, fontsize, selected_font, align, rotation, justification, lineheight, word_wrap_width, offset, fonts, computed_color, strokecolor, strokewidth, ), changed, cached)
+  @ /Users/parthbhargava/.julia/packages/Makie/WKgwk/src/basic_recipes/text.jl:323
+  with edge inputs:
+    input_text = LaTeXStrings.LaTeXString[L"R^2 = $(round(r2;digits=4))"]
+    fontsize = 16.0f0
+    selected_font = FTFont (family = TeX Gyre Heros Makie, style = Regular)
+    align = (:left, :bottom)
+    rotation = 1.0 + 0.0im + 0.0jm + 0.0km
+    justification = Makie.Automatic()
+    lineheight = 1.0
+    word_wrap_width = -1
+    offset = Float32[0.0, 0.0, 0.0]
+    fonts = Attributes()
+    computed_color = RGBA{Float32}(0.8, 0.8, 0.3, 1.0)
+    strokecolor = RGBA{Float32}(0.0, 0.0, 0.0, 0.0)
+    strokewidth = 0.0f0
+Triggered by update of:
+  alpha, strokecolor, position, colormap, colorscale, text, fonts, highclip, word_wrap_width, justification, font, align, nan_color, strokewidth, rotation, arg1, lineheight, colorrange, offset, color, fontsize, arg2 or lowclip
+Due to ERROR: TeXParseError: unexpected end of input
+at position 27 (string index 27)
+R^2 = $(round(r2;digits=4))
+                          ^
+Stack
+[3] TeXExpr :inline_math
+├─ TeXExpr :delimiter '('
+├─ TeXExpr :char 'r'
+├─ TeXExpr :char 'o'
+├─ TeXExpr :char 'u'
+├─ TeXExpr :char 'n'
+├─ TeXExpr :char 'd'
+├─ TeXExpr :delimiter '('
+├─ TeXExpr :char 'r'
+├─ TeXExpr :digit '2'
+├─ TeXExpr :punctuation ';'
+├─ TeXExpr :char 'd'
+├─ TeXExpr :char 'i'
+├─ TeXExpr :char 'g'
+├─ TeXExpr :char 'i'
+├─ TeXExpr :char 't'
+├─ TeXExpr :char 's'
+├─ TeXExpr :spaced
+│  └─ TeXExpr :symbol '='
+├─ TeXExpr :digit '4'
+├─ TeXExpr :delimiter ')'
+└─ TeXExpr :delimiter ')'
+[2] TeXExpr :line
+├─ TeXExpr :decorated
+│  ├─ TeXExpr :char 'R'
+│  ├─ nothing
+│  └─ TeXExpr :digit '2'
+├─ TeXExpr :char ' '
+├─ TeXExpr :spaced
+│  └─ TeXExpr :symbol '='
+└─ TeXExpr :char ' '
+[1] TeXExpr :lines
+
+TeX expression tokenized as
+index : token_type [length]
+1 : char [1]
+2 : caret [1]
+3 : char [1]
+4 : char [1]
+5 : char [1]
+6 : char [1]
+7 : dollar [1]
+8 : char [1]
+9 : char [1]
+10 : char [1]
+11 : char [1]
+12 : char [1]
+13 : char [1]
+14 : char [1]
+15 : char [1]
+16 : char [1]
+17 : char [1]
+18 : char [1]
+19 : char [1]
+20 : char [1]
+21 : char [1]
+22 : char [1]
+23 : char [1]
+24 : char [1]
+25 : char [1]
+26 : char [1]
+27 : char [1]
+
+
+Stacktrace:
+  [1] texparse(tex::LaTeXStrings.LaTeXString; root::MathTeXEngine.TeXExpr, showdebug::Bool)
+    @ MathTeXEngine ~/.julia/packages/MathTeXEngine/Zd227/src/parser/parser.jl:251
+  [2] texparse
+    @ ~/.julia/packages/MathTeXEngine/Zd227/src/parser/parser.jl:138 [inlined]
+  [3] generate_tex_elements(str::LaTeXStrings.LaTeXString, font_family::MathTeXEngine.FontFamily)
+    @ MathTeXEngine ~/.julia/packages/MathTeXEngine/Zd227/src/engine/layout.jl:890
+  [4] generate_tex_elements
+    @ ~/.julia/packages/MathTeXEngine/Zd227/src/engine/layout.jl:890 [inlined]
+  [5] texelems_and_glyph_collection(str::LaTeXStrings.LaTeXString, fontscale_px::Float32, align::Tuple{Symbol, Symbol}, rotation::Quaternion{Float64}, color::ColorTypes.RGBA{Float32}, strokecolor::ColorTypes.RGBA{Float32}, strokewidth::Float32, word_wrap_width::Int64)
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/basic_recipes/text.jl:778
+  [6] convert_text_string!(outputs::@NamedTuple{glyphcollections::Vector{Makie.GlyphCollection}, glyphindices::Vector{UInt64}, font_per_char::Vector{FreeTypeAbstraction.FTFont}, glyph_origins::Vector{Point{3, Float32}}, glyph_extents::Vector{Makie.GlyphExtent}, text_blocks::Vector{UnitRange{Int64}}, text_color::Vector{ColorTypes.RGBA{Float32}}, text_rotation::Vector{Quaternionf}, text_scales::Vector{Vec{2, Float32}}, text_strokewidth::Vector{Float32}, text_strokecolor::Vector{ColorTypes.RGBA{Float32}}, linesegments::Vector{Point{3, Float32}}, linewidths::Vector{Float32}, linecolors::Vector{ColorTypes.RGBA{Float32}}, lineindices::Vector{Pair{Int64, Int64}}}, input_text::LaTeXStrings.LaTeXString, i::Int64, N::Int64, fontsize::Float32, font::FreeTypeAbstraction.FTFont, align::Tuple{Symbol, Symbol}, rotation::Quaternion{Float64}, justification::Makie.Automatic, lineheight::Float64, word_wrap_width::Int64, offset::Vec{3, Float32}, fonts::Attributes, color::ColorTypes.RGBA{Float32}, strokecolor::ColorTypes.RGBA{Float32}, strokewidth::Float32)
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/basic_recipes/text.jl:249
+  [7] (::Makie.var"#2973#2974")(::@NamedTuple{input_text::Vector{LaTeXStrings.LaTeXString}, fontsize::Float32, selected_font::FreeTypeAbstraction.FTFont, align::Tuple{Symbol, Symbol}, rotation::Quaternion{Float64}, justification::Makie.Automatic, lineheight::Float64, word_wrap_width::Int64, offset::Vec{3, Float32}, fonts::Attributes, computed_color::ColorTypes.RGBA{Float32}, strokecolor::ColorTypes.RGBA{Float32}, strokewidth::Float32}, changed::@NamedTuple{input_text::Bool, fontsize::Bool, selected_font::Bool, align::Bool, rotation::Bool, justification::Bool, lineheight::Bool, word_wrap_width::Bool, offset::Bool, fonts::Bool, computed_color::Bool, strokecolor::Bool, strokewidth::Bool}, cached::Nothing)
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/basic_recipes/text.jl:344
+  [8] ComputePipeline.TypedEdge(edge::ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph}, f::Makie.var"#2973#2974", inputs::@NamedTuple{input_text::Base.RefValue{Any}, fontsize::Base.RefValue{Float32}, selected_font::Base.RefValue{FreeTypeAbstraction.FTFont}, align::Base.RefValue{Any}, rotation::Base.RefValue{Quaternion{Float64}}, justification::Base.RefValue{Makie.Automatic}, lineheight::Base.RefValue{Float64}, word_wrap_width::Base.RefValue{Int64}, offset::Base.RefValue{Vec{3, Float32}}, fonts::Base.RefValue{Attributes}, computed_color::Base.RefValue{ColorTypes.RGBA{Float32}}, strokecolor::Base.RefValue{ColorTypes.RGBA{Float32}}, strokewidth::Base.RefValue{Float32}})
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:126
+  [9] #invokelatest#2
+    @ ./essentials.jl:1055 [inlined]
+ [10] invokelatest
+    @ ./essentials.jl:1052 [inlined]
+ [11] ComputePipeline.TypedEdge(edge::ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph})
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:120
+ [12] (::ComputePipeline.var"#52#54"{ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph}})()
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:670
+ [13] lock(f::ComputePipeline.var"#52#54"{ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph}}, l::ReentrantLock)
+    @ Base ./lock.jl:232
+ [14] resolve!(edge::ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph})
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:665
+ [15] _resolve!(computed::ComputePipeline.Computed)
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:658
+ [16] foreach
+    @ ./abstractarray.jl:3187 [inlined]
+ [17] (::ComputePipeline.var"#52#54"{ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph}})()
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:667
+ [18] lock(f::ComputePipeline.var"#52#54"{ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph}}, l::ReentrantLock)
+    @ Base ./lock.jl:232
+ [19] resolve!(edge::ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph})
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:665
+ [20] _resolve!(computed::ComputePipeline.Computed)
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:658
+ [21] foreach
+    @ ./abstractarray.jl:3187 [inlined]
+ [22] (::ComputePipeline.var"#52#54"{ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph}})()
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:667
+ [23] lock(f::ComputePipeline.var"#52#54"{ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph}}, l::ReentrantLock)
+    @ Base ./lock.jl:232
+ [24] resolve!(edge::ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph})
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:665
+ [25] _resolve!(computed::ComputePipeline.Computed)
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:658
+ [26] resolve!(computed::ComputePipeline.Computed)
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:650
+ [27] getindex
+    @ ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:563 [inlined]
+ [28] #508
+    @ ~/.julia/packages/Makie/WKgwk/src/compute-plots.jl:399 [inlined]
+ [29] iterate
+    @ ./generator.jl:48 [inlined]
+ [30] _collect(c::Vector{Symbol}, itr::Base.Generator{Vector{Symbol}, Makie.var"#508#510"{ComputePipeline.ComputeGraph}}, ::Base.EltypeUnknown, isz::Base.HasShape{1})
+    @ Base ./array.jl:811
+ [31] collect_similar
+    @ ./array.jl:720 [inlined]
+ [32] map
+    @ ./abstractarray.jl:3371 [inlined]
+ [33] _register_expand_arguments!(::Type{LineSegments}, attr::ComputePipeline.ComputeGraph, inputs::Vector{Symbol}, is_merged::Bool)
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/compute-plots.jl:399
+ [34] _register_expand_arguments!
+    @ ~/.julia/packages/Makie/WKgwk/src/compute-plots.jl:395 [inlined]
+ [35] register_arguments!
+    @ ~/.julia/packages/Makie/WKgwk/src/compute-plots.jl:373 [inlined]
+ [36] (LineSegments)(user_args::Tuple{ComputePipeline.Computed}, user_attributes::Dict{Symbol, Any})
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/compute-plots.jl:769
+ [37] _create_plot!(F::Function, attributes::Dict{Symbol, Any}, scene::Makie.Text{Tuple{Vector{Point{2, Float64}}}}, args::ComputePipeline.Computed)
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/figureplotting.jl:552
+ [38] linesegments!(::Makie.Text{Tuple{Vector{Point{2, Float64}}}}, ::Vararg{Any}; kw::@Kwargs{linewidth::ComputePipeline.Computed, color::ComputePipeline.Computed, space::ComputePipeline.Computed})
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/recipes.jl:550
+ [39] tex_linesegments!(plot::Makie.Text{Tuple{Vector{Point{2, Float64}}}})
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/basic_recipes/text.jl:443
+ [40] calculated_attributes!
+    @ ~/.julia/packages/Makie/WKgwk/src/basic_recipes/text.jl:422 [inlined]
+ [41] connect_plot!(parent::Scene, plot::Makie.Text{Tuple{Vector{Point{2, Float64}}}})
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/compute-plots.jl:841
+ [42] plot!
+    @ ~/.julia/packages/Makie/WKgwk/src/interfaces.jl:211 [inlined]
+ [43] plot!(ax::Axis, plot::Makie.Text{Tuple{Vector{Point{2, Float64}}}})
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/figureplotting.jl:573
+ [44] _create_plot!(::Function, ::Dict{Symbol, Any}, ::Axis, ::Float64, ::Vararg{Float64})
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/figureplotting.jl:543
+ [45] text!(::Axis, ::Vararg{Any}; kw::@Kwargs{text::LaTeXStrings.LaTeXString, color::ColorTypes.RGB{Float32}, fontsize::Int64})
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/recipes.jl:550
+ [46] top-level scope
+    @ ~/-space/jl/physics_discovery/animations/s06_symbolic_gp.jl:46
+in expression starting at /Users/parthbhargava/-space/jl/physics_discovery/animations/s06_symbolic_gp.jl:46
+Running GP on kinetic energy ...
+Running GP on all 5 Feynman equations ...
+  Kinetic Energy: R²=0.9999, nodes=7, found=(((v * v) / 2.01) * m)
+  Pendulum Period: R²=0.9999, nodes=5, found=(sqrt(L) + sqrt(L))
+  Ohm's Law: R²=1.0, nodes=3, found=(I * R)
+  Hooke's Law: R²=1.0, nodes=3, found=(k * x)
+  Gravitational PE: R²=1.0, nodes=5, found=(m * (h * g))
+✓  s07_gp_convergence.mp4
+ERROR: LoadError: Failed to resolve arg1:
+[ComputeEdge] arg1 = compute_identity((linesgments_shifted, ), changed, cached)
+  @ /Users/parthbhargava/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:743
+[ComputeEdge] linesgments_shifted = (::MapFunctionWrapper(#2995))((linesegments, lineindices, preprojection, model_f32c, positions_transformed_f32c, model_clip_planes, space, ), changed, cached)
+  @ unknown method location
+[ComputeEdge] glyphcollections, glyphindices, font_per_char, glyph_origins, glyph_extents, text_blocks, text_color, text_rotation, text_scales, text_strokewidth, text_strokecolor, linesegments, linewidths, linecolors, lineindices = #2973((input_text, fontsize, selected_font, align, rotation, justification, lineheight, word_wrap_width, offset, fonts, computed_color, strokecolor, strokewidth, ), changed, cached)
+  @ /Users/parthbhargava/.julia/packages/Makie/WKgwk/src/basic_recipes/text.jl:323
+  with edge inputs:
+    input_text = LaTeXStrings.LaTeXString[L"\text{Kernel: }H_{\text{kernel}}(t) \text{ vs true energy (}\rho=$(round(ρ_k;digits=3))\text{)}"]
+    fontsize = 26.0f0
+    selected_font = FTFont (family = TeX Gyre Heros Makie, style = Bold)
+    align = (:center, :bottom)
+    rotation = 1.0 + 0.0im + 0.0jm + 0.0km
+    justification = Makie.Automatic()
+    lineheight = 1.0
+    word_wrap_width = -1
+    offset = Float32[0.0, 0.0, 0.0]
+    fonts = Attributes()
+    computed_color = RGBA{Float32}(0.88, 0.88, 0.93, 1.0)
+    strokecolor = RGBA{Float32}(0.0, 0.0, 0.0, 0.0)
+    strokewidth = 0.0f0
+Triggered by update of:
+  alpha, strokecolor, position, colormap, colorscale, text, fonts, highclip, word_wrap_width, justification, font, align, nan_color, strokewidth, rotation, arg1, lineheight, colorrange, offset, color, fontsize or lowclip
+Due to ERROR: TeXParseError: unexpected end of input
+at position 95 (string index 94)
+\text{Kernel: }H_{\text{kernel}}(t) \text{ vs true energy (}\rho=$(round(ρ_k;digits=3))\text{)}
+                                                                                             ^
+Stack
+[3] TeXExpr :inline_math
+├─ TeXExpr :delimiter '('
+├─ TeXExpr :char 'r'
+├─ TeXExpr :char 'o'
+├─ TeXExpr :char 'u'
+├─ TeXExpr :char 'n'
+├─ TeXExpr :char 'd'
+├─ TeXExpr :delimiter '('
+├─ TeXExpr :decorated
+│  ├─ TeXExpr :symbol 'ρ'
+│  ├─ TeXExpr :char 'k'
+│  └─ nothing
+├─ TeXExpr :punctuation ';'
+├─ TeXExpr :char 'd'
+├─ TeXExpr :char 'i'
+├─ TeXExpr :char 'g'
+├─ TeXExpr :char 'i'
+├─ TeXExpr :char 't'
+├─ TeXExpr :char 's'
+├─ TeXExpr :spaced
+│  └─ TeXExpr :symbol '='
+├─ TeXExpr :digit '3'
+├─ TeXExpr :delimiter ')'
+├─ TeXExpr :delimiter ')'
+└─ TeXExpr :text
+   ├─ :rm
+   └─ TeXExpr :delimiter ')'
+[2] TeXExpr :line
+├─ TeXExpr :text
+│  ├─ :rm
+│  └─ TeXExpr :group
+│     ├─ TeXExpr :char 'K'
+│     ├─ TeXExpr :char 'e'
+│     ├─ TeXExpr :char 'r'
+│     ├─ TeXExpr :char 'n'
+│     ├─ TeXExpr :char 'e'
+│     ├─ TeXExpr :char 'l'
+│     ├─ TeXExpr :spaced
+│     │  └─ TeXExpr :symbol ':'
+│     └─ TeXExpr :char ' '
+├─ TeXExpr :decorated
+│  ├─ TeXExpr :char 'H'
+│  ├─ TeXExpr :text
+│  │  ├─ :rm
+│  │  └─ TeXExpr :group
+│  │     ├─ TeXExpr :char 'k'
+│  │     ├─ TeXExpr :char 'e'
+│  │     ├─ TeXExpr :char 'r'
+│  │     ├─ TeXExpr :char 'n'
+│  │     ├─ TeXExpr :char 'e'
+│  │     └─ TeXExpr :char 'l'
+│  └─ nothing
+├─ TeXExpr :delimiter '('
+├─ TeXExpr :char 't'
+├─ TeXExpr :delimiter ')'
+├─ TeXExpr :char ' '
+├─ TeXExpr :text
+│  ├─ :rm
+│  └─ TeXExpr :group
+│     ├─ TeXExpr :char ' '
+│     ├─ TeXExpr :char 'v'
+│     ├─ TeXExpr :char 's'
+│     ├─ TeXExpr :char ' '
+│     ├─ TeXExpr :char 't'
+│     ├─ TeXExpr :char 'r'
+│     ├─ TeXExpr :char 'u'
+│     ├─ TeXExpr :char 'e'
+│     ├─ TeXExpr :char ' '
+│     ├─ TeXExpr :char 'e'
+│     ├─ TeXExpr :char 'n'
+│     ├─ TeXExpr :char 'e'
+│     ├─ TeXExpr :char 'r'
+│     ├─ TeXExpr :char 'g'
+│     ├─ TeXExpr :char 'y'
+│     ├─ TeXExpr :char ' '
+│     └─ TeXExpr :delimiter '('
+├─ TeXExpr :symbol 'ρ'
+└─ TeXExpr :spaced
+   └─ TeXExpr :symbol '='
+[1] TeXExpr :lines
+
+TeX expression tokenized as
+index : token_type [length]
+1 : command [5]
+6 : lcurly [1]
+7 : char [1]
+8 : char [1]
+9 : char [1]
+10 : char [1]
+11 : char [1]
+12 : char [1]
+13 : char [1]
+14 : char [1]
+15 : rcurly [1]
+16 : char [1]
+17 : underscore [1]
+18 : lcurly [1]
+19 : command [5]
+24 : lcurly [1]
+25 : char [1]
+26 : char [1]
+27 : char [1]
+28 : char [1]
+29 : char [1]
+30 : char [1]
+31 : rcurly [1]
+32 : rcurly [1]
+33 : char [1]
+34 : char [1]
+35 : char [1]
+36 : char [1]
+37 : command [5]
+42 : lcurly [1]
+43 : char [1]
+44 : char [1]
+45 : char [1]
+46 : char [1]
+47 : char [1]
+48 : char [1]
+49 : char [1]
+50 : char [1]
+51 : char [1]
+52 : char [1]
+53 : char [1]
+54 : char [1]
+55 : char [1]
+56 : char [1]
+57 : char [1]
+58 : char [1]
+59 : char [1]
+60 : rcurly [1]
+61 : command [4]
+65 : char [1]
+66 : dollar [1]
+67 : char [1]
+68 : char [1]
+69 : char [1]
+70 : char [1]
+71 : char [1]
+72 : char [1]
+73 : char [1]
+74 : char [1]
+75 : char [1]
+76 : underscore [1]
+77 : char [1]
+78 : char [1]
+79 : char [1]
+80 : char [1]
+81 : char [1]
+82 : char [1]
+83 : char [1]
+84 : char [1]
+85 : char [1]
+86 : char [1]
+87 : char [1]
+88 : char [1]
+89 : command [5]
+94 : lcurly [1]
+95 : char [1]
+96 : rcurly [1]
+
+
+Stacktrace:
+  [1] texparse(tex::LaTeXStrings.LaTeXString; root::MathTeXEngine.TeXExpr, showdebug::Bool)
+    @ MathTeXEngine ~/.julia/packages/MathTeXEngine/Zd227/src/parser/parser.jl:251
+  [2] texparse
+    @ ~/.julia/packages/MathTeXEngine/Zd227/src/parser/parser.jl:138 [inlined]
+  [3] generate_tex_elements(str::LaTeXStrings.LaTeXString, font_family::MathTeXEngine.FontFamily)
+    @ MathTeXEngine ~/.julia/packages/MathTeXEngine/Zd227/src/engine/layout.jl:890
+  [4] generate_tex_elements
+    @ ~/.julia/packages/MathTeXEngine/Zd227/src/engine/layout.jl:890 [inlined]
+  [5] texelems_and_glyph_collection(str::LaTeXStrings.LaTeXString, fontscale_px::Float32, align::Tuple{Symbol, Symbol}, rotation::Quaternion{Float64}, color::ColorTypes.RGBA{Float32}, strokecolor::ColorTypes.RGBA{Float32}, strokewidth::Float32, word_wrap_width::Int64)
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/basic_recipes/text.jl:778
+  [6] convert_text_string!(outputs::@NamedTuple{glyphcollections::Vector{Makie.GlyphCollection}, glyphindices::Vector{UInt64}, font_per_char::Vector{FreeTypeAbstraction.FTFont}, glyph_origins::Vector{Point{3, Float32}}, glyph_extents::Vector{Makie.GlyphExtent}, text_blocks::Vector{UnitRange{Int64}}, text_color::Vector{ColorTypes.RGBA{Float32}}, text_rotation::Vector{Quaternionf}, text_scales::Vector{Vec{2, Float32}}, text_strokewidth::Vector{Float32}, text_strokecolor::Vector{ColorTypes.RGBA{Float32}}, linesegments::Vector{Point{3, Float32}}, linewidths::Vector{Float32}, linecolors::Vector{ColorTypes.RGBA{Float32}}, lineindices::Vector{Pair{Int64, Int64}}}, input_text::LaTeXStrings.LaTeXString, i::Int64, N::Int64, fontsize::Float32, font::FreeTypeAbstraction.FTFont, align::Tuple{Symbol, Symbol}, rotation::Quaternion{Float64}, justification::Makie.Automatic, lineheight::Float64, word_wrap_width::Int64, offset::Vec{3, Float32}, fonts::Attributes, color::ColorTypes.RGBA{Float32}, strokecolor::ColorTypes.RGBA{Float32}, strokewidth::Float32)
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/basic_recipes/text.jl:249
+  [7] (::Makie.var"#2973#2974")(::@NamedTuple{input_text::Vector{LaTeXStrings.LaTeXString}, fontsize::Float32, selected_font::FreeTypeAbstraction.FTFont, align::Tuple{Symbol, Symbol}, rotation::Quaternion{Float64}, justification::Makie.Automatic, lineheight::Float64, word_wrap_width::Int64, offset::Vec{3, Float32}, fonts::Attributes, computed_color::ColorTypes.RGBA{Float32}, strokecolor::ColorTypes.RGBA{Float32}, strokewidth::Float32}, changed::@NamedTuple{input_text::Bool, fontsize::Bool, selected_font::Bool, align::Bool, rotation::Bool, justification::Bool, lineheight::Bool, word_wrap_width::Bool, offset::Bool, fonts::Bool, computed_color::Bool, strokecolor::Bool, strokewidth::Bool}, cached::Nothing)
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/basic_recipes/text.jl:344
+  [8] ComputePipeline.TypedEdge(edge::ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph}, f::Makie.var"#2973#2974", inputs::@NamedTuple{input_text::Base.RefValue{Any}, fontsize::Base.RefValue{Float32}, selected_font::Base.RefValue{FreeTypeAbstraction.FTFont}, align::Base.RefValue{Any}, rotation::Base.RefValue{Quaternion{Float64}}, justification::Base.RefValue{Makie.Automatic}, lineheight::Base.RefValue{Float64}, word_wrap_width::Base.RefValue{Int64}, offset::Base.RefValue{Vec{3, Float32}}, fonts::Base.RefValue{Attributes}, computed_color::Base.RefValue{ColorTypes.RGBA{Float32}}, strokecolor::Base.RefValue{ColorTypes.RGBA{Float32}}, strokewidth::Base.RefValue{Float32}})
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:126
+  [9] #invokelatest#2
+    @ ./essentials.jl:1055 [inlined]
+ [10] invokelatest
+    @ ./essentials.jl:1052 [inlined]
+ [11] ComputePipeline.TypedEdge(edge::ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph})
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:120
+ [12] (::ComputePipeline.var"#52#54"{ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph}})()
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:670
+ [13] lock(f::ComputePipeline.var"#52#54"{ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph}}, l::ReentrantLock)
+    @ Base ./lock.jl:232
+ [14] resolve!(edge::ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph})
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:665
+ [15] _resolve!(computed::ComputePipeline.Computed)
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:658
+ [16] foreach
+    @ ./abstractarray.jl:3187 [inlined]
+ [17] (::ComputePipeline.var"#52#54"{ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph}})()
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:667
+--- the above 5 lines are repeated 1 more time ---
+ [23] lock(f::ComputePipeline.var"#52#54"{ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph}}, l::ReentrantLock)
+    @ Base ./lock.jl:232
+ [24] resolve!(edge::ComputePipeline.ComputeEdge{ComputePipeline.ComputeGraph})
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:665
+ [25] _resolve!(computed::ComputePipeline.Computed)
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:658
+ [26] resolve!(computed::ComputePipeline.Computed)
+    @ ComputePipeline ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:650
+ [27] getindex
+    @ ~/.julia/packages/ComputePipeline/E2l50/src/ComputePipeline.jl:563 [inlined]
+ [28] #508
+    @ ~/.julia/packages/Makie/WKgwk/src/compute-plots.jl:399 [inlined]
+ [29] iterate
+    @ ./generator.jl:48 [inlined]
+ [30] _collect(c::Vector{Symbol}, itr::Base.Generator{Vector{Symbol}, Makie.var"#508#510"{ComputePipeline.ComputeGraph}}, ::Base.EltypeUnknown, isz::Base.HasShape{1})
+    @ Base ./array.jl:811
+ [31] collect_similar
+    @ ./array.jl:720 [inlined]
+ [32] map
+    @ ./abstractarray.jl:3371 [inlined]
+ [33] _register_expand_arguments!(::Type{LineSegments}, attr::ComputePipeline.ComputeGraph, inputs::Vector{Symbol}, is_merged::Bool)
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/compute-plots.jl:399
+ [34] _register_expand_arguments!
+    @ ~/.julia/packages/Makie/WKgwk/src/compute-plots.jl:395 [inlined]
+ [35] register_arguments!
+    @ ~/.julia/packages/Makie/WKgwk/src/compute-plots.jl:373 [inlined]
+ [36] (LineSegments)(user_args::Tuple{ComputePipeline.Computed}, user_attributes::Dict{Symbol, Any})
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/compute-plots.jl:769
+ [37] _create_plot!(F::Function, attributes::Dict{Symbol, Any}, scene::Makie.Text{Tuple{Vector{Point{2, Float32}}}}, args::ComputePipeline.Computed)
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/figureplotting.jl:552
+ [38] linesegments!(::Makie.Text{Tuple{Vector{Point{2, Float32}}}}, ::Vararg{Any}; kw::@Kwargs{linewidth::ComputePipeline.Computed, color::ComputePipeline.Computed, space::ComputePipeline.Computed})
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/recipes.jl:550
+ [39] tex_linesegments!(plot::Makie.Text{Tuple{Vector{Point{2, Float32}}}})
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/basic_recipes/text.jl:443
+ [40] calculated_attributes!
+    @ ~/.julia/packages/Makie/WKgwk/src/basic_recipes/text.jl:422 [inlined]
+ [41] connect_plot!(parent::Scene, plot::Makie.Text{Tuple{Vector{Point{2, Float32}}}})
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/compute-plots.jl:841
+ [42] plot!(scene::Scene, plot::Makie.Text{Tuple{Vector{Point{2, Float32}}}})
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/interfaces.jl:211
+ [43] _create_plot!(F::Function, attributes::Dict{Symbol, Any}, scene::Scene, args::Observable{Point{2, Float32}})
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/figureplotting.jl:553
+ [44] #text!#73
+    @ ~/.julia/packages/Makie/WKgwk/src/recipes.jl:550 [inlined]
+ [45] text!
+    @ ~/.julia/packages/Makie/WKgwk/src/recipes.jl:548 [inlined]
+ [46] initialize_block!(ax::Axis; palette::Nothing)
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/makielayout/blocks/axis.jl:526
+ [47] initialize_block!(ax::Axis)
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/makielayout/blocks/axis.jl:154
+ [48] _block(T::Type{Axis}, fig_or_scene::Figure, args::Vector{Any}, kwdict::Dict{Symbol, Any}, bbox::Nothing; kwdict_complete::Bool)
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/makielayout/blocks.jl:405
+ [49] _block
+    @ ~/.julia/packages/Makie/WKgwk/src/makielayout/blocks.jl:321 [inlined]
+ [50] #_block#1998
+    @ ~/.julia/packages/Makie/WKgwk/src/makielayout/blocks.jl:266 [inlined]
+ [51] _block(::Type{Axis}, ::GridPosition; kwargs::@Kwargs{title::LaTeXStrings.LaTeXString, xlabel::LaTeXStrings.LaTeXString, ylabel::LaTeXStrings.LaTeXString})
+    @ Makie ~/.julia/packages/Makie/WKgwk/src/makielayout/blocks.jl:260
+ [52] _block
+    @ ~/.julia/packages/Makie/WKgwk/src/makielayout/blocks.jl:251 [inlined]
+ [53] #_#1996
+    @ ~/.julia/packages/Makie/WKgwk/src/makielayout/blocks.jl:242 [inlined]
+in expression starting at /Users/parthbhargava/-space/jl/physics_discovery/animations/s08_comparison.jl:68
+Running all three methods on Kepler orbit ...
+  kernel discovery ...
+  GP on kinetic energy ...

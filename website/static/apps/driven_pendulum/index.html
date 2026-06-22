@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="../_assets/favicon.ico" />
+    <!-- Preload is necessary because we show these images when we disconnect from the server,
+    but at that point we cannot load these images from the server -->
+    <link rel="preload" href="../_assets/assets/gradient-yHQUC_QB.png" as="image" />
+    <link rel="preload" href="../_assets/assets/noise-60BoTA8O.png" as="image" />
+    <!-- Preload the fonts -->
+    <link rel="preload" href="../_assets/assets/Lora-VariableFont_wght-CZceb_kH.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+    <link rel="preload" href="../_assets/assets/PTSans-Regular-Bam3NpBI.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+    <link rel="preload" href="../_assets/assets/PTSans-Bold-C_DwAp7Z.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+    <link rel="preload" href="../_assets/assets/FiraMono-Regular-CEsLFVD9.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+    <link rel="preload" href="../_assets/assets/FiraMono-Medium-D5MAsWEG.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+    <link rel="preload" href="../_assets/assets/FiraMono-Bold-C6PDArdf.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="a marimo app" />
+    <link rel="apple-touch-icon" href="../_assets/apple-touch-icon.png" />
+    <link rel="manifest" href="../_assets/manifest.json" />
+
+    <script data-marimo="true">
+      function __resizeIframe(obj) {
+        const scrollbarHeight = 20; // Max between windows, mac, and linux
+
+        function setHeight() {
+          // Guard against race condition where iframe isn't ready
+          if (!obj.contentWindow?.document?.documentElement) {
+            return;
+          }
+          const element = obj.contentWindow.document.documentElement;
+          // If there is no vertical scrollbar, we don't need to resize the iframe
+          if (element.scrollHeight === element.clientHeight) {
+            return;
+          }
+
+          // Create a new height that includes the scrollbar height if it's visible
+          const hasHorizontalScrollbar = element.scrollWidth > element.clientWidth;
+          const newHeight = element.scrollHeight + (hasHorizontalScrollbar ? scrollbarHeight : 0);
+
+          // Only update the height if it's different from the current height
+          if (obj.style.height !== `${newHeight}px`) {
+            obj.style.height = `${newHeight}px`;
+          }
+        }
+
+        // Resize the iframe to the height of the content and bottom scrollbar height
+        setHeight();
+
+        // Resize the iframe when the content changes
+        const resizeObserver = new ResizeObserver((_entries) => {
+          setHeight();
+        });
+        // Only observe if iframe content is ready
+        if (obj.contentWindow?.document?.body) {
+          resizeObserver.observe(obj.contentWindow.document.body);
+        }
+      }
+    </script>
+    <marimo-filename hidden>notebook.py</marimo-filename>
+    <!-- TODO(Trevor): Legacy, required by VS Code plugin. Remove when plugin is updated (see marimo/server/_templates/template.py) -->
+    <marimo-version data-version="{{ version }}" hidden></marimo-version>
+    <marimo-user-config data-config="{{ user_config }}" hidden></marimo-user-config>
+    <marimo-server-token data-token="{{ server_token }}" hidden></marimo-server-token>
+    <!-- /TODO -->
+    <title>Driven Quadruple Pendulum</title>
+    <script type="module" crossorigin src="../_assets/assets/index-awsLWRjZ.js"></script>
+    <link rel="modulepreload" crossorigin href="../_assets/assets/preload-helper-BPPi7vOr.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/chunk-LvLJmgfZ.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/react-Bj1aDYRI.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/compiler-runtime-B3qBwwSJ.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/jsx-runtime-BqBOg78p.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/useEventListener-DvoEXWke.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/defaultLocale-BLUna9fQ.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/precisionRound-Cl9k9ZmS.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/defaultLocale-DzliDDTm.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/vega-loader.browser-C8wT63Va.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/utils-DCL4n9wx.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/clsx-Dz_KRrWq.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/cn-DCUzRj2J.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/badge-j3NGjqhR.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/button-BbCh-29a.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/react-dom-CSu739Rf.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/fullscreen-eipL3i3Y.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/menu-items-DcP01QzW.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/dist-BdyjRhEt.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/createLucideIcon-D5guW7EU.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/check-BH35Ndha.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/x-C-6liIBr.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/select-DZcFyKFQ.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/tooltip-DTV9tlSr.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/use-toast-IPAtJGea.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/useEvent-D91BmmQi.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/invariant-BUdrueMv.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/isObject-DvLSfCY5.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/_baseFor-DKD1r8uL.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/merge-_9WLTEyt.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/zod-H_cgTO0M.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/utils-CvI-39U6.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/Deferred-CP7vq682.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/uuid-e9lSomwA.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/DeferredRequestRegistry-CNldVcrP.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/constants-DMpttj8Q.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/session-0B5NBztP.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/config-ClMcu_sV.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/requests-DIwGYs0l.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/useLifecycle-DieWOfXE.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/useNonce-DfoVjkkH.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/useTheme-CI2eq4XN.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/arrays-DYDL-3-i.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/strings-wdPMRf6Z.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/once-DRroIaBz.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/capabilities-A_KhFcGV.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/createReducer-CI9qeK_X.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/paths-D5zczhUD.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/dist-BrR4M-k3.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/dist-HlsDto3K.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/dist-CHcznzB-.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/dist-B1U1kGCR.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/dist-ChF5Ln9c.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/dist-CpTFpfm_.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/dist-CBSMxaO_.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/dist-CPczQFlJ.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/dist-C9ZB41s2.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/stex-BGrE-q7N.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/toDate-B5A0DFEz.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/purify.es-B9KxLTTS.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/cjs-BRGiG41H.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/isSymbol-BT6B8Bon.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/now-CsYTPAhW.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/debounce-DhnxH9Rh.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/database-zap-kIkTfzTX.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/main-B0OX4z33.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/cells-BsaJrRWi.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/ErrorBoundary-DyYDV0HI.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/kbd-CTUAEnEx.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/useInstallPackage-DUF4IRRI.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/alert-dialog-BqFLkbUc.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/dialog-DzC_QCtT.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/useDebounce-7xZwVnnu.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/numbers-C3BAdHZE.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/SSRProvider-CkFAAHXw.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/context-QkTujrKn.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/useNumberFormatter-ByUv-u9o.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/usePress-DQ_tAz5W.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/input-C3Hrdlqq.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/ImperativeModal-B3Th7k4R.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/cell-link-B1pHtGWp.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/multi-map-CUuNtzHt.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/alert-yTS3WpF4.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/chevron-right-CG5QYXYk.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/dropdown-menu-CR7cnzLX.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/links-D1JoyKTt.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/useRunCells-BiCBGyeW.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/copy-LK56fFow.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/copy-BwrPA9zQ.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/copy-icon-OjtDb4gO.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/RenderHTML-ChwPJgPd.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/datasource-DjDpJnbt.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/state-D-2KaAHK.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/package-Tv6ztuzw.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/sparkles-lWUAsPhp.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/MarimoErrorOutput-B0h5OVW9.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/spinner-Bhir8k53.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/html-to-image-BWL3Ct4n.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/focus-q38vUCl-.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/useAsyncData-bgszE9F0.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/LazyAnyLanguageCodeMirror-BEvXb3VX.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/micromark-factory-space-BygYYKhs.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/chunk-5FQGJX7Z-D9iBG0F7.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/markdown-renderer-CU5Lbyax.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/command-KARR7KMq.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/field-zLmMOSA4.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/popover-Bz_0Vkyf.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/errors-vr57w7Ul.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/download-DT8gf0PL.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/table-BGPSHfig.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/useIframeCapabilities-CcI1zSdn.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/error-banner-LdWZDbqd.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/formats-b7Sf6DAK.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/en-US-Cb8rIK52.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/isValid-CklTTytn.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/dates-CTxr0EqQ.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/maps-n3GaPJwv.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/extends-BiFDv3jB.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/emotion-is-prop-valid.esm-C59xfSYt.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/useDateFormatter-ICIDGgHf.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/react-icons.esm-BNzu6e7h.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/RSPContexts-CdN1NyAt.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/table-6NxtGaCm.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/ellipsis-KAhMaCIV.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/external-link-BTNxSavU.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/message-circle-CWm2KnSx.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/plus-BgB18UzY.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/trash-2-rVklqqFF.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/react-resizable-panels.browser.esm-CV8-hvjx.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/JsonOutput-BJaeXQim.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/chart-no-axes-column-nqk474t8.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/square-function-uY_yJr5g.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/spec-CPQR_o92.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/ellipsis-vertical-CkwWkOQL.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/refresh-cw-DHwG4Mac.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/tree-actions-BM_EJr3E.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/components-BzBUxUz0.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/column-preview-BPismotx.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/icons-Ol38nIbL.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/radio-group-DlVSuZ_1.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/floating-outline-BN9sAcQ0.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/objectWithoutPropertiesLoose-DfWeGRFv.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/esm-CqWdmSnV.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/readonly-python-code-D3_kHsDx.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/file-headphone-BrQspHac.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/file-BrdxGLRX.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/image-DQHXdEQn.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/file-icons-BiMOJy0r.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/switch-BiU_sAcn.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/events-CPoJAfgx.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/globals-7JnRMGd4.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/share-DMwTZOTH.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/blob-Bgnx1kuY.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/memoize-Tp7rARFe.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/get-C-qh_et5.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/_baseSet-CxV9N1bc.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/state-BTTshiKq.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/label-xHqFtfdz.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/textarea-DwltG8V6.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/refresh-ccw-C-n2VFP5.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/form-BtBTvVVd.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/renderShortcut-CcFk3m01.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/useBoolean-Bp18o6XG.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/useDeepCompareMemoize-zUHU--0D.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/types-W8WWuumF.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/semaphore-FlZezxaf.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/fileToBase64-DZfwJMrG.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/pathUtils-CJjndqMI.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/prop-types-DaaA-ptl.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/es-DGgq-Wes.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/hasIn-DiS_ryrS.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/flatten-Dl4V1ub3.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/pick-DqWUNly1.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/code-xml-CZN6vNxu.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/house-mGK3v0Mm.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/square-B5xWCt0a.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/triangle-alert-D2p96PEF.js">
+    <link rel="modulepreload" crossorigin href="../_assets/assets/bundle.esm-DjhGJy4I.js">
+    <link rel="stylesheet" crossorigin href="../_assets/assets/cells-jmgGt1lS.css">
+    <link rel="stylesheet" crossorigin href="../_assets/assets/markdown-renderer-DdDKmWlR.css">
+    <link rel="stylesheet" crossorigin href="../_assets/assets/JsonOutput-B7vuddcd.css">
+    <link rel="stylesheet" crossorigin href="../_assets/assets/index-BIw7BKLH.css">
+  <marimo-wasm hidden=""></marimo-wasm>
+    <script>
+        if (window.location.protocol === 'file:') {
+            alert('Warning: This file must be served by an HTTP server to function correctly.');
+        }
+    </script>
+    
+    <style>
+        #save-button {
+            display: none !important;
+        }
+        #filename-input {
+            display: none !important;
+        }
+    </style>
+    
+<script data-marimo="true">
+    Object.defineProperty(window, "__MARIMO_EXPORT_CONTEXT__", {
+        value: Object.freeze({
+            trusted: true,
+            notebookCode: "import marimo\n\n__generated_with = \"0.23.9\"\napp = marimo.App(width=\"medium\", app_title=\"Driven Quadruple Pendulum\")\n\n\n@app.cell(hide_code=True)\ndef _():\n    import json\n    import marimo as mo\n    import numpy as np\n\n    return json, mo, np\n\n\n@app.cell(hide_code=True)\ndef _(mo):\n    mo.md(r\"\"\"\n    # Driven damped quadruple pendulum\n\n    Four equal masses on rigid rods with a periodic torque applied at the first pivot and viscous\n    damping on each joint. PC3236 at NUS.\n\n    The mass matrix $M(\\theta)$ couples all four angles through cosine terms; the RHS carries centrifugal\n    couplings, gravity, and the drive torque $\\tau_0\\cos(\\omega_d t)$ at pivot 1 only. Even mild drive\n    amplitudes push the outer joints into irregular, non-repeating motion.\n    \"\"\")\n    return\n\n\n@app.cell(hide_code=True)\ndef _(mo):\n    tau0_sl = mo.ui.slider(0.0, 12.0, value=8.0, step=0.25, label=\"drive \u03c4\u2080 (N\u00b7m)\", show_value=True)\n    omega_sl = mo.ui.slider(1.0, 12.0, value=5.03, step=0.1, label=\"\u03c9_d (rad/s)\", show_value=True)\n    b_sl = mo.ui.slider(0.0, 0.3, value=0.10, step=0.01, label=\"damping b\", show_value=True)\n    mo.md(f\"\"\"{mo.hstack([tau0_sl, omega_sl, b_sl], justify=\"start\", gap=2)}\"\"\")\n    return b_sl, omega_sl, tau0_sl\n\n\n@app.cell(hide_code=True)\ndef _(b_sl, np, omega_sl, tau0_sl):\n    _g = 9.81\n    _L = [0.40, 0.35, 0.30, 0.25]\n    _m = [1.0, 1.0, 1.0, 1.0]\n    _tau0 = tau0_sl.value\n    _wd   = omega_sl.value\n    _b    = b_sl.value\n\n    def _M(th):\n        L, m = _L, _m\n        Mm = np.zeros((4, 4))\n        cmsum = [sum(m[k:]) for k in range(4)]\n        for i in range(4):\n            Mm[i, i] = cmsum[i] * L[i] ** 2\n        for i in range(4):\n            for j in range(i + 1, 4):\n                v = sum(m[k] for k in range(j, 4)) * L[i] * L[j] * np.cos(th[i] - th[j])\n                Mm[i, j] = Mm[j, i] = v\n        return Mm\n\n    def _F(th, om, t):\n        L, m, g = _L, _m, _g\n        F = np.zeros(4)\n        cmsum = [sum(m[k:]) for k in range(4)]\n        for i in range(4):\n            F[i] -= cmsum[i] * g * L[i] * np.sin(th[i])\n        for i in range(4):\n            for j in range(4):\n                if i == j:\n                    continue\n                c = sum(m[k] for k in range(max(i, j), 4)) * L[i] * L[j]\n                if j \u003C i:\n                    F[i] += c * om[j] ** 2 * np.sin(th[j] - th[i])\n                else:\n                    F[i] -= c * om[j] ** 2 * np.sin(th[i] - th[j])\n        F[0] += _tau0 * np.cos(_wd * t)\n        F -= _b * om\n        return F\n\n    def _derivs(t, y):\n        th, om = y[:4], y[4:]\n        return np.concatenate([om, np.linalg.solve(_M(th), _F(th, om, t))])\n\n    def _rk4(t, y, dt):\n        k1 = _derivs(t, y)\n        k2 = _derivs(t + dt / 2, y + dt / 2 * k1)\n        k3 = _derivs(t + dt / 2, y + dt / 2 * k2)\n        k4 = _derivs(t + dt, y + dt * k3)\n        return y + (dt / 6) * (k1 + 2 * k2 + 2 * k3 + k4)\n\n    DT = 0.01; T_END = 12.0; MAX_FRAMES = 800\n    _n = int(T_END / DT)\n    _step = max(1, _n // MAX_FRAMES)\n    _y = np.zeros(8); _y[0] = 0.3; _y[1] = 0.1\n    _t = 0.0; _hist = []\n    for _i in range(_n):\n        if _i % _step == 0:\n            _hist.append(_y[:4].tolist())\n        _y = _rk4(_t, _y, DT); _t += DT\n\n    sim = {\"th\": _hist, \"n\": len(_hist), \"L\": _L}\n    return (sim,)\n\n\n@app.cell(hide_code=True)\ndef _(json, mo, sim):\n    _JS = r\"\"\"\u003C!doctype html\u003E\u003Chtml\u003E\u003Chead\u003E\u003Cmeta charset=\"utf-8\"\u003E\u003Cstyle\u003E\n    html,body{margin:0;background:#0f1117;overflow:hidden}canvas{display:block;width:100vw;height:100vh}\n    \u003C/style\u003E\u003C/head\u003E\u003Cbody\u003E\u003Ccanvas id=\"c\"\u003E\u003C/canvas\u003E\u003Cscript\u003E\n    const S=__SPEC__,cv=document.getElementById(\"c\"),ctx=cv.getContext(\"2d\");\n    const DPR=Math.min(window.devicePixelRatio||1,2);\n    function fit(){const w=cv.offsetWidth||window.innerWidth||800,h=cv.offsetHeight||window.innerHeight||520;if(w\u003E0\u0026\u0026h\u003E0){cv.width=w*DPR;cv.height=h*DPR;}}\n    addEventListener(\"resize\",fit);fit();\n    const VP=S.panels.map(()=\u003E({zoom:1,px:0,py:0}));\n    let frame=0,playing=true,last=0;\n    function legend(lx,ly,lw,lh,entries){\n      const y0=ly+lh-14*DPR;\n      entries.forEach(([l,c],i)=\u003E{ctx.fillStyle=c;ctx.fillRect(lx+5*DPR+i*72*DPR,y0,8*DPR,8*DPR);ctx.fillStyle=\"#8a93a6\";ctx.font=(9*DPR)+\"px monospace\";ctx.textAlign=\"left\";ctx.fillText(l,lx+15*DPR+i*72*DPR,y0+7*DPR);});\n    }\n    function axes2D(title,xlabel,lx,ly,lw,lh,xd,yd){\n      const pL=34*DPR,pR=8*DPR,pT=18*DPR,pB=22*DPR;\n      const mx=lx+pL,my=ly+pT,mw=lw-pL-pR,mh=lh-pT-pB;\n      function toX(v){return mx+(v-xd.min)/(xd.max-xd.min||1)*mw;}\n      function toY(v){return my+mh-(v-yd.min)/(yd.max-yd.min||1)*mh;}\n      ctx.strokeStyle=\"#1e2535\";ctx.lineWidth=1;\n      for(let i=0;i\u003C=5;i++){const x=mx+i*mw/5;ctx.beginPath();ctx.moveTo(x,my);ctx.lineTo(x,my+mh);ctx.stroke();}\n      for(let i=0;i\u003C=4;i++){const y=my+i*mh/4;ctx.beginPath();ctx.moveTo(mx,y);ctx.lineTo(mx+mw,y);ctx.stroke();}\n      ctx.strokeStyle=\"#2a3448\";ctx.lineWidth=1;ctx.beginPath();ctx.rect(mx,my,mw,mh);ctx.stroke();\n      ctx.fillStyle=\"#4a5568\";ctx.font=(8*DPR)+\"px monospace\";ctx.textAlign=\"center\";\n      for(let i=0;i\u003C=5;i+=2){const v=xd.min+i*(xd.max-xd.min)/5;ctx.fillText(v.toFixed(0),mx+i*mw/5,my+mh+10*DPR);}\n      ctx.textAlign=\"right\";\n      for(let i=0;i\u003C=4;i+=2){const v=yd.min+i*(yd.max-yd.min)/4;ctx.fillText(v.toFixed(1),mx-3*DPR,my+mh-i*mh/4+4*DPR);}\n      if(title){ctx.fillStyle=\"#9aa3b0\";ctx.font=(10*DPR)+\"px monospace\";ctx.textAlign=\"center\";ctx.fillText(title,lx+lw/2,ly+12*DPR);}\n      if(xlabel){ctx.fillStyle=\"#626b7c\";ctx.font=(9*DPR)+\"px monospace\";ctx.textAlign=\"center\";ctx.fillText(xlabel,lx+lw/2,ly+lh-4*DPR);}\n      return{mx,my,mw,mh,toX,toY};\n    }\n    function drawPanel(p,i,lx,ly,lw,lh){\n      const f=frame;\n      ctx.save();ctx.beginPath();ctx.rect(lx,ly,lw,lh);ctx.clip();\n      if(p.kind===\"pendulum_chain\"){\n    const Ls=p.L,thF=p.th[f];\n    const cx=lx+lw*0.5,cy=ly+lh*0.10;\n    const totalL=Ls.reduce((a,b)=\u003Ea+b,0);\n    const sc=Math.min(lw,lh)*0.76/totalL;\n    let bx=cx,by=cy;const bobs=[];\n    for(let j=0;j\u003CLs.length;j++){\n      const nx=bx+sc*Ls[j]*Math.sin(thF[j]),ny=by+sc*Ls[j]*Math.cos(thF[j]);\n      bobs.push([nx,ny]);bx=nx;by=ny;\n    }\n    let rx=cx,ry=cy;\n    for(let j=0;j\u003Cbobs.length;j++){\n      ctx.strokeStyle=p.colors[j]||\"#7dd3fc\";ctx.lineWidth=2.5*DPR;\n      ctx.beginPath();ctx.moveTo(rx,ry);ctx.lineTo(bobs[j][0],bobs[j][1]);ctx.stroke();\n      rx=bobs[j][0];ry=bobs[j][1];\n    }\n    const rs=[9,7,6,5];\n    for(let j=0;j\u003Cbobs.length;j++){\n      ctx.fillStyle=p.colors[j]||\"#7dd3fc\";\n      ctx.beginPath();ctx.arc(bobs[j][0],bobs[j][1],rs[j]*DPR,0,7);ctx.fill();\n    }\n    ctx.fillStyle=\"#8a93a6\";ctx.beginPath();ctx.arc(cx,cy,3*DPR,0,7);ctx.fill();\n    legend(lx,ly,lw,lh,(p.colors||[]).map((c,j)=\u003E[\"\u03b8\"+(j+1),c]));\n      }\n      else if(p.kind===\"timeseries\"){\n    const ys_arr=p.ys||[],n=ys_arr[0]?ys_arr[0].length:0;\n    const ts=p.t||Array.from({length:n},(_,k)=\u003Ek);\n    let ymin=Infinity,ymax=-Infinity;\n    for(const ya of ys_arr)for(const v of ya){if(v\u003Cymin)ymin=v;if(v\u003Eymax)ymax=v;}\n    ymin-=Math.abs(ymax-ymin)*0.07;ymax+=Math.abs(ymax-ymin)*0.07;\n    const xd={min:ts[0]||0,max:ts[n-1]||1},yd={min:ymin||0,max:ymax||1};\n    const{mx,my,mw,mh,toX,toY}=axes2D(p.title,p.xlabel,lx,ly,lw,lh,xd,yd);\n    ctx.save();ctx.beginPath();ctx.rect(mx,my,mw,mh);ctx.clip();\n    const colors=p.colors||[\"#7dd3fc\",\"#f97316\",\"#a594f2\",\"#e0635a\"];\n    const upTo=Math.min(f+1,n);\n    for(let si=0;si\u003Cys_arr.length;si++){\n      const ya=ys_arr[si];ctx.strokeStyle=colors[si%colors.length];ctx.lineWidth=2*DPR;ctx.beginPath();\n      for(let k=0;k\u003CupTo;k++){const x=toX(ts[k]),y=toY(ya[k]);k===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}\n      ctx.stroke();\n    }\n    ctx.restore();\n    if(p.labels)legend(lx,ly,lw,lh,p.labels.map((l,j)=\u003E[l,(p.colors||colors)[j%colors.length]]));\n      }\n      ctx.restore();\n    }\n    function draw(){\n      const W=cv.width,H=cv.height;\n      ctx.fillStyle=\"#0f1117\";ctx.fillRect(0,0,W,H);\n      for(let i=0;i\u003CS.panels.length;i++){\n    const lay=S.layout[i];\n    drawPanel(S.panels[i],i,lay[0]*W,lay[1]*H,lay[2]*W,lay[3]*H);\n      }\n      ctx.fillStyle=\"#2a3448\";ctx.font=(9*DPR)+\"px monospace\";ctx.textAlign=\"left\";\n      ctx.fillText(\"frame \"+frame+\"/\"+S.frames+\"  click to pause\",6*DPR,H-5*DPR);\n    }\n    function loop(t){if(playing\u0026\u0026t-last\u003ES.dt){frame=(frame+1)%S.frames;last=t;}try{draw();}catch(e){}requestAnimationFrame(loop);}\n    cv.addEventListener(\"click\",()=\u003E{playing=!playing;});\n    let _s=false;\n    const _ro=new ResizeObserver(()=\u003E{fit();if(!_s\u0026\u0026cv.width\u003E0){_s=true;requestAnimationFrame(loop);}});\n    _ro.observe(cv);setTimeout(()=\u003E{fit();if(!_s\u0026\u0026cv.width\u003E0){_s=true;requestAnimationFrame(loop);}},100);\n    \u003C/script\u003E\u003C/body\u003E\u003C/html\u003E\"\"\"\n\n    _th = sim[\"th\"]\n    _spec = {\n        \"frames\": sim[\"n\"], \"dt\": 20,\n        \"panels\": [\n            {\n                \"kind\": \"pendulum_chain\",\n                \"L\": sim[\"L\"],\n                \"th\": _th,\n                \"colors\": [\"#7dd3fc\", \"#a594f2\", \"#f97316\", \"#e0635a\"],\n            },\n            {\n                \"kind\": \"timeseries\",\n                \"title\": \"\u03b8\u2081 and \u03b8\u2082\",\n                \"xlabel\": \"frame\",\n                \"ys\": [[row[0] for row in _th], [row[1] for row in _th]],\n                \"colors\": [\"#7dd3fc\", \"#a594f2\"],\n                \"labels\": [\"\u03b8\u2081\", \"\u03b8\u2082\"],\n            },\n            {\n                \"kind\": \"timeseries\",\n                \"title\": \"\u03b8\u2083 and \u03b8\u2084\",\n                \"xlabel\": \"frame\",\n                \"ys\": [[row[2] for row in _th], [row[3] for row in _th]],\n                \"colors\": [\"#f97316\", \"#e0635a\"],\n                \"labels\": [\"\u03b8\u2083\", \"\u03b8\u2084\"],\n            },\n        ],\n        \"layout\": [\n            [0.00, 0.00, 0.40, 1.00],\n            [0.40, 0.00, 0.60, 0.50],\n            [0.40, 0.50, 0.60, 0.50],\n        ],\n    }\n    mo.vstack([\n        mo.md(\"**Quadruple pendulum, live.** Click to pause.\"),\n        mo.iframe(_JS.replace(\"__SPEC__\", json.dumps(_spec)), height=\"520px\"),\n    ])\n    return\n\n\n@app.cell(hide_code=True)\ndef _(b_sl, mo, omega_sl, sim, tau0_sl):\n    _last = sim[\"th\"][-1] if sim[\"th\"] else [0, 0, 0, 0]\n    mo.md(f\"\"\"\n    **Drive:** \u03c4\u2080 = {tau0_sl.value:.2f} N\u00b7m, \u03c9_d = {omega_sl.value:.2f} rad/s, b = {b_sl.value:.2f}.\n    Final angles: \u03b8\u2081 = {_last[0]:.2f}, \u03b8\u2082 = {_last[1]:.2f}, \u03b8\u2083 = {_last[2]:.2f}, \u03b8\u2084 = {_last[3]:.2f} rad.\n    \"\"\")\n    return\n\n\n@app.cell(hide_code=True)\ndef _(mo):\n    mo.md(r\"\"\"\n    **Equations of motion.** The Lagrangian gives a $4\\times4$ mass-matrix system:\n\n    $$M(\\theta)\\,\\ddot\\theta = F(\\theta,\\dot\\theta,t)$$\n\n    where\n\n    $$M_{ij} = \\Bigl(\\sum_{k\\geq\\max(i,j)} m_k\\Bigr) L_i L_j \\cos(\\theta_i-\\theta_j)$$\n\n    and $F_i$ collects gravity ($-M_{ii}g/L_i\\cdot\\sin\\theta_i$), centrifugal coupling\n    (off-diagonal angular-velocity terms), the drive torque $\\tau_0\\cos(\\omega_d t)$ at $i=1$\n    only, and viscous damping $-b\\dot\\theta_i$.\n    RK4 at $\\Delta t = 10^{-2}$ s, 12 s trajectory.\n    \"\"\")\n    return\n\n\nif __name__ == \"__main__\":\n    app.run()\n",
+        }),
+        writable: false,
+        configurable: false,
+    });
+</script>
+<marimo-code hidden="">import%20marimo%0A%0A__generated_with%20%3D%20%220.23.9%22%0Aapp%20%3D%20marimo.App(width%3D%22medium%22%2C%20app_title%3D%22Driven%20Quadruple%20Pendulum%22)%0A%0A%0A%40app.cell(hide_code%3DTrue)%0Adef%20_()%3A%0A%20%20%20%20import%20json%0A%20%20%20%20import%20marimo%20as%20mo%0A%20%20%20%20import%20numpy%20as%20np%0A%0A%20%20%20%20return%20json%2C%20mo%2C%20np%0A%0A%0A%40app.cell(hide_code%3DTrue)%0Adef%20_(mo)%3A%0A%20%20%20%20mo.md(r%22%22%22%0A%20%20%20%20%23%20Driven%20damped%20quadruple%20pendulum%0A%0A%20%20%20%20Four%20equal%20masses%20on%20rigid%20rods%20with%20a%20periodic%20torque%20applied%20at%20the%20first%20pivot%20and%20viscous%0A%20%20%20%20damping%20on%20each%20joint.%20PC3236%20at%20NUS.%0A%0A%20%20%20%20The%20mass%20matrix%20%24M(%5Ctheta)%24%20couples%20all%20four%20angles%20through%20cosine%20terms%3B%20the%20RHS%20carries%20centrifugal%0A%20%20%20%20couplings%2C%20gravity%2C%20and%20the%20drive%20torque%20%24%5Ctau_0%5Ccos(%5Comega_d%20t)%24%20at%20pivot%201%20only.%20Even%20mild%20drive%0A%20%20%20%20amplitudes%20push%20the%20outer%20joints%20into%20irregular%2C%20non-repeating%20motion.%0A%20%20%20%20%22%22%22)%0A%20%20%20%20return%0A%0A%0A%40app.cell(hide_code%3DTrue)%0Adef%20_(mo)%3A%0A%20%20%20%20tau0_sl%20%3D%20mo.ui.slider(0.0%2C%2012.0%2C%20value%3D8.0%2C%20step%3D0.25%2C%20label%3D%22drive%20%CF%84%E2%82%80%20(N%C2%B7m)%22%2C%20show_value%3DTrue)%0A%20%20%20%20omega_sl%20%3D%20mo.ui.slider(1.0%2C%2012.0%2C%20value%3D5.03%2C%20step%3D0.1%2C%20label%3D%22%CF%89_d%20(rad%2Fs)%22%2C%20show_value%3DTrue)%0A%20%20%20%20b_sl%20%3D%20mo.ui.slider(0.0%2C%200.3%2C%20value%3D0.10%2C%20step%3D0.01%2C%20label%3D%22damping%20b%22%2C%20show_value%3DTrue)%0A%20%20%20%20mo.md(f%22%22%22%7Bmo.hstack(%5Btau0_sl%2C%20omega_sl%2C%20b_sl%5D%2C%20justify%3D%22start%22%2C%20gap%3D2)%7D%22%22%22)%0A%20%20%20%20return%20b_sl%2C%20omega_sl%2C%20tau0_sl%0A%0A%0A%40app.cell(hide_code%3DTrue)%0Adef%20_(b_sl%2C%20np%2C%20omega_sl%2C%20tau0_sl)%3A%0A%20%20%20%20_g%20%3D%209.81%0A%20%20%20%20_L%20%3D%20%5B0.40%2C%200.35%2C%200.30%2C%200.25%5D%0A%20%20%20%20_m%20%3D%20%5B1.0%2C%201.0%2C%201.0%2C%201.0%5D%0A%20%20%20%20_tau0%20%3D%20tau0_sl.value%0A%20%20%20%20_wd%20%20%20%3D%20omega_sl.value%0A%20%20%20%20_b%20%20%20%20%3D%20b_sl.value%0A%0A%20%20%20%20def%20_M(th)%3A%0A%20%20%20%20%20%20%20%20L%2C%20m%20%3D%20_L%2C%20_m%0A%20%20%20%20%20%20%20%20Mm%20%3D%20np.zeros((4%2C%204))%0A%20%20%20%20%20%20%20%20cmsum%20%3D%20%5Bsum(m%5Bk%3A%5D)%20for%20k%20in%20range(4)%5D%0A%20%20%20%20%20%20%20%20for%20i%20in%20range(4)%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20Mm%5Bi%2C%20i%5D%20%3D%20cmsum%5Bi%5D%20*%20L%5Bi%5D%20**%202%0A%20%20%20%20%20%20%20%20for%20i%20in%20range(4)%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20for%20j%20in%20range(i%20%2B%201%2C%204)%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20v%20%3D%20sum(m%5Bk%5D%20for%20k%20in%20range(j%2C%204))%20*%20L%5Bi%5D%20*%20L%5Bj%5D%20*%20np.cos(th%5Bi%5D%20-%20th%5Bj%5D)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20Mm%5Bi%2C%20j%5D%20%3D%20Mm%5Bj%2C%20i%5D%20%3D%20v%0A%20%20%20%20%20%20%20%20return%20Mm%0A%0A%20%20%20%20def%20_F(th%2C%20om%2C%20t)%3A%0A%20%20%20%20%20%20%20%20L%2C%20m%2C%20g%20%3D%20_L%2C%20_m%2C%20_g%0A%20%20%20%20%20%20%20%20F%20%3D%20np.zeros(4)%0A%20%20%20%20%20%20%20%20cmsum%20%3D%20%5Bsum(m%5Bk%3A%5D)%20for%20k%20in%20range(4)%5D%0A%20%20%20%20%20%20%20%20for%20i%20in%20range(4)%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20F%5Bi%5D%20-%3D%20cmsum%5Bi%5D%20*%20g%20*%20L%5Bi%5D%20*%20np.sin(th%5Bi%5D)%0A%20%20%20%20%20%20%20%20for%20i%20in%20range(4)%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20for%20j%20in%20range(4)%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20i%20%3D%3D%20j%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20continue%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20c%20%3D%20sum(m%5Bk%5D%20for%20k%20in%20range(max(i%2C%20j)%2C%204))%20*%20L%5Bi%5D%20*%20L%5Bj%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20if%20j%20%3C%20i%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20F%5Bi%5D%20%2B%3D%20c%20*%20om%5Bj%5D%20**%202%20*%20np.sin(th%5Bj%5D%20-%20th%5Bi%5D)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20else%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20F%5Bi%5D%20-%3D%20c%20*%20om%5Bj%5D%20**%202%20*%20np.sin(th%5Bi%5D%20-%20th%5Bj%5D)%0A%20%20%20%20%20%20%20%20F%5B0%5D%20%2B%3D%20_tau0%20*%20np.cos(_wd%20*%20t)%0A%20%20%20%20%20%20%20%20F%20-%3D%20_b%20*%20om%0A%20%20%20%20%20%20%20%20return%20F%0A%0A%20%20%20%20def%20_derivs(t%2C%20y)%3A%0A%20%20%20%20%20%20%20%20th%2C%20om%20%3D%20y%5B%3A4%5D%2C%20y%5B4%3A%5D%0A%20%20%20%20%20%20%20%20return%20np.concatenate(%5Bom%2C%20np.linalg.solve(_M(th)%2C%20_F(th%2C%20om%2C%20t))%5D)%0A%0A%20%20%20%20def%20_rk4(t%2C%20y%2C%20dt)%3A%0A%20%20%20%20%20%20%20%20k1%20%3D%20_derivs(t%2C%20y)%0A%20%20%20%20%20%20%20%20k2%20%3D%20_derivs(t%20%2B%20dt%20%2F%202%2C%20y%20%2B%20dt%20%2F%202%20*%20k1)%0A%20%20%20%20%20%20%20%20k3%20%3D%20_derivs(t%20%2B%20dt%20%2F%202%2C%20y%20%2B%20dt%20%2F%202%20*%20k2)%0A%20%20%20%20%20%20%20%20k4%20%3D%20_derivs(t%20%2B%20dt%2C%20y%20%2B%20dt%20*%20k3)%0A%20%20%20%20%20%20%20%20return%20y%20%2B%20(dt%20%2F%206)%20*%20(k1%20%2B%202%20*%20k2%20%2B%202%20*%20k3%20%2B%20k4)%0A%0A%20%20%20%20DT%20%3D%200.01%3B%20T_END%20%3D%2012.0%3B%20MAX_FRAMES%20%3D%20800%0A%20%20%20%20_n%20%3D%20int(T_END%20%2F%20DT)%0A%20%20%20%20_step%20%3D%20max(1%2C%20_n%20%2F%2F%20MAX_FRAMES)%0A%20%20%20%20_y%20%3D%20np.zeros(8)%3B%20_y%5B0%5D%20%3D%200.3%3B%20_y%5B1%5D%20%3D%200.1%0A%20%20%20%20_t%20%3D%200.0%3B%20_hist%20%3D%20%5B%5D%0A%20%20%20%20for%20_i%20in%20range(_n)%3A%0A%20%20%20%20%20%20%20%20if%20_i%20%25%20_step%20%3D%3D%200%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20_hist.append(_y%5B%3A4%5D.tolist())%0A%20%20%20%20%20%20%20%20_y%20%3D%20_rk4(_t%2C%20_y%2C%20DT)%3B%20_t%20%2B%3D%20DT%0A%0A%20%20%20%20sim%20%3D%20%7B%22th%22%3A%20_hist%2C%20%22n%22%3A%20len(_hist)%2C%20%22L%22%3A%20_L%7D%0A%20%20%20%20return%20(sim%2C)%0A%0A%0A%40app.cell(hide_code%3DTrue)%0Adef%20_(json%2C%20mo%2C%20sim)%3A%0A%20%20%20%20_JS%20%3D%20r%22%22%22%3C!doctype%20html%3E%3Chtml%3E%3Chead%3E%3Cmeta%20charset%3D%22utf-8%22%3E%3Cstyle%3E%0A%20%20%20%20html%2Cbody%7Bmargin%3A0%3Bbackground%3A%230f1117%3Boverflow%3Ahidden%7Dcanvas%7Bdisplay%3Ablock%3Bwidth%3A100vw%3Bheight%3A100vh%7D%0A%20%20%20%20%3C%2Fstyle%3E%3C%2Fhead%3E%3Cbody%3E%3Ccanvas%20id%3D%22c%22%3E%3C%2Fcanvas%3E%3Cscript%3E%0A%20%20%20%20const%20S%3D__SPEC__%2Ccv%3Ddocument.getElementById(%22c%22)%2Cctx%3Dcv.getContext(%222d%22)%3B%0A%20%20%20%20const%20DPR%3DMath.min(window.devicePixelRatio%7C%7C1%2C2)%3B%0A%20%20%20%20function%20fit()%7Bconst%20w%3Dcv.offsetWidth%7C%7Cwindow.innerWidth%7C%7C800%2Ch%3Dcv.offsetHeight%7C%7Cwindow.innerHeight%7C%7C520%3Bif(w%3E0%26%26h%3E0)%7Bcv.width%3Dw*DPR%3Bcv.height%3Dh*DPR%3B%7D%7D%0A%20%20%20%20addEventListener(%22resize%22%2Cfit)%3Bfit()%3B%0A%20%20%20%20const%20VP%3DS.panels.map(()%3D%3E(%7Bzoom%3A1%2Cpx%3A0%2Cpy%3A0%7D))%3B%0A%20%20%20%20let%20frame%3D0%2Cplaying%3Dtrue%2Clast%3D0%3B%0A%20%20%20%20function%20legend(lx%2Cly%2Clw%2Clh%2Centries)%7B%0A%20%20%20%20%20%20const%20y0%3Dly%2Blh-14*DPR%3B%0A%20%20%20%20%20%20entries.forEach((%5Bl%2Cc%5D%2Ci)%3D%3E%7Bctx.fillStyle%3Dc%3Bctx.fillRect(lx%2B5*DPR%2Bi*72*DPR%2Cy0%2C8*DPR%2C8*DPR)%3Bctx.fillStyle%3D%22%238a93a6%22%3Bctx.font%3D(9*DPR)%2B%22px%20monospace%22%3Bctx.textAlign%3D%22left%22%3Bctx.fillText(l%2Clx%2B15*DPR%2Bi*72*DPR%2Cy0%2B7*DPR)%3B%7D)%3B%0A%20%20%20%20%7D%0A%20%20%20%20function%20axes2D(title%2Cxlabel%2Clx%2Cly%2Clw%2Clh%2Cxd%2Cyd)%7B%0A%20%20%20%20%20%20const%20pL%3D34*DPR%2CpR%3D8*DPR%2CpT%3D18*DPR%2CpB%3D22*DPR%3B%0A%20%20%20%20%20%20const%20mx%3Dlx%2BpL%2Cmy%3Dly%2BpT%2Cmw%3Dlw-pL-pR%2Cmh%3Dlh-pT-pB%3B%0A%20%20%20%20%20%20function%20toX(v)%7Breturn%20mx%2B(v-xd.min)%2F(xd.max-xd.min%7C%7C1)*mw%3B%7D%0A%20%20%20%20%20%20function%20toY(v)%7Breturn%20my%2Bmh-(v-yd.min)%2F(yd.max-yd.min%7C%7C1)*mh%3B%7D%0A%20%20%20%20%20%20ctx.strokeStyle%3D%22%231e2535%22%3Bctx.lineWidth%3D1%3B%0A%20%20%20%20%20%20for(let%20i%3D0%3Bi%3C%3D5%3Bi%2B%2B)%7Bconst%20x%3Dmx%2Bi*mw%2F5%3Bctx.beginPath()%3Bctx.moveTo(x%2Cmy)%3Bctx.lineTo(x%2Cmy%2Bmh)%3Bctx.stroke()%3B%7D%0A%20%20%20%20%20%20for(let%20i%3D0%3Bi%3C%3D4%3Bi%2B%2B)%7Bconst%20y%3Dmy%2Bi*mh%2F4%3Bctx.beginPath()%3Bctx.moveTo(mx%2Cy)%3Bctx.lineTo(mx%2Bmw%2Cy)%3Bctx.stroke()%3B%7D%0A%20%20%20%20%20%20ctx.strokeStyle%3D%22%232a3448%22%3Bctx.lineWidth%3D1%3Bctx.beginPath()%3Bctx.rect(mx%2Cmy%2Cmw%2Cmh)%3Bctx.stroke()%3B%0A%20%20%20%20%20%20ctx.fillStyle%3D%22%234a5568%22%3Bctx.font%3D(8*DPR)%2B%22px%20monospace%22%3Bctx.textAlign%3D%22center%22%3B%0A%20%20%20%20%20%20for(let%20i%3D0%3Bi%3C%3D5%3Bi%2B%3D2)%7Bconst%20v%3Dxd.min%2Bi*(xd.max-xd.min)%2F5%3Bctx.fillText(v.toFixed(0)%2Cmx%2Bi*mw%2F5%2Cmy%2Bmh%2B10*DPR)%3B%7D%0A%20%20%20%20%20%20ctx.textAlign%3D%22right%22%3B%0A%20%20%20%20%20%20for(let%20i%3D0%3Bi%3C%3D4%3Bi%2B%3D2)%7Bconst%20v%3Dyd.min%2Bi*(yd.max-yd.min)%2F4%3Bctx.fillText(v.toFixed(1)%2Cmx-3*DPR%2Cmy%2Bmh-i*mh%2F4%2B4*DPR)%3B%7D%0A%20%20%20%20%20%20if(title)%7Bctx.fillStyle%3D%22%239aa3b0%22%3Bctx.font%3D(10*DPR)%2B%22px%20monospace%22%3Bctx.textAlign%3D%22center%22%3Bctx.fillText(title%2Clx%2Blw%2F2%2Cly%2B12*DPR)%3B%7D%0A%20%20%20%20%20%20if(xlabel)%7Bctx.fillStyle%3D%22%23626b7c%22%3Bctx.font%3D(9*DPR)%2B%22px%20monospace%22%3Bctx.textAlign%3D%22center%22%3Bctx.fillText(xlabel%2Clx%2Blw%2F2%2Cly%2Blh-4*DPR)%3B%7D%0A%20%20%20%20%20%20return%7Bmx%2Cmy%2Cmw%2Cmh%2CtoX%2CtoY%7D%3B%0A%20%20%20%20%7D%0A%20%20%20%20function%20drawPanel(p%2Ci%2Clx%2Cly%2Clw%2Clh)%7B%0A%20%20%20%20%20%20const%20f%3Dframe%3B%0A%20%20%20%20%20%20ctx.save()%3Bctx.beginPath()%3Bctx.rect(lx%2Cly%2Clw%2Clh)%3Bctx.clip()%3B%0A%20%20%20%20%20%20if(p.kind%3D%3D%3D%22pendulum_chain%22)%7B%0A%20%20%20%20const%20Ls%3Dp.L%2CthF%3Dp.th%5Bf%5D%3B%0A%20%20%20%20const%20cx%3Dlx%2Blw*0.5%2Ccy%3Dly%2Blh*0.10%3B%0A%20%20%20%20const%20totalL%3DLs.reduce((a%2Cb)%3D%3Ea%2Bb%2C0)%3B%0A%20%20%20%20const%20sc%3DMath.min(lw%2Clh)*0.76%2FtotalL%3B%0A%20%20%20%20let%20bx%3Dcx%2Cby%3Dcy%3Bconst%20bobs%3D%5B%5D%3B%0A%20%20%20%20for(let%20j%3D0%3Bj%3CLs.length%3Bj%2B%2B)%7B%0A%20%20%20%20%20%20const%20nx%3Dbx%2Bsc*Ls%5Bj%5D*Math.sin(thF%5Bj%5D)%2Cny%3Dby%2Bsc*Ls%5Bj%5D*Math.cos(thF%5Bj%5D)%3B%0A%20%20%20%20%20%20bobs.push(%5Bnx%2Cny%5D)%3Bbx%3Dnx%3Bby%3Dny%3B%0A%20%20%20%20%7D%0A%20%20%20%20let%20rx%3Dcx%2Cry%3Dcy%3B%0A%20%20%20%20for(let%20j%3D0%3Bj%3Cbobs.length%3Bj%2B%2B)%7B%0A%20%20%20%20%20%20ctx.strokeStyle%3Dp.colors%5Bj%5D%7C%7C%22%237dd3fc%22%3Bctx.lineWidth%3D2.5*DPR%3B%0A%20%20%20%20%20%20ctx.beginPath()%3Bctx.moveTo(rx%2Cry)%3Bctx.lineTo(bobs%5Bj%5D%5B0%5D%2Cbobs%5Bj%5D%5B1%5D)%3Bctx.stroke()%3B%0A%20%20%20%20%20%20rx%3Dbobs%5Bj%5D%5B0%5D%3Bry%3Dbobs%5Bj%5D%5B1%5D%3B%0A%20%20%20%20%7D%0A%20%20%20%20const%20rs%3D%5B9%2C7%2C6%2C5%5D%3B%0A%20%20%20%20for(let%20j%3D0%3Bj%3Cbobs.length%3Bj%2B%2B)%7B%0A%20%20%20%20%20%20ctx.fillStyle%3Dp.colors%5Bj%5D%7C%7C%22%237dd3fc%22%3B%0A%20%20%20%20%20%20ctx.beginPath()%3Bctx.arc(bobs%5Bj%5D%5B0%5D%2Cbobs%5Bj%5D%5B1%5D%2Crs%5Bj%5D*DPR%2C0%2C7)%3Bctx.fill()%3B%0A%20%20%20%20%7D%0A%20%20%20%20ctx.fillStyle%3D%22%238a93a6%22%3Bctx.beginPath()%3Bctx.arc(cx%2Ccy%2C3*DPR%2C0%2C7)%3Bctx.fill()%3B%0A%20%20%20%20legend(lx%2Cly%2Clw%2Clh%2C(p.colors%7C%7C%5B%5D).map((c%2Cj)%3D%3E%5B%22%CE%B8%22%2B(j%2B1)%2Cc%5D))%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20else%20if(p.kind%3D%3D%3D%22timeseries%22)%7B%0A%20%20%20%20const%20ys_arr%3Dp.ys%7C%7C%5B%5D%2Cn%3Dys_arr%5B0%5D%3Fys_arr%5B0%5D.length%3A0%3B%0A%20%20%20%20const%20ts%3Dp.t%7C%7CArray.from(%7Blength%3An%7D%2C(_%2Ck)%3D%3Ek)%3B%0A%20%20%20%20let%20ymin%3DInfinity%2Cymax%3D-Infinity%3B%0A%20%20%20%20for(const%20ya%20of%20ys_arr)for(const%20v%20of%20ya)%7Bif(v%3Cymin)ymin%3Dv%3Bif(v%3Eymax)ymax%3Dv%3B%7D%0A%20%20%20%20ymin-%3DMath.abs(ymax-ymin)*0.07%3Bymax%2B%3DMath.abs(ymax-ymin)*0.07%3B%0A%20%20%20%20const%20xd%3D%7Bmin%3Ats%5B0%5D%7C%7C0%2Cmax%3Ats%5Bn-1%5D%7C%7C1%7D%2Cyd%3D%7Bmin%3Aymin%7C%7C0%2Cmax%3Aymax%7C%7C1%7D%3B%0A%20%20%20%20const%7Bmx%2Cmy%2Cmw%2Cmh%2CtoX%2CtoY%7D%3Daxes2D(p.title%2Cp.xlabel%2Clx%2Cly%2Clw%2Clh%2Cxd%2Cyd)%3B%0A%20%20%20%20ctx.save()%3Bctx.beginPath()%3Bctx.rect(mx%2Cmy%2Cmw%2Cmh)%3Bctx.clip()%3B%0A%20%20%20%20const%20colors%3Dp.colors%7C%7C%5B%22%237dd3fc%22%2C%22%23f97316%22%2C%22%23a594f2%22%2C%22%23e0635a%22%5D%3B%0A%20%20%20%20const%20upTo%3DMath.min(f%2B1%2Cn)%3B%0A%20%20%20%20for(let%20si%3D0%3Bsi%3Cys_arr.length%3Bsi%2B%2B)%7B%0A%20%20%20%20%20%20const%20ya%3Dys_arr%5Bsi%5D%3Bctx.strokeStyle%3Dcolors%5Bsi%25colors.length%5D%3Bctx.lineWidth%3D2*DPR%3Bctx.beginPath()%3B%0A%20%20%20%20%20%20for(let%20k%3D0%3Bk%3CupTo%3Bk%2B%2B)%7Bconst%20x%3DtoX(ts%5Bk%5D)%2Cy%3DtoY(ya%5Bk%5D)%3Bk%3D%3D%3D0%3Fctx.moveTo(x%2Cy)%3Actx.lineTo(x%2Cy)%3B%7D%0A%20%20%20%20%20%20ctx.stroke()%3B%0A%20%20%20%20%7D%0A%20%20%20%20ctx.restore()%3B%0A%20%20%20%20if(p.labels)legend(lx%2Cly%2Clw%2Clh%2Cp.labels.map((l%2Cj)%3D%3E%5Bl%2C(p.colors%7C%7Ccolors)%5Bj%25colors.length%5D%5D))%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20ctx.restore()%3B%0A%20%20%20%20%7D%0A%20%20%20%20function%20draw()%7B%0A%20%20%20%20%20%20const%20W%3Dcv.width%2CH%3Dcv.height%3B%0A%20%20%20%20%20%20ctx.fillStyle%3D%22%230f1117%22%3Bctx.fillRect(0%2C0%2CW%2CH)%3B%0A%20%20%20%20%20%20for(let%20i%3D0%3Bi%3CS.panels.length%3Bi%2B%2B)%7B%0A%20%20%20%20const%20lay%3DS.layout%5Bi%5D%3B%0A%20%20%20%20drawPanel(S.panels%5Bi%5D%2Ci%2Clay%5B0%5D*W%2Clay%5B1%5D*H%2Clay%5B2%5D*W%2Clay%5B3%5D*H)%3B%0A%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20ctx.fillStyle%3D%22%232a3448%22%3Bctx.font%3D(9*DPR)%2B%22px%20monospace%22%3Bctx.textAlign%3D%22left%22%3B%0A%20%20%20%20%20%20ctx.fillText(%22frame%20%22%2Bframe%2B%22%2F%22%2BS.frames%2B%22%20%20click%20to%20pause%22%2C6*DPR%2CH-5*DPR)%3B%0A%20%20%20%20%7D%0A%20%20%20%20function%20loop(t)%7Bif(playing%26%26t-last%3ES.dt)%7Bframe%3D(frame%2B1)%25S.frames%3Blast%3Dt%3B%7Dtry%7Bdraw()%3B%7Dcatch(e)%7B%7DrequestAnimationFrame(loop)%3B%7D%0A%20%20%20%20cv.addEventListener(%22click%22%2C()%3D%3E%7Bplaying%3D!playing%3B%7D)%3B%0A%20%20%20%20let%20_s%3Dfalse%3B%0A%20%20%20%20const%20_ro%3Dnew%20ResizeObserver(()%3D%3E%7Bfit()%3Bif(!_s%26%26cv.width%3E0)%7B_s%3Dtrue%3BrequestAnimationFrame(loop)%3B%7D%7D)%3B%0A%20%20%20%20_ro.observe(cv)%3BsetTimeout(()%3D%3E%7Bfit()%3Bif(!_s%26%26cv.width%3E0)%7B_s%3Dtrue%3BrequestAnimationFrame(loop)%3B%7D%7D%2C100)%3B%0A%20%20%20%20%3C%2Fscript%3E%3C%2Fbody%3E%3C%2Fhtml%3E%22%22%22%0A%0A%20%20%20%20_th%20%3D%20sim%5B%22th%22%5D%0A%20%20%20%20_spec%20%3D%20%7B%0A%20%20%20%20%20%20%20%20%22frames%22%3A%20sim%5B%22n%22%5D%2C%20%22dt%22%3A%2020%2C%0A%20%20%20%20%20%20%20%20%22panels%22%3A%20%5B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22kind%22%3A%20%22pendulum_chain%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22L%22%3A%20sim%5B%22L%22%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22th%22%3A%20_th%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22colors%22%3A%20%5B%22%237dd3fc%22%2C%20%22%23a594f2%22%2C%20%22%23f97316%22%2C%20%22%23e0635a%22%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22kind%22%3A%20%22timeseries%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22title%22%3A%20%22%CE%B8%E2%82%81%20and%20%CE%B8%E2%82%82%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22xlabel%22%3A%20%22frame%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22ys%22%3A%20%5B%5Brow%5B0%5D%20for%20row%20in%20_th%5D%2C%20%5Brow%5B1%5D%20for%20row%20in%20_th%5D%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22colors%22%3A%20%5B%22%237dd3fc%22%2C%20%22%23a594f2%22%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22labels%22%3A%20%5B%22%CE%B8%E2%82%81%22%2C%20%22%CE%B8%E2%82%82%22%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22kind%22%3A%20%22timeseries%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22title%22%3A%20%22%CE%B8%E2%82%83%20and%20%CE%B8%E2%82%84%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22xlabel%22%3A%20%22frame%22%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22ys%22%3A%20%5B%5Brow%5B2%5D%20for%20row%20in%20_th%5D%2C%20%5Brow%5B3%5D%20for%20row%20in%20_th%5D%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22colors%22%3A%20%5B%22%23f97316%22%2C%20%22%23e0635a%22%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22labels%22%3A%20%5B%22%CE%B8%E2%82%83%22%2C%20%22%CE%B8%E2%82%84%22%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%2C%0A%20%20%20%20%20%20%20%20%5D%2C%0A%20%20%20%20%20%20%20%20%22layout%22%3A%20%5B%0A%20%20%20%20%20%20%20%20%20%20%20%20%5B0.00%2C%200.00%2C%200.40%2C%201.00%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%5B0.40%2C%200.00%2C%200.60%2C%200.50%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%5B0.40%2C%200.50%2C%200.60%2C%200.50%5D%2C%0A%20%20%20%20%20%20%20%20%5D%2C%0A%20%20%20%20%7D%0A%20%20%20%20mo.vstack(%5B%0A%20%20%20%20%20%20%20%20mo.md(%22**Quadruple%20pendulum%2C%20live.**%20Click%20to%20pause.%22)%2C%0A%20%20%20%20%20%20%20%20mo.iframe(_JS.replace(%22__SPEC__%22%2C%20json.dumps(_spec))%2C%20height%3D%22520px%22)%2C%0A%20%20%20%20%5D)%0A%20%20%20%20return%0A%0A%0A%40app.cell(hide_code%3DTrue)%0Adef%20_(b_sl%2C%20mo%2C%20omega_sl%2C%20sim%2C%20tau0_sl)%3A%0A%20%20%20%20_last%20%3D%20sim%5B%22th%22%5D%5B-1%5D%20if%20sim%5B%22th%22%5D%20else%20%5B0%2C%200%2C%200%2C%200%5D%0A%20%20%20%20mo.md(f%22%22%22%0A%20%20%20%20**Drive%3A**%20%CF%84%E2%82%80%20%3D%20%7Btau0_sl.value%3A.2f%7D%20N%C2%B7m%2C%20%CF%89_d%20%3D%20%7Bomega_sl.value%3A.2f%7D%20rad%2Fs%2C%20b%20%3D%20%7Bb_sl.value%3A.2f%7D.%0A%20%20%20%20Final%20angles%3A%20%CE%B8%E2%82%81%20%3D%20%7B_last%5B0%5D%3A.2f%7D%2C%20%CE%B8%E2%82%82%20%3D%20%7B_last%5B1%5D%3A.2f%7D%2C%20%CE%B8%E2%82%83%20%3D%20%7B_last%5B2%5D%3A.2f%7D%2C%20%CE%B8%E2%82%84%20%3D%20%7B_last%5B3%5D%3A.2f%7D%20rad.%0A%20%20%20%20%22%22%22)%0A%20%20%20%20return%0A%0A%0A%40app.cell(hide_code%3DTrue)%0Adef%20_(mo)%3A%0A%20%20%20%20mo.md(r%22%22%22%0A%20%20%20%20**Equations%20of%20motion.**%20The%20Lagrangian%20gives%20a%20%244%5Ctimes4%24%20mass-matrix%20system%3A%0A%0A%20%20%20%20%24%24M(%5Ctheta)%5C%2C%5Cddot%5Ctheta%20%3D%20F(%5Ctheta%2C%5Cdot%5Ctheta%2Ct)%24%24%0A%0A%20%20%20%20where%0A%0A%20%20%20%20%24%24M_%7Bij%7D%20%3D%20%5CBigl(%5Csum_%7Bk%5Cgeq%5Cmax(i%2Cj)%7D%20m_k%5CBigr)%20L_i%20L_j%20%5Ccos(%5Ctheta_i-%5Ctheta_j)%24%24%0A%0A%20%20%20%20and%20%24F_i%24%20collects%20gravity%20(%24-M_%7Bii%7Dg%2FL_i%5Ccdot%5Csin%5Ctheta_i%24)%2C%20centrifugal%20coupling%0A%20%20%20%20(off-diagonal%20angular-velocity%20terms)%2C%20the%20drive%20torque%20%24%5Ctau_0%5Ccos(%5Comega_d%20t)%24%20at%20%24i%3D1%24%0A%20%20%20%20only%2C%20and%20viscous%20damping%20%24-b%5Cdot%5Ctheta_i%24.%0A%20%20%20%20RK4%20at%20%24%5CDelta%20t%20%3D%2010%5E%7B-2%7D%24%20s%2C%2012%20s%20trajectory.%0A%20%20%20%20%22%22%22)%0A%20%20%20%20return%0A%0A%0Aif%20__name__%20%3D%3D%20%22__main__%22%3A%0A%20%20%20%20app.run()%0A</marimo-code></head>
+  <body>
+    <div id="root"></div>
+    <!-- This is a portal for the data editor to render in -->
+    <div id="portal" data-testid="glide-portal" style="position: fixed; left: 0; top: 0; z-index: 9999"></div>
+    <script data-marimo="true">
+      Object.defineProperty(window, "__MARIMO_MOUNT_CONFIG__", {
+        value: Object.freeze({
+            "filename": "notebook.py",
+            "cwd": "",
+            "lspWorkspace": null,
+            "mode": "edit",
+            "version": "0.23.9",
+            "serverToken": "unused",
+            "config": {"ai": {"custom_providers": {}, "enabled": true, "models": {"custom_models": [], "displayed_models": []}}, "completion": {"activate_on_typing": true, "auto_close_pairs": true, "copilot": false, "signature_hint_on_typing": false}, "diagnostics": {"sql_linter": true}, "display": {"cell_output": "below", "code_editor_font_size": 14, "dataframes": "rich", "default_table_max_columns": 50, "default_table_page_size": 10, "default_width": "medium", "reference_highlighting": true, "theme": "light"}, "formatting": {"line_length": 79}, "keymap": {"overrides": {}, "preset": "default"}, "language_servers": {"pylsp": {"enable_flake8": false, "enable_mypy": true, "enable_pydocstyle": false, "enable_pyflakes": false, "enable_pylint": false, "enable_ruff": true, "enabled": false}}, "mcp": {"mcpServers": {}, "presets": []}, "package_management": {"manager": "pip"}, "runtime": {"auto_instantiate": false, "auto_reload": "off", "default_csv_encoding": "utf-8", "default_sql_output": "auto", "on_cell_change": "autorun", "output_max_bytes": 8000000, "reactive_tests": true, "show_tracebacks": false, "std_stream_max_bytes": 1000000, "watcher_on_save": "lazy"}, "save": {"autosave": "off", "autosave_delay": 1000, "format_on_save": false}, "server": {"browser": "default", "follow_symlink": false}, "snippets": {"custom_paths": [], "include_default_snippets": true}},
+            "configOverrides": {},
+            "appConfig": {"app_title": "Driven Quadruple Pendulum", "sql_output": "auto", "width": "medium"},
+            "view": {"showAppCode": false},
+            "notebook": null,
+            "session": null,
+            "runtimeConfig": null,
+        }),
+        writable: false,
+        configurable: false,
+      });
+    </script>
+  </body>
+</html>

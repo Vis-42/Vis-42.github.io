@@ -1,0 +1,11 @@
+┌ Warning: Assignment to `cur_θ` in soft scope is ambiguous because a global variable by the same name exists: `cur_θ` will be treated as a new local. Disambiguate by using `local cur_θ` to suppress this warning or `global cur_θ` to assign to the existing global variable.
+└ @ ~/-space/jl/active_matter/animations/s05_runtumble_path.jl:70
+┌ Warning: Assignment to `ti` in soft scope is ambiguous because a global variable by the same name exists: `ti` will be treated as a new local. Disambiguate by using `local ti` to suppress this warning or `global ti` to assign to the existing global variable.
+└ @ ~/-space/jl/active_matter/animations/s05_runtumble_path.jl:73
+ERROR: LoadError: UndefVarError: `ti` not defined in local scope
+Suggestion: check for an assignment to a local variable that shadows a global of the same name.
+Stacktrace:
+ [1] top-level scope
+   @ ~/-space/jl/active_matter/animations/s05_runtumble_path.jl:72
+in expression starting at /Users/parthbhargava/-space/jl/active_matter/animations/s05_runtumble_path.jl:68
+EXIT:1

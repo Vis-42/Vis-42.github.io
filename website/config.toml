@@ -1,0 +1,19 @@
+baseURL = "https://parthbhargava.net/"
+locale = 'en-us'
+title = 'Parth Bhargava'
+disableKinds = ["taxonomy", "term"]
+
+# Allow raw HTML in content (project descriptions use <sup>, entities, etc.)
+[markup.goldmark.renderer]
+  unsafe = true
+
+[params]
+  # Site description
+  description = "Parth Bhargava, physics undergraduate at NUS. Interactive simulations, lab work, and notes on complex systems, nonlinear dynamics, and whatever else I'm thinking about."
+  
+  # Author
+  [params.profile]
+    name = "Parth Bhargava"
+    email = "bhargava.parth07@gmail.com"
+    github = "Vis-42"
+

@@ -1,0 +1,74 @@
+  Activating project at `~/-space/jl/reservoir_computing/animations`
+  No Changes to `~/-space/jl/reservoir_computing/animations/Project.toml`
+  No Changes to `~/-space/jl/reservoir_computing/animations/Manifest.toml`
+
+[1/11]  s01_motivation.jl ...
+✓  s01_motivation.mp4
+    done in 110.2 s
+
+[2/11]  s02_lyapunov.jl ...
+✓  s02_lyapunov.mp4
+    done in 43.9 s
+
+[3/11]  s03_lorenz_attractor.jl ...
+✓  s03_lorenz_attractor.mp4
+    done in 40.3 s
+
+[4/11]  s04_echo_state.jl ...
+✓  s04_echo_state.mp4
+    done in 12.1 s
+
+[5/11]  s05_spectral_radius.jl ...
+✓  s05_spectral_radius.mp4
+    done in 6.4 s
+
+[6/11]  s06_reservoir_init.jl ...
+✓  s06_reservoir_init.mp4
+    done in 5.4 s
+
+[7/11]  s07_reservoir_dynamics.jl ...
+✓  s07_reservoir_dynamics.mp4
+    done in 6.8 s
+
+[8/11]  s08_ridge_regression.jl ...
+✓  s08_ridge_regression.mp4
+    done in 7.5 s
+
+[9/11]  s09_autonomous_pred.jl ...
+✓  s09_autonomous_pred.mp4
+    done in 7.2 s
+
+[10/11]  s10_phase_diagram.jl ...
+✓  s10_phase_diagram.mp4
+    done in 7.3 s
+
+[11/11]  s11_trajectory_recon.jl ...
+✓  s11_trajectory_recon.mp4
+    done in 8.3 s
+
+✓  All animations complete → /Users/parthbhargava/-space/jl/reservoir_computing/animations/output
+
+========================================================================
+COMPLETE SLIDE → ANIMATION MAPPING  (11 animated + 4 text-only)
+========================================================================
+
+[ANIMATION] Pre-rendered Julia outputs:
+  ✓  Motivation  →  s01_motivation.mp4
+  ✓  Theory: Lyapunov Exponents  →  s02_lyapunov.mp4
+  ✓  Theory: Lorenz-63 System  →  s03_lorenz_attractor.mp4
+  ✓  Theory: Echo State Property  →  s04_echo_state.mp4
+  ✓  Theory: Spectral Radius  →  s05_spectral_radius.mp4
+  ✓  Architecture: Reservoir Init  →  s06_reservoir_init.mp4
+  ✓  Architecture: Reservoir Dynamics  →  s07_reservoir_dynamics.mp4
+  ✓  Methods: Ridge Regression  →  s08_ridge_regression.mp4
+  ✓  Methods: Autonomous Prediction  →  s09_autonomous_pred.mp4
+  ✓  Results: Phase Diagram  →  s10_phase_diagram.mp4
+  ✓  Results: Trajectory Recon  →  s11_trajectory_recon.mp4
+
+[TEXT ONLY] No animation:
+  Outline
+  Methods: Hyperparameter Sweep
+  Conclusions
+  Limitations
+  Natural Extensions
+

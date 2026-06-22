@@ -1,0 +1,44 @@
+{{ define "main" }}
+<article class="project-page">
+  <p class="classification">Photographs</p>
+  <h1 class="project-title">photographs</h1>
+
+  {{ $photos := .Pages.ByDate.Reverse }}
+
+  {{ if $photos }}
+  <div class="photo-grid">
+    {{ range first 12 $photos }}
+    <figure class="photo-item">
+      {{ with .Params.src }}
+      <img src="{{ . }}" alt="{{ $.Title }}" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:2px;">
+      {{ end }}
+      <figcaption>{{ with .Params.caption }}{{ . }}{{ else }}{{ .Title }}{{ end }}</figcaption>
+    </figure>
+    {{ end }}
+  </div>
+
+  {{ if gt (len $photos) 12 }}
+  <details class="show-more">
+    <summary><span class="more-label"></span></summary>
+    <div class="photo-grid" style="margin-top:0.9rem;">
+      {{ range after 12 $photos }}
+      <figure class="photo-item">
+        {{ with .Params.src }}
+        <img src="{{ . }}" alt="{{ $.Title }}" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:2px;">
+        {{ end }}
+        <figcaption>{{ with .Params.caption }}{{ . }}{{ else }}{{ .Title }}{{ end }}</figcaption>
+      </figure>
+      {{ end }}
+    </div>
+  </details>
+  {{ end }}
+
+  {{ else }}
+  <div class="project-prose">
+    <p class="section-note">No photographs yet.</p>
+  </div>
+  {{ end }}
+
+  <p class="project-back"><a href="/">← back to home</a></p>
+</article>
+{{ end }}

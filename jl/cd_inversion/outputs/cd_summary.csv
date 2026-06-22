@@ -1,0 +1,6 @@
+CD Inversion Network — Summary
+============================================================
+
+condition,test_rmse,physics_satisfaction,spectral_r2
+with_physics,0.3246,1.0,0.6207
+without_physics,0.3246,1.0,0.6207

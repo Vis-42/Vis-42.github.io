@@ -1,0 +1,5 @@
+System: lorenz63
+Lyapunov time: 1.1038
+Best sparsity=0.15, sr=1.05
+Best prediction horizon: 0.942 Lyapunov times
+RMSE: 11.1561

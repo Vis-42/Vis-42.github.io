@@ -1,0 +1,7 @@
+Reservoir Computing — Lorenz63 ESN Phase Diagram
+N_reservoir = 50
+Train steps = 2000, Test steps = 400
+Lyapunov time = 1.104
+Best sparsity = 0.15, spectral_radius = 0.7
+Best prediction horizon = 1.96 Lyapunov times
+Best RMSE = 11.5

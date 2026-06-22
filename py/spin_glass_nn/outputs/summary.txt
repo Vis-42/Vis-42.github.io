@@ -1,0 +1,4 @@
+Spin Glass NN — Spiral Dataset
+Final loss: 0.6607
+Final IPR: 0.1235
+Initial IPR: 0.1278

@@ -1,0 +1,12 @@
+{{ define "main" }}
+<article class="project-page">
+  <p class="classification">Photographs</p>
+  {{ with .Params.src }}
+  <figure class="project-figure" style="max-width:640px;">
+    <img src="{{ . }}" alt="{{ $.Title }}" loading="lazy" style="width:100%;">
+    <figcaption>{{ with $.Params.caption }}{{ . }}{{ else }}{{ $.Title }}{{ end }}</figcaption>
+  </figure>
+  {{ end }}
+  <p class="project-back"><a href="/photographs/">← back to photographs</a></p>
+</article>
+{{ end }}

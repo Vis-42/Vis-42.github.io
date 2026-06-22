@@ -1,0 +1,45 @@
+{{ define "main" }}
+<article class="project-page">
+  <p class="classification">Writing · notes in progress</p>
+  <h1 class="project-title">blog</h1>
+
+  {{ $posts := where .Site.RegularPages "Section" "blog" }}
+  {{ $posts = $posts.ByDate.Reverse }}
+
+  {{ if $posts }}
+  <ul class="post-list">
+    {{ range first 5 $posts }}
+    <li class="post-item">
+      <div class="post-date">{{ .Date.Format "2006 · Jan" }}</div>
+      <h4 class="post-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h4>
+      {{ with .Params.excerpt }}<p class="post-excerpt">{{ . }}</p>{{ else }}<p class="post-excerpt">{{ .Summary | truncate 160 }}</p>{{ end }}
+      <a class="post-readmore" href="{{ .RelPermalink }}">read the post →</a>
+    </li>
+    {{ end }}
+  </ul>
+
+  {{ if gt (len $posts) 5 }}
+  <details class="show-more">
+    <summary><span class="more-label"></span></summary>
+    <ul class="post-list">
+      {{ range after 5 $posts }}
+      <li class="post-item">
+        <div class="post-date">{{ .Date.Format "2006 · Jan" }}</div>
+        <h4 class="post-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h4>
+        {{ with .Params.excerpt }}<p class="post-excerpt">{{ . }}</p>{{ else }}<p class="post-excerpt">{{ .Summary | truncate 160 }}</p>{{ end }}
+        <a class="post-readmore" href="{{ .RelPermalink }}">read the post →</a>
+      </li>
+      {{ end }}
+    </ul>
+  </details>
+  {{ end }}
+
+  {{ else }}
+  <div class="project-prose">
+    <p class="section-note">No posts yet.</p>
+  </div>
+  {{ end }}
+
+  <p class="project-back"><a href="/">← back to home</a></p>
+</article>
+{{ end }}

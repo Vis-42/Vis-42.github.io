@@ -1,0 +1,3 @@
+Percolation on Clique Complex (N=120, p_edge=0.06)
+  dim=1: p_c=0.200, S_max=1.000
+  dim=2: p_c=0.300, S_max=0.667
