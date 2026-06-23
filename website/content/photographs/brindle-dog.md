@@ -1,6 +1,6 @@
 ---
 title: "Dog on the grass"
-date: 2024-06-12
+date: 2024-06-14
 src: "/media/photos/DSC01008.jpg"
-caption: "brindle stray, alert · India, 2024"
+caption: "brindle stray, alert · India, June 2024"
 ---

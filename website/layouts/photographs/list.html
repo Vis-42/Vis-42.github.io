@@ -2,43 +2,80 @@
 <article class="project-page">
   <p class="classification">Photographs</p>
   <h1 class="project-title">photographs</h1>
+  <p class="photo-page-meta">Sony α6100 &nbsp;·&nbsp; {{ len .Pages }} frames</p>
 
   {{ $photos := .Pages.ByDate.Reverse }}
-
   {{ if $photos }}
-  <div class="photo-grid">
-    {{ range first 12 $photos }}
-    <figure class="photo-item">
-      {{ with .Params.src }}
-      <img src="{{ . }}" alt="{{ $.Title }}" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:2px;">
-      {{ end }}
-      <figcaption>{{ with .Params.caption }}{{ . }}{{ else }}{{ .Title }}{{ end }}</figcaption>
+  <div class="photo-masonry" id="photoGrid">
+    {{ range $i, $p := $photos }}
+    {{ $fname := path.Base $p.Params.src }}
+    <figure class="photo-item"
+            data-full="{{ $p.Params.src }}"
+            data-caption="{{ with $p.Params.caption }}{{ . }}{{ else }}{{ $p.Title }}{{ end }}"
+            data-index="{{ $i }}"
+            onclick="openLb(this)">
+      <img src="/media/photos/thumbs/{{ $fname }}"
+           alt="{{ $p.Title }}"
+           loading="lazy">
+      <figcaption>{{ with $p.Params.caption }}{{ . }}{{ else }}{{ $p.Title }}{{ end }}</figcaption>
     </figure>
     {{ end }}
   </div>
-
-  {{ if gt (len $photos) 12 }}
-  <details class="show-more">
-    <summary><span class="more-label"></span></summary>
-    <div class="photo-grid" style="margin-top:0.9rem;">
-      {{ range after 12 $photos }}
-      <figure class="photo-item">
-        {{ with .Params.src }}
-        <img src="{{ . }}" alt="{{ $.Title }}" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:2px;">
-        {{ end }}
-        <figcaption>{{ with .Params.caption }}{{ . }}{{ else }}{{ .Title }}{{ end }}</figcaption>
-      </figure>
-      {{ end }}
-    </div>
-  </details>
-  {{ end }}
-
   {{ else }}
-  <div class="project-prose">
-    <p class="section-note">No photographs yet.</p>
-  </div>
+  <p class="section-note">No photographs yet.</p>
   {{ end }}
+
+  <!-- Lightbox -->
+  <div id="lb" class="lb" hidden aria-modal="true" role="dialog">
+    <div class="lb-backdrop" onclick="closeLb()"></div>
+    <button class="lb-close" onclick="closeLb()" aria-label="Close">✕</button>
+    <button class="lb-prev" onclick="navLb(-1)" aria-label="Previous">&#8592;</button>
+    <button class="lb-next" onclick="navLb(1)" aria-label="Next">&#8594;</button>
+    <figure class="lb-figure">
+      <img id="lb-img" src="" alt="" onclick="navLb(1)">
+      <figcaption id="lb-cap"></figcaption>
+    </figure>
+  </div>
 
   <p class="project-back"><a href="/">← back to home</a></p>
 </article>
+
+<script>
+(function(){
+  var items = [], cur = 0;
+
+  window.openLb = function(el) {
+    items = Array.from(document.querySelectorAll('.photo-item'));
+    cur = items.indexOf(el);
+    show(cur);
+    document.getElementById('lb').hidden = false;
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.closeLb = function() {
+    document.getElementById('lb').hidden = true;
+    document.body.style.overflow = '';
+  };
+
+  window.navLb = function(dir) {
+    cur = (cur + dir + items.length) % items.length;
+    show(cur);
+  };
+
+  function show(i) {
+    var el = items[i];
+    var img = document.getElementById('lb-img');
+    img.src = '';
+    img.src = el.dataset.full;
+    document.getElementById('lb-cap').textContent = el.dataset.caption;
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (document.getElementById('lb').hidden) return;
+    if (e.key === 'Escape')      closeLb();
+    if (e.key === 'ArrowRight')  navLb(1);
+    if (e.key === 'ArrowLeft')   navLb(-1);
+  });
+})();
+</script>
 {{ end }}

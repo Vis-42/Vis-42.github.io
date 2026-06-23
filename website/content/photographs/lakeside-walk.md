@@ -1,6 +1,6 @@
 ---
 title: "Lakeside walk"
-date: 2024-10-20
+date: 2025-06-28
 src: "/media/photos/DSC02012.jpg"
-caption: "families along the promenade, hills behind · India, 2024"
+caption: "families along the promenade, hills behind · India, June 2025"
 ---

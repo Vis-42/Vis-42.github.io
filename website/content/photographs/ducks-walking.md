@@ -1,6 +1,6 @@
 ---
 title: "Ducks in a line"
-date: 2024-04-01
+date: 2024-04-22
 src: "/media/photos/DSC00707.jpg"
-caption: "four white ducks on a garden path · India, 2024"
+caption: "four white ducks on a garden path · India, April 2024"
 ---

@@ -1,6 +1,6 @@
 ---
 title: "Leaves in afternoon light"
-date: 2024-03-12
+date: 2024-04-14
 src: "/media/photos/DSC00113.jpg"
-caption: "backlit leaves against a fence · India, 2024"
+caption: "backlit leaves against a fence · India, April 2024"
 ---

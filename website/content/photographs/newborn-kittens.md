@@ -1,6 +1,6 @@
 ---
 title: "Newborn kittens"
-date: 2024-07-20
+date: 2024-06-18
 src: "/media/photos/DSC01344.jpg"
-caption: "two-day-old kittens · India, 2024"
+caption: "two-day-old kittens · India, June 2024"
 ---

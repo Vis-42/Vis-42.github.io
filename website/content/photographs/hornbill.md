@@ -1,6 +1,6 @@
 ---
 title: "Hornbill"
-date: 2024-09-01
+date: 2025-01-31
 src: "/media/photos/DSC01698.jpg"
-caption: "Oriental Pied Hornbill on a log · Singapore, 2024"
+caption: "Oriental Pied Hornbill on a log · Singapore, January 2025"
 ---

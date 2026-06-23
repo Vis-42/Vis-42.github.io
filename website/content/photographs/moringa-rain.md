@@ -1,6 +1,6 @@
 ---
 title: "Moringa in the rain"
-date: 2024-06-10
+date: 2024-05-03
 src: "/media/photos/DSC00970.jpg"
-caption: "drumstick tree, monsoon · India, 2024"
+caption: "drumstick tree, first monsoon · India, May 2024"
 ---
