@@ -1,0 +1,270 @@
+{{ define "main" }}
+<article class="project-page">
+  <p class="classification">Coursework</p>
+  <h1 class="project-title">coursework</h1>
+  <div class="project-prose">
+    <p>Lab reports, analysis code, and problem sets from my physics degree at NUS. The experimental work is up top; lecture-course assignments are below.</p>
+  </div>
+
+  <div class="coursework-subsection">
+    <h3>Experimental Work</h3>
+    <div class="projects-grid experiments-preview">
+
+      <div class="project-card">
+      <div class="card-thumb">
+      <img src="/media/thumbs/hall.png" alt="Scanning Hall probe microscopy: Hall cross sensor and superconducting vortex lattice maps" loading="lazy">
+      </div>
+      <div class="card-content">
+      <h4>hall effect in semiconductors</h4>
+      <p>Measured Hall voltage and magnetoresistance across temperature to extract carrier type, mobility, and the intrinsic transition; includes uncertainty analysis.</p>
+      <p class="project-links">
+      <a href="/pdfs/experiments/hall-effect.pdf" target="_blank">Report</a>
+      <a href="https://github.com/Vis-42/Vis-42.github.io/blob/main/manuscripts/typst/hall_effect/scripts/hall_effect_analysis.py" target="_blank">Analysis Code</a>
+      </p>
+      </div>
+      </div>
+
+      <div class="project-card">
+      <div class="card-thumb">
+      <img src="/media/thumbs/raman.png" alt="Raman spectrum of carbon allotropes" loading="lazy">
+      </div>
+      <div class="card-content">
+      <h4>raman spectroscopy</h4>
+      <p>Characterised carbon allotropes via D/G band ratios, estimated graphene layer count, and identified an unknown semiconductor wafer from its 521 cm⁻¹ mode.</p>
+      <p class="project-links">
+      <a href="/pdfs/experiments/raman-spectroscopy.pdf" target="_blank">Report</a>
+      <a href="/pdfs/experiments/raman-spectroscopy.pdf" target="_blank">Slides</a>
+      <a href="https://github.com/Vis-42/Vis-42.github.io/blob/main/manuscripts/typst/raman/scripts/analyze_raman.py" target="_blank">Analysis Code</a>
+      <a href="https://github.com/Vis-42/Vis-42.github.io/blob/main/manuscripts/typst/raman/scripts/analyze_dlc.py" target="_blank">DLC Analysis</a>
+      </p>
+      </div>
+      </div>
+
+      <div class="project-card">
+      <div class="card-thumb">
+      <img src="/media/thumbs/xrd.png" alt="Electron diffraction pattern from a silicon crystal (bulk spots and surface reconstruction)" loading="lazy">
+      </div>
+      <div class="card-content">
+      <h4>x-ray diffraction analysis</h4>
+      <p>Used Bragg peaks to determine lattice constants and identify an unknown crystal; report documents calibration limits.</p>
+      <p class="project-links">
+      <a href="/pdfs/experiments/xrd.pdf" target="_blank">Report</a>
+      <a href="https://github.com/Vis-42/Vis-42.github.io/blob/main/manuscripts/typst/xrd/scripts/xrd_final_corrected.py" target="_blank">Analysis Code</a>
+      </p>
+      </div>
+      </div>
+
+    </div>
+
+    <details class="experiments-collapsible">
+      <summary class="experiments-toggle">Show more experiments</summary>
+      <div class="projects-grid">
+
+      <div class="project-card">
+      <div class="card-thumb">
+      <img src="/media/thumbs/magnetic.png" alt="Magnetic moment scaling laws" loading="lazy">
+      </div>
+      <div class="card-content">
+      <h4>magnetic moment in helmholtz field</h4>
+      <p>Calibrated Helmholtz field constant and tested scaling laws; corrected a model assumption during analysis.</p>
+      <p class="project-links">
+      <a href="/pdfs/experiments/magnetic-moment.pdf" target="_blank">Report</a>
+      <a href="/pdfs/magnetic-moment-slides.pdf" target="_blank">Slides</a>
+      <a href="https://github.com/Vis-42/Vis-42.github.io/blob/main/manuscripts/typst/magnetic_moment/scripts/mm_analysis.py" target="_blank">Analysis Code</a>
+      </p>
+      </div>
+      </div>
+
+      <div class="project-card">
+      <div class="card-thumb">
+      <img src="/media/thumbs/xrf.png" alt="Emission line spectra of the elements arranged as a periodic table" loading="lazy">
+      </div>
+      <div class="card-content">
+      <h4>x-ray fluorescence analysis</h4>
+      <p>Qualitative elemental identification of unknowns and quantitative brass composition via Gaussian deconvolution of overlapping K-lines.</p>
+      <p class="project-links">
+      <a href="/pdfs/experiments/xrf.pdf" target="_blank">Report</a>
+      <a href="https://github.com/Vis-42/Vis-42.github.io/blob/main/manuscripts/typst/xrf/scripts/analyze_xrf.py" target="_blank">Analysis Code</a>
+      </p>
+      </div>
+      </div>
+
+      <div class="project-card">
+      <div class="card-thumb">
+      <img src="/media/thumbs/paschen.png" alt="Paschen curve with Townsend theory" loading="lazy">
+      </div>
+      <div class="card-content">
+      <h4>paschen curve &amp; gas discharge</h4>
+      <p>Mapped breakdown voltage vs. electrode gap at three pressures; extracted the second Townsend coefficient and identified the avalanche-to-streamer transition.</p>
+      <p class="project-links">
+      <a href="/pdfs/experiments/paschen-curve.pdf" target="_blank">Report</a>
+      <a href="https://github.com/Vis-42/Vis-42.github.io/blob/main/manuscripts/typst/plasma/scripts/analyze_paschen.py" target="_blank">Analysis Code</a>
+      </p>
+      </div>
+      </div>
+
+      <div class="project-card">
+      <div class="card-thumb">
+      <img src="/media/thumbs/laue.png" alt="Laue diffraction pattern grid" loading="lazy">
+      </div>
+      <div class="card-content">
+      <h4>laue diffraction &amp; x-ray crystallography</h4>
+      <p>Indexed Laue back-reflection patterns and determined lattice parameters; combined with powder XRD for crystal identification.</p>
+      <p class="project-links">
+      <a href="/pdfs/experiments/laue-xrc.pdf" target="_blank">Report</a>
+      <a href="https://github.com/Vis-42/Vis-42.github.io/blob/main/manuscripts/typst/lau+xrc/scripts/analyze_xrc.py" target="_blank">Analysis Code</a>
+      </p>
+      </div>
+      </div>
+
+      <div class="project-card">
+      <div class="card-thumb">
+      <img src="/media/thumbs/pll.png" alt="Laser pointer beams red green violet" loading="lazy">
+      </div>
+      <div class="card-content">
+      <h4>propagation of laser light (pll)</h4>
+      <p>Measured Gaussian beam parameters and beam quality; report focuses on fitting and measurement limits.</p>
+      <p class="project-links">
+      <a href="/pdfs/experiments/pll.pdf" target="_blank">Report</a>
+      </p>
+      </div>
+      </div>
+
+      <div class="project-card">
+      <div class="card-thumb">
+      <img src="/media/thumbs/fluorescence.png" alt="Fluorescence emission spectra of BSA and lysozyme" loading="lazy">
+      </div>
+      <div class="card-content">
+      <h4>fluorescence spectroscopy: protein unfolding</h4>
+      <p>Tracked acid denaturation of BSA and lysozyme via intrinsic Trp/Tyr fluorescence; observed emission shifts and intensity changes tied to tertiary structure loss.</p>
+      <p class="project-links">
+      <a href="/pdfs/experiments/fluorescence-spectroscopy.pdf" target="_blank">Report</a>
+      <a href="https://github.com/Vis-42/Vis-42.github.io/blob/main/manuscripts/typst/bio-fluorescence/scripts/analyze_fluorescence.py" target="_blank">Analysis Code</a>
+      </p>
+      </div>
+      </div>
+
+      <div class="project-card">
+      <div class="card-thumb">
+      <img src="/media/thumbs/cd.png" alt="Circular dichroism spectra" loading="lazy">
+      </div>
+      <div class="card-content">
+      <h4>circular dichroism: protein secondary structure</h4>
+      <p>Monitored &alpha;-helical content of BSA and lysozyme under acid denaturation using far-UV CD; lysozyme's disulfide bonds preserved its secondary structure.</p>
+      <p class="project-links">
+      <a href="/pdfs/experiments/circular-dichroism.pdf" target="_blank">Report</a>
+      <a href="https://github.com/Vis-42/Vis-42.github.io/blob/main/manuscripts/typst/bio-cd/scripts/analyze_cd.py" target="_blank">Analysis Code</a>
+      </p>
+      </div>
+      </div>
+
+      <div class="project-card">
+      <div class="card-thumb">
+      <img src="/media/thumbs/esr.png" alt="EPR spectrometer" loading="lazy">
+      </div>
+      <div class="card-content">
+      <h4>electron spin resonance (esr)</h4>
+      <p>Extracted g-factor from frequency–field measurements; analyzed Zeeman splitting and systematics.</p>
+      <p class="project-links">
+      <a href="/pdfs/experiments/esr.pdf" target="_blank">Report</a>
+      </p>
+      </div>
+      </div>
+
+      <div class="project-card">
+      <div class="card-thumb">
+      <img src="/media/thumbs/trim.png" alt="TRIM ion transport simulation" loading="lazy">
+      </div>
+      <div class="card-content">
+      <h4>trim ion transport simulation</h4>
+      <p>Monte Carlo simulations of ion range, damage, and sputtering across nuclear microscopy, semiconductor implantation, and proton therapy applications.</p>
+      <p class="project-links">
+      <a href="/pdfs/experiments/trim-simulation.pdf" target="_blank">Report</a>
+      </p>
+      </div>
+      </div>
+
+      <div class="project-card">
+      <div class="card-thumb">
+      <img src="/media/thumbs/microscopy.png" alt="Fluorescence microscopy comparison panel" loading="lazy">
+      </div>
+      <div class="card-content">
+      <h4>fluorescence microscopy: cellular structure</h4>
+      <p>Imaged Hoechst-stained onion epidermal and cheek epithelial cells; compared brightfield and fluorescence contrast for nuclear localisation.</p>
+      <p class="project-links">
+      <a href="/pdfs/experiments/fluorescence-microscopy.pdf" target="_blank">Report</a>
+      <a href="https://github.com/Vis-42/Vis-42.github.io/blob/main/manuscripts/typst/bio-microscopy/scripts/process_images.py" target="_blank">Analysis Code</a>
+      </p>
+      </div>
+      </div>
+
+      </div>
+    </details>
+  </div>
+
+  <div class="coursework-subsection">
+    <h3>Notes and Assignments</h3>
+    <div class="notes-list"></div>
+
+    <details class="assignments-collapsible">
+      <summary class="assignments-toggle">Assignments</summary>
+      <div class="notes-list">
+        <h4>classical mechanics ii (pc3261)</h4>
+        <ul>
+          <li><a href="/pdfs/notes/cma1.pdf" target="_blank">CMA 1</a></li>
+          <li><a href="/pdfs/notes/cma2.pdf" target="_blank">CMA 2</a></li>
+          <li><a href="/pdfs/notes/cma3.pdf" target="_blank">CMA 3</a></li>
+          <li><a href="/pdfs/notes/cma4.pdf" target="_blank">CMA 4</a></li>
+          <li><a href="/pdfs/notes/cma5.pdf" target="_blank">CMA 5</a></li>
+          <li><a href="/pdfs/notes/cma6.pdf" target="_blank">CMA 6</a></li>
+          <li><a href="/pdfs/notes/cmw2.pdf" target="_blank">CMW 2</a></li>
+          <li><a href="/pdfs/notes/cmw4.pdf" target="_blank">CMW 4</a></li>
+          <li><a href="/pdfs/notes/cmw5.pdf" target="_blank">CMW 5</a></li>
+          <li><a href="/pdfs/notes/cmw6.pdf" target="_blank">CMW 6</a></li>
+          <li><a href="/pdfs/notes/cmw7.pdf" target="_blank">CMW 7</a></li>
+          <li><a href="/pdfs/notes/cmw8.pdf" target="_blank">CMW 8</a></li>
+          <li><a href="/pdfs/notes/cmw9.pdf" target="_blank">CMW 9</a></li>
+          <li><a href="/pdfs/notes/cmw10.pdf" target="_blank">CMW 10</a></li>
+          <li><a href="/pdfs/notes/cmw11.pdf" target="_blank">CMW 11</a></li>
+          <li><a href="/pdfs/notes/cmw12.pdf" target="_blank">CMW 12</a></li>
+          <li><a href="/pdfs/notes/cmw13.pdf" target="_blank">CMW 13</a></li>
+          <li><a href="/pdfs/notes/cmw14.pdf" target="_blank">CMW 14</a></li>
+          <li><a href="/pdfs/notes/cmw15.pdf" target="_blank">CMW 15</a></li>
+          <li><a href="/pdfs/notes/cmw16.pdf" target="_blank">CMW 16</a></li>
+          <li><a href="/pdfs/notes/cmw17.pdf" target="_blank">CMW 17</a></li>
+          <li><a href="/pdfs/notes/cmw18.pdf" target="_blank">CMW 18</a></li>
+          <li><a href="/pdfs/notes/cmw19.pdf" target="_blank">CMW 19</a></li>
+          <li><a href="/pdfs/notes/cmw20.pdf" target="_blank">CMW 20</a></li>
+          <li><a href="/pdfs/notes/cmw21.pdf" target="_blank">CMW 21</a></li>
+          <li><a href="/pdfs/notes/cmw22.pdf" target="_blank">CMW 22</a></li>
+          <li><a href="/pdfs/notes/cmw23.pdf" target="_blank">CMW 23</a></li>
+          <li><a href="/pdfs/notes/cmw24.pdf" target="_blank">CMW 24</a></li>
+        </ul>
+        <h4>thermodynamics &amp; statistical mechanics (pc2135)</h4>
+        <ul>
+          <li><a href="/pdfs/notes/therm01.pdf" target="_blank">Assignment 1</a></li>
+          <li><a href="/pdfs/notes/therm02.pdf" target="_blank">Assignment 2</a></li>
+          <li><a href="/pdfs/notes/therm03.pdf" target="_blank">Assignment 3</a></li>
+          <li><a href="/pdfs/notes/therm04.pdf" target="_blank">Assignment 4</a></li>
+          <li><a href="/pdfs/notes/therm05.pdf" target="_blank">Assignment 5</a></li>
+          <li><a href="/pdfs/notes/therm06.pdf" target="_blank">Assignment 6</a></li>
+          <li><a href="/pdfs/notes/therm07.pdf" target="_blank">Assignment 7</a></li>
+          <li><a href="/pdfs/notes/therm08.pdf" target="_blank">Assignment 8</a></li>
+          <li><a href="/pdfs/notes/therm09.pdf" target="_blank">Assignment 9</a></li>
+          <li><a href="/pdfs/notes/therm10.pdf" target="_blank">Assignment 10</a></li>
+          <li><a href="/pdfs/notes/therm11.pdf" target="_blank">Assignment 11</a></li>
+          <li><a href="/pdfs/notes/therm12.pdf" target="_blank">Assignment 12</a></li>
+        </ul>
+        <h4>biophysics ii (pc3267)</h4>
+        <ul>
+          <li><a href="/pdfs/notes/homework1.pdf" target="_blank">Homework 1</a></li>
+          <li><a href="/pdfs/notes/homework2.pdf" target="_blank">Homework 2</a></li>
+          <li><a href="/pdfs/notes/homework3.pdf" target="_blank">Homework 3</a></li>
+        </ul>
+      </div>
+    </details>
+  </div>
+
+  <p class="project-back"><a href="/">← back to home</a></p>
+</article>
+{{ end }}

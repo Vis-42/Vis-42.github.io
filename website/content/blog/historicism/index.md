@@ -13,4 +13,4 @@ what came later was a paradigm-shift, with quantum mechanics and relativity, eve
 
 in the 1950s, the existence of india as a unified state
 
-in the 1800s, the idea of democracy
+in the 1800s, the idea of democracy was

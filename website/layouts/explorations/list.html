@@ -1,18 +1,25 @@
 {{ define "main" }}
 <article class="project-page">
-  <p class="classification">Index · computational projects</p>
-  <h1 class="project-title">Projects</h1>
+  <p class="classification">Explorations</p>
+  <h1 class="project-title">explorations</h1>
   <div class="project-prose">
-    <p>Twelve interactive computational-physics notebooks plus a chaotic-pendulum study, each with its own page, figures, and source.</p>
+    <p>Interactive computational-physics notebooks, each a small machine you can run in the browser. Pick one, push its sliders, watch it behave. Every card opens its own page with the live notebook, the figures, and the source.</p>
   </div>
-  <section class="links-panel">
-    <h2 class="links-head">All projects</h2>
-    <ul class="links-list">
-      {{ range (sort .Pages "Weight") }}
-      <li><a href="{{ .RelPermalink }}"><span class="lk-label">{{ .Title }}</span><span class="lk-arrow">→</span></a></li>
-      {{ end }}
-    </ul>
-  </section>
-  <p class="project-back"><a href="/">← home</a></p>
+
+  <div class="projects-grid">
+    {{ range (sort .Pages "Weight") }}
+    <div class="project-card">
+      <div class="card-thumb">
+        {{ with .Params.thumb }}<img src="{{ . }}" alt="{{ $.Title }}" loading="lazy">{{ end }}
+      </div>
+      <div class="card-content">
+        <h4><a href="{{ .RelPermalink }}">{{ .Title | lower }}</a></h4>
+        {{ .Summary }}
+      </div>
+    </div>
+    {{ end }}
+  </div>
+
+  <p class="project-back"><a href="/">← back to home</a></p>
 </article>
 {{ end }}
