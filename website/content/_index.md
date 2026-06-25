@@ -1,5 +1,4 @@
 ---
 title: "Home"
+aliases: ["/about/"]
 ---
-
-Welcome to my academic website!

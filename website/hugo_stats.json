@@ -35,8 +35,6 @@
       "ul"
     ],
     "classes": [
-      "about-contact",
-      "about-prose",
       "accent",
       "active",
       "app-frame",
@@ -64,13 +62,6 @@
       "hero-content",
       "hero-inner",
       "hero-photo",
-      "home-index",
-      "hx-arrow",
-      "hx-desc",
-      "hx-item",
-      "hx-label",
-      "hx-main",
-      "hx-num",
       "is-placeholder",
       "lb",
       "lb-backdrop",
