@@ -777,31 +777,42 @@
     .disc-toggle.open .disc-spoke:nth-of-type(2) { transform: rotate(45deg); }
     .disc-toggle.open .disc-spoke:nth-of-type(3) { transform: rotate(45deg); }
 
-    /* Full-screen backdrop — no backdrop-filter here to avoid containing-block traps */
+    /* Standalone theme toggle (mobile only) — sits below the disc */
+    .disc-theme-btn {
+      position: fixed; top: 88px; right: 22px; z-index: 1001; display: none;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.66rem; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--ink-2);
+      background: var(--panel); border: 1px solid var(--panel-border);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      border-radius: 999px; padding: 0.28rem 0.7rem;
+      box-shadow: 0 2px 10px var(--shadow); cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .disc-theme-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* Full-screen backdrop */
     .disc-menu { position: fixed; inset: 0; z-index: 1000; pointer-events: none; background: transparent; transition: background 0.3s ease; }
     .disc-menu.open { pointer-events: auto; background: rgba(10, 8, 5, 0.52); }
 
-    /* Items: absolute inside the full-screen overlay (same coordinate space as viewport).
-       JS sets left/top to exact viewport coordinates computed with Math.cos/sin.
-       No position:fixed on items = no containing-block traps from backdrop-filter. */
-    .disc-menu a, .disc-menu .disc-theme {
+    /* Items: absolute inside fullscreen overlay (inset:0 = same coords as viewport).
+       JS assigns left/top directly; CSS only controls opacity/scale per slot class.
+       3 slots visible at a time: slot-prev, slot-cur, slot-next. */
+    .disc-menu a {
       position: absolute; left: 0; top: 0;
-      transform: translate(-50%, -50%) scale(0.15);
+      transform: translate(-50%, -50%) scale(0.5);
       opacity: 0; pointer-events: none; white-space: nowrap;
-      font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; letter-spacing: 0.02em;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem; letter-spacing: 0.02em;
       text-decoration: none; color: var(--ink); cursor: pointer;
       background: var(--panel); border: 1px solid var(--panel-border);
-      border-radius: 999px; padding: 0.42rem 1rem; box-shadow: 0 4px 18px var(--shadow);
-      transition:
-        transform 0.36s cubic-bezier(0.34, 1.4, 0.64, 1) calc(var(--i,0) * 32ms),
-        opacity   0.22s ease                              calc(var(--i,0) * 32ms);
+      border-radius: 999px; padding: 0.44rem 1.05rem; box-shadow: 0 4px 18px var(--shadow);
+      transition: opacity 0.22s ease, transform 0.28s cubic-bezier(0.34, 1.2, 0.64, 1);
     }
     .disc-menu a.disc-inactive { color: var(--ink-muted); }
-    .disc-menu.open a, .disc-menu.open .disc-theme {
-      transform: translate(-50%, -50%);
-      opacity: 1; pointer-events: auto;
-    }
-    .disc-menu.open a.disc-inactive { opacity: 0.55; }
+    /* centre item: full size */
+    .disc-menu a.slot-cur  { opacity: 1; pointer-events: auto; transform: translate(-50%,-50%) scale(1); }
+    /* flanking items: slightly smaller, dimmer */
+    .disc-menu a.slot-prev,
+    .disc-menu a.slot-next { opacity: 0.55; pointer-events: auto; transform: translate(-50%,-50%) scale(0.88); }
 
     /* ============================== RESPONSIVE ============================== */
     @media (max-width: 1024px) {
@@ -810,6 +821,7 @@
       .page-column { padding-left: 1.4rem; }
       .site-monogram { display: flex; }
       .disc-toggle { display: flex; }
+      .disc-theme-btn { display: inline-flex; align-items: center; }
     }
     @media (max-width: 720px) {
       html { font-size: 16px; }
@@ -838,6 +850,9 @@
   <!-- monogram home-link (mobile) -->
   <a href="/" class="site-monogram" aria-label="Home">PB</a>
 
+  <!-- standalone theme toggle (mobile only, separate from disc) -->
+  <button class="disc-theme-btn theme-toggle" aria-label="Toggle theme"><span class="theme-text">Dark</span></button>
+
   <!-- rotating disc menu (mobile) -->
   <button class="disc-toggle" aria-label="Open menu" aria-expanded="false">
     <span class="disc-ring"></span>
@@ -845,13 +860,12 @@
     <span class="disc-core"></span>
   </button>
   <nav class="disc-menu" aria-hidden="true" aria-label="Menu">
-    <a style="--i:0" href="/explorations/">explorations</a>
-    <a style="--i:1" href="/coursework/">coursework</a>
-    <a style="--i:2" href="/blog/">blog</a>
-    <a style="--i:3" href="/photographs/">photographs</a>
-    <a style="--i:4" href="/projects/" class="disc-inactive">projects</a>
-    <a style="--i:5" href="/publications/" class="disc-inactive">publications</a>
-    <button class="theme-toggle disc-theme" aria-label="Toggle theme"><span class="theme-text">Dark</span></button>
+    <a href="/explorations/">explorations</a>
+    <a href="/coursework/">coursework</a>
+    <a href="/blog/">blog</a>
+    <a href="/photographs/">photographs</a>
+    <a href="/projects/" class="disc-inactive">projects</a>
+    <a href="/publications/" class="disc-inactive">publications</a>
   </nav>
 
   <main>
@@ -911,42 +925,82 @@
       }));
     })();
 
-    // Rotating-disc menu (mobile) — radial fan positioned with real trig in JS
+    // Disc menu — circular 3-slot carousel (prev · cur · next), swipe to scroll
     (function() {
-      const disc = document.querySelector('.disc-toggle');
-      const menu = document.querySelector('.disc-menu');
+      var disc = document.querySelector('.disc-toggle');
+      var menu = document.querySelector('.disc-menu');
       if (!disc || !menu) return;
-      const items = Array.from(menu.children).filter(el => el.matches('a, .disc-theme'));
+      var items = Array.from(menu.querySelectorAll('a'));
+      var N = items.length;
+      var cur = 0;
 
-      // Items are position:absolute inside the fullscreen overlay (inset:0),
-      // so left/top in JS equal viewport coordinates directly. No fixed-position
-      // containing-block issues, no CSS custom-property math in transforms.
-      function layout() {
-        const r = disc.getBoundingClientRect();
-        const cx = r.left + r.width / 2;
-        const cy = r.top + r.height / 2;
-        const R = Math.min(160, window.innerWidth * 0.50);
-        const n = items.length;
-        const a0 = 100, a1 = 196; // 100° (below-left) → 196° (left-above)
+      // Three fixed slot angles around the disc:
+      //   prev = 118° (upper-left), cur = 155° (left), next = 192° (lower-left)
+      var SLOTS = [118, 155, 192];
+      var R = 0, cx = 0, cy = 0;
+
+      function measure() {
+        var r = disc.getBoundingClientRect();
+        cx = r.left + r.width / 2;
+        cy = r.top + r.height / 2;
+        R = Math.min(155, window.innerWidth * 0.48);
+      }
+
+      function render() {
         items.forEach(function(el, i) {
-          var ang = (a0 + (a1 - a0) * (i / (n - 1))) * Math.PI / 180;
+          // distance from cur in circular sense
+          var fwd = ((i - cur) % N + N) % N;   // 0=cur, 1=next, N-1=prev
+          var slot = fwd === 0 ? 1 : fwd === 1 ? 2 : fwd === N - 1 ? 0 : -1;
+          el.classList.remove('slot-prev', 'slot-cur', 'slot-next');
+          if (slot === -1) { return; } // hidden
+          var ang = SLOTS[slot] * Math.PI / 180;
           el.style.left = (cx + R * Math.cos(ang)) + 'px';
           el.style.top  = (cy + R * Math.sin(ang)) + 'px';
+          el.classList.add(slot === 0 ? 'slot-prev' : slot === 1 ? 'slot-cur' : 'slot-next');
         });
       }
 
+      function advance(dir) { cur = ((cur + dir) % N + N) % N; render(); }
+
       function setOpen(open) {
-        if (open) layout();
+        if (open) { measure(); render(); }
+        else { items.forEach(function(el) { el.classList.remove('slot-prev','slot-cur','slot-next'); }); }
         disc.classList.toggle('open', open);
         menu.classList.toggle('open', open);
         disc.setAttribute('aria-expanded', open ? 'true' : 'false');
         menu.setAttribute('aria-hidden', open ? 'false' : 'true');
       }
-      disc.addEventListener('click', function(e) { e.stopPropagation(); setOpen(!menu.classList.contains('open')); });
-      menu.querySelectorAll('a').forEach(function(a) { a.addEventListener('click', function() { setOpen(false); }); });
-      menu.addEventListener('click', function(e) { if (e.target === menu) setOpen(false); });
-      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') setOpen(false); });
-      window.addEventListener('resize', function() { if (menu.classList.contains('open')) layout(); });
+
+      disc.addEventListener('click', function(e) {
+        e.stopPropagation();
+        setOpen(!menu.classList.contains('open'));
+      });
+
+      // clicking a slot-prev or slot-next cycles instead of navigating
+      items.forEach(function(el) {
+        el.addEventListener('click', function(e) {
+          if (el.classList.contains('slot-prev')) { e.preventDefault(); advance(-1); }
+          else if (el.classList.contains('slot-next')) { e.preventDefault(); advance(1); }
+          else { setOpen(false); } // slot-cur: navigate
+        });
+      });
+
+      // swipe left/right to cycle
+      var tx = 0;
+      menu.addEventListener('touchstart', function(e) { tx = e.touches[0].clientX; }, {passive:true});
+      menu.addEventListener('touchend', function(e) {
+        var dx = e.changedTouches[0].clientX - tx;
+        if (Math.abs(dx) > 35) { advance(dx < 0 ? 1 : -1); }
+        else if (e.target === menu) { setOpen(false); }
+      }, {passive:true});
+
+      document.addEventListener('keydown', function(e) {
+        if (!menu.classList.contains('open')) return;
+        if (e.key === 'Escape') setOpen(false);
+        if (e.key === 'ArrowLeft')  advance(-1);
+        if (e.key === 'ArrowRight') advance(1);
+      });
+      window.addEventListener('resize', function() { if (menu.classList.contains('open')) { measure(); render(); } });
     })();
 
     // Smooth scroll for in-page anchors
