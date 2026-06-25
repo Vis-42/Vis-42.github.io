@@ -2,13 +2,11 @@
 
 
 <div class="hero">
-  <div class="hero-grid">
-
-    <div class="hero-photo-card">
+  <div class="hero-top">
+    <figure class="hero-photo">
       <img src="/disp.jpg" alt="Parth Bhargava" loading="lazy">
-    </div>
-
-    <div class="hero-title-card">
+    </figure>
+    <div class="hero-card hero-title">
       <h1>Parth Bhargava</h1>
       <p class="subtitle">Physics undergraduate · National University of Singapore</p>
       <p class="purpose-statement">a place i keep the physics i'm working through, the experiments and simulations i build, and whatever else i'm thinking about.</p>
@@ -19,14 +17,14 @@
         <a href="/pdfs/cv.pdf" target="_blank">CV</a>
       </div>
     </div>
-
-    <div class="hero-bio-card">
-      <p>Second-year physics student at NUS.</p>
-      <p>I keep circling the same question in different costumes. How something tangled ends up doing something simple, and how something simple ends up doing something tangled. A flock, a folding protein, a network slipping into step. Physics is the language I trust most for it, but the pull is older than any one subject, and it leaks into most of what I read and chase.</p>
-      <p>I would rather build a thing and watch how it behaves than be told. That is most of how I learn, and most of why I like it.</p>
-    </div>
-
   </div>
+
+  <section class="hero-card hero-about">
+    <h2 class="card-heading">about</h2>
+    <div class="hero-about-body">
+      {{ .Content }}
+    </div>
+  </section>
   <div class="sticker-field" aria-hidden="true">
     <figure class="sticker line" data-rot="0" style="top:22px; right:22.7%; width:68px;" title="Lorenz / reservoir">
       <div class="glyph" style="-webkit-mask-image:url(/stickers/svg/reservoir_computing.svg);mask-image:url(/stickers/svg/reservoir_computing.svg)"></div>

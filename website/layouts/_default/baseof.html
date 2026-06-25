@@ -2,7 +2,9 @@
 <html lang="{{ .Site.LanguageCode }}">
 <head>
   <meta charset="utf-8">
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
@@ -42,9 +44,9 @@
       --accent-2:   #3c5469;   /* faded ink-blue */
       --accent-soft:#e7dcc6;
       --paper:      #ece2cd;   /* page base, mostly behind the scrim */
-      --paper-2:    rgba(244, 236, 219, 0.86);  /* cards / raised — translucent vellum */
-      --paper-3:    rgba(227, 215, 190, 0.78);  /* sunk / wells */
-      --panel:      rgba(243, 235, 217, 0.82);  /* main content sheet */
+      --paper-2:    rgba(244, 236, 219, 0.80);  /* cards / raised — translucent vellum */
+      --paper-3:    rgba(227, 215, 190, 0.72);  /* sunk / wells */
+      --panel:      rgba(243, 235, 217, 0.74);  /* main content sheet */
       --panel-border: rgba(120, 100, 70, 0.20);
       --rule:       #b9a787;
       --rule-soft:  #cbb99a;
@@ -63,9 +65,9 @@
       --accent-2:   #9ec3ad;   /* chalk green */
       --accent-soft:rgba(230, 164, 99, 0.16);
       --paper:      #141a17;
-      --paper-2:    rgba(35, 45, 40, 0.80);
-      --paper-3:    rgba(20, 27, 24, 0.78);
-      --panel:      rgba(26, 34, 29, 0.76);
+      --paper-2:    rgba(35, 45, 40, 0.72);
+      --paper-3:    rgba(20, 27, 24, 0.70);
+      --panel:      rgba(26, 34, 29, 0.68);
       --panel-border: rgba(180, 200, 180, 0.16);
       --rule:       #45524a;
       --rule-soft:  #36423b;
@@ -207,6 +209,10 @@
     .rail-nav a:hover { color: var(--accent); border-right-color: var(--accent); padding-right: 0.85rem; }
     .rail-nav a.active { color: var(--accent); border-right-color: var(--accent); }
     .rail-nav .rn-n { font-size: 0.6rem; color: var(--ink-muted); }
+    /* temporarily-empty sections: greyed, but still clickable */
+    .rail-nav a.rail-inactive { color: var(--ink-muted); opacity: 0.5; }
+    .rail-nav a.rail-inactive::after { content: " · soon"; font-size: 0.58rem; letter-spacing: 0; opacity: 0.75; }
+    .rail-nav a.rail-inactive:hover { opacity: 0.85; color: var(--accent); border-right-color: var(--accent); }
     .rail-theme {
       margin-top: 1.6rem; font-family: 'IBM Plex Mono', monospace;
       font-size: 0.66rem; letter-spacing: 0.04em;
@@ -253,15 +259,36 @@
       display: flex; gap: 0.6rem; align-items: center;
     }
     .classification .sep { color: var(--accent); }
-    /* Three-panel grid: [photo | title] / [bio spanning full width] */
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 190px 1fr;
-      grid-template-rows: 190px auto;
-      gap: 0.7rem;
-      max-width: 700px;
+    /* Hero: tilted framed photo + title card, then a full-width about card */
+    .hero-top {
+      display: flex; align-items: center; gap: 2rem;
+      max-width: 700px; margin-bottom: 1rem;
     }
-    .hero-photo-card, .hero-title-card, .hero-bio-card {
+    /* the taped, tilted polaroid */
+    .hero-photo {
+      flex: 0 0 auto; width: 168px; margin: 0.4rem 0 0.4rem 0.3rem;
+      transform: rotate(-2.6deg);
+      background: var(--paper-2);
+      padding: 9px 9px 30px;
+      border: 1px solid var(--rule-soft);
+      box-shadow: 0 8px 22px var(--shadow);
+      position: relative;
+      transition: transform 0.25s ease;
+    }
+    .hero-photo:hover { transform: rotate(-0.6deg) scale(1.015); }
+    .hero-photo::before {
+      content: ""; position: absolute; top: -13px; left: 50%;
+      transform: translateX(-50%) rotate(2.5deg);
+      width: 78px; height: 26px; background: var(--tape);
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+    .hero-photo img {
+      width: 100%; display: block; aspect-ratio: 1 / 1;
+      object-fit: cover; filter: grayscale(0.1) contrast(1.02);
+    }
+
+    /* shared vellum card */
+    .hero-card {
       background: var(--panel);
       backdrop-filter: blur(10px) saturate(1.06);
       -webkit-backdrop-filter: blur(10px) saturate(1.06);
@@ -269,44 +296,33 @@
       border-radius: 5px;
       box-shadow: 0 6px 28px var(--shadow);
     }
-    .hero-photo-card {
-      grid-column: 1; grid-row: 1;
-      overflow: hidden;
+    .hero-title {
+      flex: 1 1 auto; min-width: 0;
+      padding: 1.5rem 1.8rem;
     }
-    .hero-photo-card img {
-      width: 100%; height: 100%;
-      object-fit: cover; object-position: center top;
-      display: block; filter: grayscale(0.12) contrast(1.02);
-    }
-    .hero-title-card {
-      grid-column: 2; grid-row: 1;
-      padding: 1.4rem 1.7rem;
-      display: flex; flex-direction: column; justify-content: center;
-    }
-    .hero-title-card h1 {
+    .hero-title h1 {
       font-family: 'IBM Plex Serif', serif; font-weight: 700;
-      font-size: 2.4rem; line-height: 1.04; letter-spacing: -0.01em;
-      color: var(--ink); margin-bottom: 0.25rem;
+      font-size: 2.3rem; line-height: 1.05; letter-spacing: -0.01em;
+      color: var(--ink); margin-bottom: 0.35rem;
     }
-    .hero-bio-card {
-      grid-column: 1 / -1; grid-row: 2;
-      padding: 1.2rem 1.7rem;
-      font-size: 0.97rem; color: var(--ink-2); line-height: 1.76;
+    .hero-about {
+      max-width: 700px; padding: 1.4rem 1.8rem 1.5rem;
     }
-    .hero-bio-card p + p { margin-top: 0.75rem; }
-    /* legacy — kept for mobile override reference */
-    .hero-content h1 {
-      font-family: 'IBM Plex Serif', serif; font-weight: 700;
-      font-size: 2.4rem; line-height: 1.04; letter-spacing: -0.01em;
-      color: var(--ink); margin-bottom: 0.25rem;
+    .card-heading {
+      font-family: 'IBM Plex Mono', monospace; font-weight: 500;
+      font-size: 0.66rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.9rem;
     }
+    .hero-about-body { font-size: 0.97rem; color: var(--ink-2); line-height: 1.76; }
+    .hero-about-body p + p { margin-top: 0.8rem; }
+
     .subtitle {
-      font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem;
       letter-spacing: 0.04em; color: var(--ink-2); margin-bottom: 1rem;
     }
     .purpose-statement {
-      font-style: italic; font-size: 1.04rem; color: var(--ink-2);
-      max-width: 38ch; margin-bottom: 1.4rem;
+      font-size: 1.0rem; color: var(--ink-2);
+      max-width: 40ch; margin-bottom: 1.3rem;
       border-left: 2px solid var(--accent-soft); padding-left: 1rem;
     }
     .contact {
@@ -424,9 +440,11 @@
 
     /* ============================== INDEX-CARD PROJECTS ============================== */
     .projects-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1.4rem; margin-top: 0.6rem;
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.2rem; margin-top: 0.6rem;
     }
+    @media (max-width: 860px) { .projects-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .projects-grid { grid-template-columns: 1fr; } }
     .project-card {
       background: var(--paper-2);
       border: 1px solid var(--rule-soft);
@@ -608,6 +626,8 @@
       border-radius: 5px;
       box-shadow: 0 8px 34px var(--shadow);
     }
+    /* wider variant for card-grid pages (explorations, coursework) */
+    .project-page.wide { max-width: 1000px; }
 
     /* ===== home landing: the site index ===== */
     .home-index {
@@ -764,30 +784,29 @@
     }
     .disc-menu.open { pointer-events: auto; }
     .disc-menu.open::before { background: rgba(10, 8, 5, 0.55); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+    /* Items are positioned by JS (left/top = disc centre; --dx/--dy = radial offset)
+       so the radial fan is computed with real trig and works on every browser. */
     .disc-menu a, .disc-menu .disc-theme {
-      /* Disc center: top 47px, right 47px (disc is 58×58 at top:18 right:18) */
-      position: fixed;
-      --r: min(10rem, 46vw);
-      --ang: calc(100deg + var(--i, 0) * 15deg);
-      /* Place each item at exact polar coordinates from disc centre */
-      top:   calc(47px + var(--r) * sin(var(--ang)));
-      right: calc(47px - var(--r) * cos(var(--ang)));
-      /* Centre the pill on that computed point */
-      transform: translate(50%, -50%) scale(0.15);
+      position: fixed; left: 0; top: 0;
+      transform: translate(-50%, -50%) scale(0.2);
       opacity: 0; pointer-events: none; white-space: nowrap;
       font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; letter-spacing: 0.02em;
       text-decoration: none; color: var(--ink); cursor: pointer;
       background: var(--panel); border: 1px solid var(--panel-border);
       backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-      border-radius: 999px; padding: 0.38rem 0.9rem; box-shadow: 0 4px 16px var(--shadow);
+      border-radius: 999px; padding: 0.4rem 0.95rem; box-shadow: 0 4px 16px var(--shadow);
       transition:
-        transform 0.36s cubic-bezier(0.2, 0.9, 0.3, 1.2) calc(var(--i, 0) * 35ms),
-        opacity   0.22s ease                              calc(var(--i, 0) * 35ms);
+        transform 0.38s cubic-bezier(0.2, 0.9, 0.3, 1.2) calc(var(--i, 0) * 35ms),
+        opacity   0.24s ease                             calc(var(--i, 0) * 35ms);
     }
-    .disc-menu .disc-theme { --i: 6; }
+    .disc-menu a.disc-inactive { color: var(--ink-muted); opacity: 0; }
+    .disc-menu.open a.disc-inactive { opacity: 0.55; }
     .disc-menu.open a, .disc-menu.open .disc-theme {
       opacity: 1; pointer-events: auto;
-      transform: translate(50%, -50%) scale(1);
+      transform: translate(-50%, -50%) translate(var(--dx, 0), var(--dy, 0));
+    }
+    .disc-menu.open a.disc-inactive {
+      transform: translate(-50%, -50%) translate(var(--dx, 0), var(--dy, 0));
     }
 
     /* ============================== RESPONSIVE ============================== */
@@ -800,11 +819,10 @@
     }
     @media (max-width: 720px) {
       html { font-size: 16px; }
-      .hero-grid { grid-template-columns: 1fr; grid-template-rows: 220px auto auto; }
-      .hero-photo-card { grid-column: 1; grid-row: 1; }
-      .hero-title-card { grid-column: 1; grid-row: 2; }
-      .hero-bio-card { grid-column: 1; grid-row: 3; }
-      .hero-title-card h1 { font-size: 2rem; }
+      .hero-top { flex-direction: column; align-items: flex-start; gap: 1.2rem; }
+      .hero-photo { width: 150px; align-self: center; }
+      .hero-title { width: 100%; }
+      .hero-title h1 { font-size: 2rem; }
       .colophon { grid-template-columns: 1fr; }
       .webring { justify-content: flex-start; }
       .sticker-field { display: none; }
@@ -834,11 +852,11 @@
   </button>
   <nav class="disc-menu" aria-hidden="true" aria-label="Menu">
     <a style="--i:0" href="/explorations/">explorations</a>
-    <a style="--i:1" href="/projects/">projects</a>
-    <a style="--i:2" href="/coursework/">coursework</a>
-    <a style="--i:3" href="/publications/">publications</a>
-    <a style="--i:4" href="/blog/">blog</a>
-    <a style="--i:5" href="/photographs/">photographs</a>
+    <a style="--i:1" href="/coursework/">coursework</a>
+    <a style="--i:2" href="/blog/">blog</a>
+    <a style="--i:3" href="/photographs/">photographs</a>
+    <a style="--i:4" href="/projects/" class="disc-inactive">projects</a>
+    <a style="--i:5" href="/publications/" class="disc-inactive">publications</a>
     <button class="theme-toggle disc-theme" aria-label="Toggle theme"><span class="theme-text">Dark</span></button>
   </nav>
 
@@ -847,11 +865,11 @@
       <a class="rail-home" href="/">P.&nbsp;Bhargava<span class="rail-sub">working notebook</span></a>
       <nav class="rail-nav">
         <a href="/explorations/" class="{{ if hasPrefix $p.RelPermalink "/explorations" }}active{{ end }}"><span class="rn-n">01</span>explorations</a>
-        <a href="/projects/"     class="{{ if hasPrefix $p.RelPermalink "/projects" }}active{{ end }}"><span class="rn-n">02</span>projects</a>
-        <a href="/coursework/"   class="{{ if hasPrefix $p.RelPermalink "/coursework" }}active{{ end }}"><span class="rn-n">03</span>coursework</a>
-        <a href="/publications/" class="{{ if hasPrefix $p.RelPermalink "/publications" }}active{{ end }}"><span class="rn-n">04</span>publications</a>
-        <a href="/blog/"         class="{{ if hasPrefix $p.RelPermalink "/blog" }}active{{ end }}"><span class="rn-n">05</span>blog</a>
-        <a href="/photographs/"  class="{{ if hasPrefix $p.RelPermalink "/photographs" }}active{{ end }}"><span class="rn-n">06</span>photographs</a>
+        <a href="/coursework/"   class="{{ if hasPrefix $p.RelPermalink "/coursework" }}active{{ end }}"><span class="rn-n">02</span>coursework</a>
+        <a href="/blog/"         class="{{ if hasPrefix $p.RelPermalink "/blog" }}active{{ end }}"><span class="rn-n">03</span>blog</a>
+        <a href="/photographs/"  class="{{ if hasPrefix $p.RelPermalink "/photographs" }}active{{ end }}"><span class="rn-n">04</span>photographs</a>
+        <a href="/projects/"     class="rail-inactive {{ if hasPrefix $p.RelPermalink "/projects" }}active{{ end }}"><span class="rn-n">05</span>projects</a>
+        <a href="/publications/" class="rail-inactive {{ if hasPrefix $p.RelPermalink "/publications" }}active{{ end }}"><span class="rn-n">06</span>publications</a>
       </nav>
       <button class="theme-toggle rail-theme" aria-label="Toggle theme"><span class="theme-text">Dark</span></button>
       <div class="rail-stamp">NUS · Physics<br>est. 2024</div>
@@ -899,22 +917,42 @@
       }));
     })();
 
-    // Rotating-disc menu (mobile)
+    // Rotating-disc menu (mobile) — radial fan positioned with real trig in JS
     (function() {
       const disc = document.querySelector('.disc-toggle');
       const menu = document.querySelector('.disc-menu');
       if (!disc || !menu) return;
+      const items = Array.from(menu.children).filter(el => el.matches('a, .disc-theme'));
+
+      function layout() {
+        const r = disc.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const R = Math.min(165, window.innerWidth * 0.52);
+        const n = items.length;
+        // fan from 100° (down, slightly left) to 196° (left, slightly up)
+        const a0 = 100, a1 = 196;
+        items.forEach((el, i) => {
+          const ang = (a0 + (a1 - a0) * (i / (n - 1))) * Math.PI / 180;
+          el.style.left = cx + 'px';
+          el.style.top  = cy + 'px';
+          el.style.setProperty('--dx', (R * Math.cos(ang)).toFixed(1) + 'px');
+          el.style.setProperty('--dy', (R * Math.sin(ang)).toFixed(1) + 'px');
+        });
+      }
+
       const setOpen = (open) => {
+        if (open) layout();
         disc.classList.toggle('open', open);
         menu.classList.toggle('open', open);
         disc.setAttribute('aria-expanded', open ? 'true' : 'false');
         menu.setAttribute('aria-hidden', open ? 'false' : 'true');
       };
       disc.addEventListener('click', (e) => { e.stopPropagation(); setOpen(!menu.classList.contains('open')); });
-      // close when a destination link is tapped, when tapping the backdrop, or on Escape
       menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setOpen(false)));
       menu.addEventListener('click', (e) => { if (e.target === menu) setOpen(false); });
       document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+      window.addEventListener('resize', () => { if (menu.classList.contains('open')) layout(); });
     })();
 
     // Smooth scroll for in-page anchors
