@@ -751,22 +751,29 @@
     .disc-menu.open { pointer-events: auto; }
     .disc-menu.open::before { background: rgba(10, 8, 5, 0.55); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
     .disc-menu a, .disc-menu .disc-theme {
-      position: absolute; top: 47px; right: 47px;
-      --r: min(9.5rem, 46vw);
-      --ang: calc(99deg + var(--i) * 16deg);
-      transform: translate(50%, -50%) scale(0.25);
+      /* Disc center: top 47px, right 47px (disc is 58×58 at top:18 right:18) */
+      position: fixed;
+      --r: min(10rem, 46vw);
+      --ang: calc(100deg + var(--i, 0) * 15deg);
+      /* Place each item at exact polar coordinates from disc centre */
+      top:   calc(47px + var(--r) * sin(var(--ang)));
+      right: calc(47px - var(--r) * cos(var(--ang)));
+      /* Centre the pill on that computed point */
+      transform: translate(50%, -50%) scale(0.15);
       opacity: 0; pointer-events: none; white-space: nowrap;
-      font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; letter-spacing: 0.02em;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; letter-spacing: 0.02em;
       text-decoration: none; color: var(--ink); cursor: pointer;
       background: var(--panel); border: 1px solid var(--panel-border);
       backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-      border-radius: 999px; padding: 0.42rem 0.95rem; box-shadow: 0 4px 16px var(--shadow);
-      transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.25), opacity 0.3s ease;
+      border-radius: 999px; padding: 0.38rem 0.9rem; box-shadow: 0 4px 16px var(--shadow);
+      transition:
+        transform 0.36s cubic-bezier(0.2, 0.9, 0.3, 1.2) calc(var(--i, 0) * 35ms),
+        opacity   0.22s ease                              calc(var(--i, 0) * 35ms);
     }
-    .disc-menu .disc-theme { --i: 7; }
+    .disc-menu .disc-theme { --i: 6; }
     .disc-menu.open a, .disc-menu.open .disc-theme {
       opacity: 1; pointer-events: auto;
-      transform: translate(50%, -50%) rotate(var(--ang)) translateX(var(--r)) rotate(calc(var(--ang) * -1));
+      transform: translate(50%, -50%) scale(1);
     }
 
     /* ============================== RESPONSIVE ============================== */
