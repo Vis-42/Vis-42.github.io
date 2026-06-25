@@ -25,20 +25,20 @@
   <p class="section-note">No photographs yet.</p>
   {{ end }}
 
-  <!-- Lightbox -->
-  <div id="lb" class="lb" hidden aria-modal="true" role="dialog">
-    <div class="lb-backdrop" onclick="closeLb()"></div>
-    <button class="lb-close" onclick="closeLb()" aria-label="Close">✕</button>
-    <button class="lb-prev" onclick="navLb(-1)" aria-label="Previous">&#8592;</button>
-    <button class="lb-next" onclick="navLb(1)" aria-label="Next">&#8594;</button>
-    <figure class="lb-figure">
-      <img id="lb-img" src="" alt="" onclick="navLb(1)">
-      <figcaption id="lb-cap"></figcaption>
-    </figure>
-  </div>
-
   <p class="project-back"><a href="/">← back to home</a></p>
 </article>
+
+<!-- Lightbox — outside .project-page so backdrop-filter doesn't trap position:fixed -->
+<div id="lb" class="lb" hidden aria-modal="true" role="dialog">
+  <div class="lb-backdrop" onclick="closeLb()"></div>
+  <button class="lb-close" onclick="closeLb()" aria-label="Close">✕</button>
+  <button class="lb-prev" onclick="navLb(-1)" aria-label="Previous">&#8592;</button>
+  <button class="lb-next" onclick="navLb(1)" aria-label="Next">&#8594;</button>
+  <figure class="lb-figure">
+    <img id="lb-img" src="" alt="" onclick="navLb(1)">
+    <figcaption id="lb-cap"></figcaption>
+  </figure>
+</div>
 
 <script>
 (function(){
