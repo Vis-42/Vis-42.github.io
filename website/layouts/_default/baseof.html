@@ -777,31 +777,30 @@
     .disc-toggle.open .disc-spoke:nth-of-type(2) { transform: rotate(45deg); }
     .disc-toggle.open .disc-spoke:nth-of-type(3) { transform: rotate(45deg); }
 
-    .disc-menu { position: fixed; inset: 0; z-index: 1000; pointer-events: none; }
-    .disc-menu::before {
-      content: ""; position: absolute; inset: 0; background: rgba(10, 8, 5, 0);
-      backdrop-filter: blur(0px); transition: background 0.3s ease, backdrop-filter 0.3s ease;
-    }
-    .disc-menu.open { pointer-events: auto; }
-    .disc-menu.open::before { background: rgba(10, 8, 5, 0.55); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
-    /* Items are positioned by JS (left/top = disc centre; --dx/--dy = radial offset)
-       so the radial fan is computed with real trig and works on every browser. */
+    /* Full-screen backdrop — no backdrop-filter here to avoid containing-block traps */
+    .disc-menu { position: fixed; inset: 0; z-index: 1000; pointer-events: none; background: transparent; transition: background 0.3s ease; }
+    .disc-menu.open { pointer-events: auto; background: rgba(10, 8, 5, 0.52); }
+
+    /* Items: absolute inside the full-screen overlay (same coordinate space as viewport).
+       JS sets left/top to exact viewport coordinates computed with Math.cos/sin.
+       No position:fixed on items = no containing-block traps from backdrop-filter. */
     .disc-menu a, .disc-menu .disc-theme {
-      position: fixed; left: 0; top: 0;
-      transform: translate(-50%, -50%) scale(0.2);
+      position: absolute; left: 0; top: 0;
+      transform: translate(-50%, -50%) scale(0.15);
       opacity: 0; pointer-events: none; white-space: nowrap;
       font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; letter-spacing: 0.02em;
       text-decoration: none; color: var(--ink); cursor: pointer;
       background: var(--panel); border: 1px solid var(--panel-border);
-      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-      border-radius: 999px; padding: 0.4rem 0.95rem; box-shadow: 0 4px 16px var(--shadow);
+      border-radius: 999px; padding: 0.42rem 1rem; box-shadow: 0 4px 18px var(--shadow);
       transition:
-        transform 0.38s cubic-bezier(0.2, 0.9, 0.3, 1.2) calc(var(--i, 0) * 35ms),
-        opacity   0.24s ease                             calc(var(--i, 0) * 35ms);
+        transform 0.36s cubic-bezier(0.34, 1.4, 0.64, 1) calc(var(--i,0) * 32ms),
+        opacity   0.22s ease                              calc(var(--i,0) * 32ms);
     }
     .disc-menu a.disc-inactive { color: var(--ink-muted); }
-    /* JS sets the per-item transform directly; CSS only toggles visibility */
-    .disc-menu.open a, .disc-menu.open .disc-theme { opacity: 1; pointer-events: auto; }
+    .disc-menu.open a, .disc-menu.open .disc-theme {
+      transform: translate(-50%, -50%);
+      opacity: 1; pointer-events: auto;
+    }
     .disc-menu.open a.disc-inactive { opacity: 0.55; }
 
     /* ============================== RESPONSIVE ============================== */
@@ -919,38 +918,35 @@
       if (!disc || !menu) return;
       const items = Array.from(menu.children).filter(el => el.matches('a, .disc-theme'));
 
-      // Position each item by writing the FULL transform string in JS (no CSS
-      // custom-property maths, which some mobile engines drop silently).
-      function layout(open) {
+      // Items are position:absolute inside the fullscreen overlay (inset:0),
+      // so left/top in JS equal viewport coordinates directly. No fixed-position
+      // containing-block issues, no CSS custom-property math in transforms.
+      function layout() {
         const r = disc.getBoundingClientRect();
         const cx = r.left + r.width / 2;
         const cy = r.top + r.height / 2;
-        const R = Math.min(165, window.innerWidth * 0.52);
+        const R = Math.min(160, window.innerWidth * 0.50);
         const n = items.length;
-        const a0 = 100, a1 = 196; // fan: 100° (down, slightly left) → 196° (left, slightly up)
-        items.forEach((el, i) => {
-          if (!open) { el.style.transform = 'translate(-50%,-50%) scale(0.2)'; return; }
-          const ang = (a0 + (a1 - a0) * (i / (n - 1))) * Math.PI / 180;
-          const dx = (R * Math.cos(ang)).toFixed(1);
-          const dy = (R * Math.sin(ang)).toFixed(1);
-          el.style.left = cx + 'px';
-          el.style.top  = cy + 'px';
-          el.style.transform = 'translate(-50%,-50%) translate(' + dx + 'px,' + dy + 'px)';
+        const a0 = 100, a1 = 196; // 100° (below-left) → 196° (left-above)
+        items.forEach(function(el, i) {
+          var ang = (a0 + (a1 - a0) * (i / (n - 1))) * Math.PI / 180;
+          el.style.left = (cx + R * Math.cos(ang)) + 'px';
+          el.style.top  = (cy + R * Math.sin(ang)) + 'px';
         });
       }
 
-      const setOpen = (open) => {
-        layout(open);
+      function setOpen(open) {
+        if (open) layout();
         disc.classList.toggle('open', open);
         menu.classList.toggle('open', open);
         disc.setAttribute('aria-expanded', open ? 'true' : 'false');
         menu.setAttribute('aria-hidden', open ? 'false' : 'true');
-      };
-      disc.addEventListener('click', (e) => { e.stopPropagation(); setOpen(!menu.classList.contains('open')); });
-      menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setOpen(false)));
-      menu.addEventListener('click', (e) => { if (e.target === menu) setOpen(false); });
-      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
-      window.addEventListener('resize', () => { if (menu.classList.contains('open')) layout(true); });
+      }
+      disc.addEventListener('click', function(e) { e.stopPropagation(); setOpen(!menu.classList.contains('open')); });
+      menu.querySelectorAll('a').forEach(function(a) { a.addEventListener('click', function() { setOpen(false); }); });
+      menu.addEventListener('click', function(e) { if (e.target === menu) setOpen(false); });
+      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') setOpen(false); });
+      window.addEventListener('resize', function() { if (menu.classList.contains('open')) layout(); });
     })();
 
     // Smooth scroll for in-page anchors

@@ -1,6 +1,6 @@
 {{ define "main" }}
 <article class="project-page wide">
-  <p class="classification">Explorations</p>
+  <p class="classification">{{ with .Params.filed }}{{ . }}{{ else }}Explorations{{ end }}</p>
   <h1 class="project-title">explorations</h1>
   <div class="project-prose">
     <p>Interactive computational-physics notebooks, each a small machine you can run in the browser. Pick one, push its sliders, watch it behave. Every card opens its own page with the live notebook, the figures, and the source.</p>

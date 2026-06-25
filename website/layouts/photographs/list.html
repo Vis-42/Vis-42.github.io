@@ -1,6 +1,6 @@
 {{ define "main" }}
 <article class="project-page">
-  <p class="classification">Photographs</p>
+  <p class="classification">{{ with .Params.filed }}{{ . }}{{ else }}Photographs{{ end }}</p>
   <h1 class="project-title">photographs</h1>
   <p class="photo-page-meta">Sony α6100 &nbsp;·&nbsp; {{ len .Pages }} frames</p>
 

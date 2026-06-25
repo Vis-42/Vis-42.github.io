@@ -1,6 +1,6 @@
 {{ define "main" }}
 <article class="project-page">
-  <p class="classification">Publications</p>
+  <p class="classification">{{ with .Params.filed }}{{ . }}{{ else }}Publications{{ end }}</p>
   <h1 class="project-title">publications</h1>
   <div class="project-prose">
     <p class="section-note">Nothing published yet. Papers and preprints will appear here when there are some, in the format: title, authors, venue, a one-sentence summary, and links to the PDF, DOI, and code.</p>

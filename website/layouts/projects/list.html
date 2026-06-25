@@ -1,6 +1,6 @@
 {{ define "main" }}
 <article class="project-page">
-  <p class="classification">Projects</p>
+  <p class="classification">{{ with .Params.filed }}{{ . }}{{ else }}Projects{{ end }}</p>
   <h1 class="project-title">projects</h1>
   <div class="project-prose">
     <p>Original, independent work, as opposed to the reproductions and study pieces under <a href="/explorations/">explorations</a>. This is where things I'm building from scratch will land.</p>

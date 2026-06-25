@@ -1,6 +1,6 @@
 {{ define "main" }}
 <article class="project-page">
-  <p class="classification">Writing · notes in progress</p>
+  <p class="classification">{{ with .Params.filed }}{{ . }}{{ else }}Writing · notes in progress{{ end }}</p>
   <h1 class="project-title">blog</h1>
 
   {{ $posts := where .Site.RegularPages "Section" "blog" }}

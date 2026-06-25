@@ -1,6 +1,6 @@
 {{ define "main" }}
 <article class="project-page wide">
-  <p class="classification">Coursework</p>
+  <p class="classification">{{ with .Params.filed }}{{ . }}{{ else }}Coursework{{ end }}</p>
   <h1 class="project-title">coursework</h1>
   <div class="project-prose">
     <p>Lab reports and analysis code from my physics degree at NUS.</p>
