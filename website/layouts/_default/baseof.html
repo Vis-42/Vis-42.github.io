@@ -246,45 +246,39 @@
     }
 
     /* ============================== MASTHEAD ============================== */
-    .hero { position: relative; padding: 3rem 0 2.2rem; min-height: 380px; }
+    .hero { position: relative; padding: 2rem 0 1.6rem; }
     .classification {
       font-size: 0.64rem; letter-spacing: 0.16em; text-transform: uppercase;
       color: var(--ink-muted); margin-bottom: 1.2rem;
       display: flex; gap: 0.6rem; align-items: center;
     }
     .classification .sep { color: var(--accent); }
-    .hero-inner { display: flex; gap: 2.2rem; align-items: flex-start; }
+    /* one unified card: photo on the left, everything else on the right */
+    .hero-inner {
+      background: var(--panel);
+      backdrop-filter: blur(10px) saturate(1.06);
+      -webkit-backdrop-filter: blur(10px) saturate(1.06);
+      border: 1px solid var(--panel-border);
+      border-radius: 6px; box-shadow: 0 8px 34px var(--shadow);
+      display: flex; gap: 0; align-items: stretch; overflow: hidden;
+    }
     .hero-photo {
-      flex: 0 0 auto; width: 150px; transform: rotate(-2.2deg);
-      background: var(--paper-2); padding: 9px 9px 34px;
-      box-shadow: 0 6px 18px var(--shadow);
-      border: 1px solid var(--rule-soft); position: relative;
+      flex: 0 0 160px; position: relative;
+      border-right: 1px solid var(--panel-border);
     }
-    .hero-photo::before {
-      content: ""; position: absolute; top: -12px; left: 50%;
-      transform: translateX(-50%) rotate(3deg);
-      width: 74px; height: 26px; background: var(--tape);
-      border: 1px solid rgba(0,0,0,0.04);
+    .hero-photo img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      filter: grayscale(0.18) contrast(1.02);
     }
-    .hero-photo::after {
-      content: ""; position: absolute; bottom: 9px; left: 0; right: 0;
-      text-align: center; font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.56rem; letter-spacing: 0.04em; color: var(--ink-muted);
-    }
-    .hero-photo img { width: 100%; display: block; filter: grayscale(0.18) contrast(1.02); }
     .hero-content {
       flex: 1 1 auto; min-width: 0;
-      background: var(--panel);
-      backdrop-filter: blur(9px) saturate(1.05);
-      -webkit-backdrop-filter: blur(9px) saturate(1.05);
-      border: 1px solid var(--panel-border);
-      border-radius: 5px; box-shadow: 0 8px 30px var(--shadow);
-      padding: 1.7rem 1.9rem;
+      padding: 1.8rem 2rem 1.6rem;
+      display: flex; flex-direction: column;
     }
     .hero-content h1 {
       font-family: 'IBM Plex Serif', serif; font-weight: 700;
-      font-size: 2.9rem; line-height: 1.04; letter-spacing: -0.01em;
-      color: var(--ink); margin-bottom: 0.3rem;
+      font-size: 2.6rem; line-height: 1.04; letter-spacing: -0.01em;
+      color: var(--ink); margin-bottom: 0.25rem;
     }
     .subtitle {
       font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem;
@@ -629,16 +623,11 @@
     .about-prose p:first-child { font-size: 1.18rem; color: var(--ink); font-style: italic; margin-bottom: 1.1rem; }
     .about-contact { margin-top: 2rem; padding-top: 1.2rem; border-top: 1px dashed var(--rule-soft); }
     .hero-about {
-      max-width: 680px; margin: 0.9rem 0 0;
-      background: var(--panel);
-      backdrop-filter: blur(10px) saturate(1.06);
-      -webkit-backdrop-filter: blur(10px) saturate(1.06);
-      border: 1px solid var(--panel-border);
-      border-radius: 5px; box-shadow: 0 8px 34px var(--shadow);
-      padding: 1.4rem 1.9rem;
-      font-size: 1rem; color: var(--ink-2); line-height: 1.74;
+      margin-top: 1.4rem; padding-top: 1.2rem;
+      border-top: 1px solid var(--panel-border);
+      font-size: 0.96rem; color: var(--ink-2); line-height: 1.76;
     }
-    .hero-about p + p { margin-top: 0.9rem; }
+    .hero-about p + p { margin-top: 0.75rem; }
     .project-title {
       font-family: 'IBM Plex Serif', serif; font-weight: 700;
       font-size: 2.2rem; line-height: 1.08; color: var(--ink);
@@ -790,8 +779,10 @@
     }
     @media (max-width: 720px) {
       html { font-size: 16px; }
-      .hero-inner { flex-direction: column; gap: 1.4rem; }
-      .hero-content h1 { font-size: 2.2rem; }
+      .hero-inner { flex-direction: column; }
+      .hero-photo { flex: 0 0 200px; border-right: none; border-bottom: 1px solid var(--panel-border); }
+      .hero-photo img { height: 200px; }
+      .hero-content h1 { font-size: 2.1rem; }
       .colophon { grid-template-columns: 1fr; }
       .webring { justify-content: flex-start; }
       .sticker-field { display: none; }
@@ -820,13 +811,12 @@
     <span class="disc-core"></span>
   </button>
   <nav class="disc-menu" aria-hidden="true" aria-label="Menu">
-    <a style="--i:0" href="/about/">about</a>
-    <a style="--i:1" href="/explorations/">explorations</a>
-    <a style="--i:2" href="/projects/">projects</a>
-    <a style="--i:3" href="/coursework/">coursework</a>
-    <a style="--i:4" href="/publications/">publications</a>
-    <a style="--i:5" href="/blog/">blog</a>
-    <a style="--i:6" href="/photographs/">photographs</a>
+    <a style="--i:0" href="/explorations/">explorations</a>
+    <a style="--i:1" href="/projects/">projects</a>
+    <a style="--i:2" href="/coursework/">coursework</a>
+    <a style="--i:3" href="/publications/">publications</a>
+    <a style="--i:4" href="/blog/">blog</a>
+    <a style="--i:5" href="/photographs/">photographs</a>
     <button class="theme-toggle disc-theme" aria-label="Toggle theme"><span class="theme-text">Dark</span></button>
   </nav>
 
@@ -834,13 +824,12 @@
     <aside class="margin-rail" aria-label="Navigation">
       <a class="rail-home" href="/">P.&nbsp;Bhargava<span class="rail-sub">working notebook</span></a>
       <nav class="rail-nav">
-        <a href="/about/"        class="{{ if and (not $p.IsHome) (hasPrefix $p.RelPermalink "/about") }}active{{ end }}"><span class="rn-n">01</span>about</a>
-        <a href="/explorations/" class="{{ if hasPrefix $p.RelPermalink "/explorations" }}active{{ end }}"><span class="rn-n">02</span>explorations</a>
-        <a href="/projects/"     class="{{ if hasPrefix $p.RelPermalink "/projects" }}active{{ end }}"><span class="rn-n">03</span>projects</a>
-        <a href="/coursework/"   class="{{ if hasPrefix $p.RelPermalink "/coursework" }}active{{ end }}"><span class="rn-n">04</span>coursework</a>
-        <a href="/publications/" class="{{ if hasPrefix $p.RelPermalink "/publications" }}active{{ end }}"><span class="rn-n">05</span>publications</a>
-        <a href="/blog/"         class="{{ if hasPrefix $p.RelPermalink "/blog" }}active{{ end }}"><span class="rn-n">06</span>blog</a>
-        <a href="/photographs/"  class="{{ if hasPrefix $p.RelPermalink "/photographs" }}active{{ end }}"><span class="rn-n">07</span>photographs</a>
+        <a href="/explorations/" class="{{ if hasPrefix $p.RelPermalink "/explorations" }}active{{ end }}"><span class="rn-n">01</span>explorations</a>
+        <a href="/projects/"     class="{{ if hasPrefix $p.RelPermalink "/projects" }}active{{ end }}"><span class="rn-n">02</span>projects</a>
+        <a href="/coursework/"   class="{{ if hasPrefix $p.RelPermalink "/coursework" }}active{{ end }}"><span class="rn-n">03</span>coursework</a>
+        <a href="/publications/" class="{{ if hasPrefix $p.RelPermalink "/publications" }}active{{ end }}"><span class="rn-n">04</span>publications</a>
+        <a href="/blog/"         class="{{ if hasPrefix $p.RelPermalink "/blog" }}active{{ end }}"><span class="rn-n">05</span>blog</a>
+        <a href="/photographs/"  class="{{ if hasPrefix $p.RelPermalink "/photographs" }}active{{ end }}"><span class="rn-n">06</span>photographs</a>
       </nav>
       <button class="theme-toggle rail-theme" aria-label="Toggle theme"><span class="theme-text">Dark</span></button>
       <div class="rail-stamp">NUS · Physics<br>est. 2024</div>
