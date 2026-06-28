@@ -815,9 +815,9 @@
     .mob-backdrop {
       position: fixed; inset: 0; z-index: 999; display: none;
       background: rgba(10,8,5,0.45); transition: opacity 0.28s;
-      opacity: 0;
+      opacity: 0; pointer-events: none;
     }
-    .mob-backdrop.open { opacity: 1; }
+    .mob-backdrop.open { opacity: 1; pointer-events: auto; }
 
     /* ============================== RESPONSIVE ============================== */
     @media (max-width: 1024px) {
