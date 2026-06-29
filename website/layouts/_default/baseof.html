@@ -439,11 +439,17 @@
     }
     @media (max-width: 860px) { .projects-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 560px) {
-      .projects-grid { grid-template-columns: repeat(2, 1fr); gap: 0.7rem; }
-      .card-thumb { height: 110px; flex: 0 0 110px; }
-      .card-content { padding: 0.6rem 0.7rem 0.7rem; }
-      .card-content h4 { font-size: 0.78rem; }
-      .card-content > p { font-size: 0.78rem; -webkit-line-clamp: 3; }
+      .project-page { padding: 1.2rem 1rem 1.2rem; }
+      .projects-grid { grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
+      .project-card { min-width: 0; overflow: hidden; }
+      .card-thumb { height: 100px; flex: 0 0 100px; }
+      .card-content { padding: 0.55rem 0.65rem 0.65rem; min-width: 0; }
+      .card-content h4 { font-size: 0.76rem; line-height: 1.3; }
+      .card-content > p { font-size: 0.74rem; -webkit-line-clamp: 3; }
+    }
+    @media (max-width: 380px) {
+      .projects-grid { grid-template-columns: 1fr; }
+      .card-thumb { height: 130px; flex: 0 0 130px; }
     }
     .project-card {
       background: var(--paper-2);
@@ -823,7 +829,7 @@
     @media (max-width: 1024px) {
       main { grid-template-columns: minmax(0, 1fr); gap: 0; padding-top: 5rem; }
       .margin-rail { display: none; }
-      .page-column { padding-left: 1.4rem; }
+      .page-column { padding-left: 1.2rem; padding-right: 1.2rem; }
       .site-monogram { display: flex; }
       .mob-toggle { display: flex; }
       .mob-menu { display: flex; }
