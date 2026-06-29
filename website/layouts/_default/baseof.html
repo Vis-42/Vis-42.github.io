@@ -37,16 +37,16 @@
 
     :root {
       /* Paper (light) */
-      --ink:        #2c2620;
+      --ink:        #1a100a;
       --ink-2:      #574c3d;
       --ink-muted:  #8a7c66;
       --accent:     #9c3b2c;   /* oxblood — links, rules, marks */
       --accent-2:   #3c5469;   /* faded ink-blue */
       --accent-soft:#e7dcc6;
       --paper:      #ece2cd;   /* page base, mostly behind the scrim */
-      --paper-2:    rgba(244, 236, 219, 0.80);  /* cards / raised — translucent vellum */
-      --paper-3:    rgba(227, 215, 190, 0.72);  /* sunk / wells */
-      --panel:      rgba(243, 235, 217, 0.74);  /* main content sheet */
+      --paper-2:    rgba(244, 236, 219, 0.90);  /* cards / raised — translucent vellum */
+      --paper-3:    rgba(227, 215, 190, 0.84);  /* sunk / wells */
+      --panel:      rgba(243, 235, 217, 0.88);  /* main content sheet */
       --panel-border: rgba(120, 100, 70, 0.20);
       --rule:       #b9a787;
       --rule-soft:  #cbb99a;
@@ -105,7 +105,7 @@
     /* uniform scrim — same opacity everywhere so the background shows evenly */
     body::after {
       content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-      background: rgba(236, 226, 205, 0.72);
+      background: rgba(232, 222, 200, 0.76);
       transition: background 0.3s ease;
     }
     [data-theme="dark"] body::before {
@@ -405,6 +405,7 @@
     /* Photographs: masonry grid + lightbox */
     .photo-page-meta { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; color: var(--ink-muted); letter-spacing: 0.06em; text-transform: uppercase; margin: -0.6rem 0 1.8rem; }
     .photo-masonry { columns: 3 240px; column-gap: 0.7rem; }
+    @media (max-width: 560px) { .photo-masonry { columns: 2; column-gap: 0.5rem; } }
     .photo-item { break-inside: avoid; margin: 0 0 0.7rem; cursor: zoom-in; position: relative; }
     .photo-item img { width: 100%; display: block; border-radius: 2px; transition: opacity 0.15s; }
     .photo-item:hover img { opacity: 0.82; }
@@ -437,7 +438,13 @@
       gap: 1.2rem; margin-top: 0.6rem;
     }
     @media (max-width: 860px) { .projects-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 560px) { .projects-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 560px) {
+      .projects-grid { grid-template-columns: repeat(2, 1fr); gap: 0.7rem; }
+      .card-thumb { height: 110px; flex: 0 0 110px; }
+      .card-content { padding: 0.6rem 0.7rem 0.7rem; }
+      .card-content h4 { font-size: 0.78rem; }
+      .card-content > p { font-size: 0.78rem; -webkit-line-clamp: 3; }
+    }
     .project-card {
       background: var(--paper-2);
       border: 1px solid var(--rule-soft);
