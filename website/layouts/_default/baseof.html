@@ -111,7 +111,7 @@
     /* the artwork — a Beowulf cluster, fixed behind everything */
     body::before {
       content: ""; position: fixed; inset: 0; z-index: -2;
-      background: var(--paper) url('/media/bg/cluster.jpg?v=2') center center / cover no-repeat;
+      background: var(--paper) url('/media/bg/cluster-light.jpg') center center / cover no-repeat;
       filter: saturate(0.9) contrast(1.02);
     }
     /* uniform scrim — same opacity everywhere so the background shows evenly */
@@ -121,6 +121,7 @@
       transition: background 0.3s ease;
     }
     [data-theme="dark"] body::before {
+      background-image: url('/media/bg/cluster.jpg?v=2');
       filter: grayscale(0.35) brightness(0.5) contrast(1.04);
     }
     [data-theme="dark"] body::after {
