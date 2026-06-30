@@ -47,27 +47,27 @@
     }
 
     :root {
-      /* Temperature contrast: cool blue image vs warm cream panels.
-         Mirrors dark mode's warm image vs cool green panels.
-         3 colors: warm cream (panels) + dark navy (ink) + amber (accent)
-         Image is the 4th element — the cool blue background it all sits on. */
-      --ink:        #100a02;   /* warm near-black — same as before, good on cream */
-      --ink-2:      #3a2010;   /* warm dark brown */
-      --ink-muted:  #6b4520;   /* warm mid-brown */
-      --accent:     #b86a10;   /* amber — warm family, unifies with cream surface */
-      --accent-2:   #8a5010;   /* deeper amber */
-      --accent-soft:rgba(184, 106, 16, 0.15);
-      --paper:      #ece2cd;   /* warm cream — temperature contrast against the cool blue image */
-      --paper-2:    rgba(244, 236, 219, 0.72);  /* warm cream glass panels */
-      --paper-3:    rgba(227, 215, 190, 0.68);
-      --panel:      rgba(243, 235, 217, 0.70);  /* warm cream over cool blue = visual tension */
-      --panel-border: rgba(110, 88, 60, 0.18);
-      --rule:       #b9a787;
-      --rule-soft:  #cbb99a;
-      --margin-line:#b86a10;   /* amber rule */
-      --tape:       rgba(200, 182, 140, 0.50);
-      --header-bg:  rgba(236, 226, 205, 0.94);
-      --shadow:     rgba(60, 48, 30, 0.18);
+      /* Image is warm (cream/tan cluster). Panels are COOL NEUTRAL glass —
+         same temperature-contrast trick dark mode uses (cool green panels, warm image).
+         3 colors: warm image · cool grey-white panels · oxblood accent.
+         Ink is dark warm brown — it picks up image warmth, reads on cool panel. */
+      --ink:        #100a02;
+      --ink-2:      #3a2010;
+      --ink-muted:  #6b4520;
+      --accent:     #9c3b2c;   /* oxblood — warm saturated, pops on cool surface */
+      --accent-2:   #3c5469;   /* slate blue — secondary, also cool (harmonises with panel) */
+      --accent-soft:rgba(156, 59, 44, 0.12);
+      --paper:      #eaeaea;   /* cool neutral base — not warm, not cold, just light */
+      --paper-2:    rgba(232, 232, 234, 0.72);  /* cool grey-white glass panels */
+      --paper-3:    rgba(216, 218, 222, 0.68);
+      --panel:      rgba(234, 234, 236, 0.70);  /* cool neutral glass over warm image = tension */
+      --panel-border: rgba(80, 80, 100, 0.14);
+      --rule:       #a8a8b4;
+      --rule-soft:  #c8c8d0;
+      --margin-line:#9c3b2c;   /* oxblood rule — matches accent */
+      --tape:       rgba(180, 180, 196, 0.45);
+      --header-bg:  rgba(232, 232, 234, 0.94);
+      --shadow:     rgba(40, 40, 60, 0.16);
     }
 
     [data-theme="dark"] {
@@ -114,13 +114,13 @@
     /* the artwork — a Beowulf cluster, fixed behind everything */
     body::before {
       content: ""; position: fixed; inset: 0; z-index: -2;
-      background: var(--paper) url('/media/bg/cluster-light.jpg') center center / cover no-repeat;
+      background: var(--paper) url('/media/bg/cluster.jpg?v=2') center center / cover no-repeat;
       filter: saturate(0.9) contrast(1.02);
     }
     /* uniform scrim — same opacity everywhere so the background shows evenly */
     body::after {
       content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-      background: rgba(232, 222, 200, 0.72);
+      background: rgba(228, 228, 232, 0.72);
       transition: background 0.3s ease;
     }
     [data-theme="dark"] body::before {
