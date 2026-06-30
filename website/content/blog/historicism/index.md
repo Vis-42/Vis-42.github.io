@@ -1,5 +1,5 @@
 ---
-title: "historicism and unjustified optimism"
+title: "historicism as justification"
 date: 2026-06-19
 excerpt: "misguided determinism"
 tags: ["habits", "perspective"]
@@ -11,10 +11,11 @@ in the 1890s, Max Planck's professors told him that physics was almost complete 
 
 what came later was a paradigm-shift, with quantum mechanics and relativity, everything discovered before was in question to be challenged.
 
-in the 1800s, the idea of democracy was seen as absurd and especially the idea that all people having an equal vote. 
+in the 1800s, the idea of democracy was seen as absurd and especially the idea that all people having an equal vote, since most people were ill-informed and uneducated, and good education was not even expected to reach till them in any future. So even mass education seemed like a fairy tale idea. 
 
-in the 1950s, the existence of india as a unified state
+in the 1950s, the existence of india as a unified state was popularly debated on in the anglosphere because they recognised its diversity to be a cause of divide and predicted balkanisation.
 
+all of these stories follow with the belief that history follows a 
 retroscpect cherry picking
 
 hegel - we cannot learn from history
