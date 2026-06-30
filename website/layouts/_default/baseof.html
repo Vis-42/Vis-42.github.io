@@ -47,24 +47,24 @@
     }
 
     :root {
-      /* Paper (light) */
-      --ink:        #100a02;   /* matches dark mode 13:1 contrast */
-      --ink-2:      #3a2010;   /* matches dark mode 9.4:1 */
-      --ink-muted:  #6b4520;   /* matches dark mode 5.6:1 */
-      --accent:     #9c3b2c;   /* oxblood — links, rules, marks */
-      --accent-2:   #3c5469;   /* faded ink-blue */
-      --accent-soft:#e7dcc6;
-      --paper:      #ece2cd;   /* page base, mostly behind the scrim */
-      --paper-2:    rgba(246, 239, 223, 0.72);  /* cards / raised — same transparency as dark mode */
-      --paper-3:    rgba(230, 218, 194, 0.68);  /* sunk / wells */
-      --panel:      rgba(245, 238, 220, 0.70);  /* main content sheet */
-      --panel-border: rgba(110, 88, 60, 0.18);
-      --rule:       #b9a787;
-      --rule-soft:  #cbb99a;
-      --margin-line:#c1584a;   /* the red notebook margin rule */
-      --tape:       rgba(200, 182, 140, 0.55);
-      --header-bg:  rgba(236, 226, 205, 0.94);
-      --shadow:     rgba(60, 48, 30, 0.18);
+      /* Cool blue-white — tuned to complement the inverted blue background */
+      --ink:        #080c18;   /* cool near-black with blue tint — 13:1 on glass panels */
+      --ink-2:      #1e2c48;   /* dark navy — 9.4:1 */
+      --ink-muted:  #4a5e7a;   /* steel blue — 5.6:1 */
+      --accent:     #b86a10;   /* warm amber — complementary to blue, pops cleanly */
+      --accent-2:   #1a7a8c;   /* teal — analogous to background */
+      --accent-soft:rgba(184, 106, 16, 0.14);
+      --paper:      #dce8f4;   /* cool blue-white page base */
+      --paper-2:    rgba(220, 234, 248, 0.72);  /* cards — cool glass */
+      --paper-3:    rgba(200, 218, 238, 0.68);  /* sunk / wells */
+      --panel:      rgba(224, 236, 250, 0.70);  /* main content sheet — cool glass */
+      --panel-border: rgba(60, 90, 140, 0.16);
+      --rule:       #8aa4c0;
+      --rule-soft:  #b0c4d8;
+      --margin-line:#1a7a8c;   /* teal rule line */
+      --tape:       rgba(140, 170, 210, 0.40);
+      --header-bg:  rgba(220, 234, 248, 0.94);
+      --shadow:     rgba(20, 40, 80, 0.18);
     }
 
     [data-theme="dark"] {
@@ -117,7 +117,7 @@
     /* uniform scrim — same opacity everywhere so the background shows evenly */
     body::after {
       content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-      background: rgba(232, 222, 200, 0.76);
+      background: rgba(210, 228, 248, 0.74);
       transition: background 0.3s ease;
     }
     [data-theme="dark"] body::before {
