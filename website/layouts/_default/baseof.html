@@ -47,21 +47,23 @@
     }
 
     :root {
-      /* Cool blue-white — tuned to complement the inverted blue background */
-      --ink:        #080c18;   /* cool near-black with blue tint — 13:1 on glass panels */
-      --ink-2:      #1e2c48;   /* dark navy — 9.4:1 */
-      --ink-muted:  #4a5e7a;   /* steel blue — 5.6:1 */
-      --accent:     #b86a10;   /* warm amber — complementary to blue, pops cleanly */
-      --accent-2:   #1a7a8c;   /* teal — analogous to background */
-      --accent-soft:rgba(184, 106, 16, 0.14);
-      --paper:      #dce8f4;   /* cool blue-white page base */
-      --paper-2:    rgba(220, 234, 248, 0.72);  /* cards — cool glass */
-      --paper-3:    rgba(200, 218, 238, 0.68);  /* sunk / wells */
-      --panel:      rgba(224, 236, 250, 0.70);  /* main content sheet — cool glass */
-      --panel-border: rgba(60, 90, 140, 0.16);
+      /* 3-color light mode mirroring dark mode's structure:
+         dark mode = cream + near-black + forest-green
+         light mode = deep navy + blue-white + medium blue  */
+      --ink:        #080c18;   /* deep navy (= dark mode's cream, just inverted) */
+      --ink-2:      #1e2c48;   /* medium navy */
+      --ink-muted:  #4a5e7a;   /* light navy */
+      --accent:     #2a6fa8;   /* medium blue — the green equivalent */
+      --accent-2:   #1a5080;   /* deeper blue */
+      --accent-soft:rgba(42, 111, 168, 0.14);
+      --paper:      #dce8f4;   /* blue-white surface (= dark mode's near-black) */
+      --paper-2:    rgba(220, 234, 248, 0.72);
+      --paper-3:    rgba(200, 218, 238, 0.68);
+      --panel:      rgba(224, 236, 250, 0.70);
+      --panel-border: rgba(42, 111, 168, 0.16);
       --rule:       #8aa4c0;
       --rule-soft:  #b0c4d8;
-      --margin-line:#1a7a8c;   /* teal rule line */
+      --margin-line:#2a6fa8;   /* blue rule (= dark mode's teal margin line) */
       --tape:       rgba(140, 170, 210, 0.40);
       --header-bg:  rgba(220, 234, 248, 0.94);
       --shadow:     rgba(20, 40, 80, 0.18);
