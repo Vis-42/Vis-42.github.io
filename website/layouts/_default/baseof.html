@@ -48,16 +48,16 @@
 
     :root {
       /* Paper (light) */
-      --ink:        #0e0804;   /* near-black with warm tint — max contrast on cream panels */
-      --ink-2:      #4a3520;
-      --ink-muted:  #7a6248;
+      --ink:        #0e0804;
+      --ink-2:      #3d2810;
+      --ink-muted:  #5a3e22;
       --accent:     #9c3b2c;   /* oxblood — links, rules, marks */
       --accent-2:   #3c5469;   /* faded ink-blue */
       --accent-soft:#e7dcc6;
       --paper:      #ece2cd;   /* page base, mostly behind the scrim */
-      --paper-2:    rgba(246, 239, 223, 0.78);  /* cards / raised — translucent glass */
-      --paper-3:    rgba(230, 218, 194, 0.70);  /* sunk / wells */
-      --panel:      rgba(245, 238, 220, 0.76);  /* main content sheet — glass look */
+      --paper-2:    rgba(246, 239, 223, 0.72);  /* cards / raised — same transparency as dark mode */
+      --paper-3:    rgba(230, 218, 194, 0.68);  /* sunk / wells */
+      --panel:      rgba(245, 238, 220, 0.70);  /* main content sheet */
       --panel-border: rgba(110, 88, 60, 0.18);
       --rule:       #b9a787;
       --rule-soft:  #cbb99a;
@@ -190,16 +190,11 @@
     /* the sticky lab-notebook spine — now the primary desktop nav */
     .margin-rail {
       position: sticky; top: 1.8rem;
-      padding: 1.2rem 1.2rem 1.2rem 0.8rem;
+      padding-top: 0.4rem;
       font-size: 0.72rem; color: var(--ink-muted);
       border-right: 1px solid var(--rule-soft);
-      text-align: right;
+      padding-right: 1.2rem; text-align: right;
       min-height: 60vh;
-      background: var(--panel);
-      backdrop-filter: blur(10px) saturate(1.06);
-      -webkit-backdrop-filter: blur(10px) saturate(1.06);
-      border: 1px solid var(--panel-border);
-      border-radius: 5px;
     }
     .rail-home {
       display: block; text-decoration: none; color: var(--ink);
@@ -575,9 +570,6 @@
       border-top: 3px double var(--rule);
       font-size: 0.72rem; color: var(--ink-muted);
       display: grid; grid-template-columns: 1fr auto; gap: 1.4rem; align-items: end;
-      background: var(--panel);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
     }
     .colophon p { margin-bottom: 0.4rem; line-height: 1.6; }
     .colophon .accent { color: var(--accent); }
