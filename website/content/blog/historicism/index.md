@@ -16,6 +16,7 @@ in the 1800s, the idea of democracy was seen as absurd and especially the idea t
 in the 1950s, the existence of india as a unified state was popularly debated on in the anglosphere because they recognised its diversity to be a cause of divide and predicted balkanisation.
 
 all of these stories follow with the belief that history follows a 
+
 retroscpect cherry picking
 
 hegel - we cannot learn from history

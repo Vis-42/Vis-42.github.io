@@ -55,9 +55,9 @@
       --accent-2:   #3c5469;   /* faded ink-blue */
       --accent-soft:#e7dcc6;
       --paper:      #ece2cd;   /* page base, mostly behind the scrim */
-      --paper-2:    rgba(246, 239, 223, 0.97);  /* cards / raised — nearly solid cream */
-      --paper-3:    rgba(230, 218, 194, 0.94);  /* sunk / wells */
-      --panel:      rgba(245, 238, 220, 0.96);  /* main content sheet — solid cream, sharp contrast */
+      --paper-2:    rgba(246, 239, 223, 0.78);  /* cards / raised — translucent glass */
+      --paper-3:    rgba(230, 218, 194, 0.70);  /* sunk / wells */
+      --panel:      rgba(245, 238, 220, 0.76);  /* main content sheet — glass look */
       --panel-border: rgba(110, 88, 60, 0.18);
       --rule:       #b9a787;
       --rule-soft:  #cbb99a;
@@ -941,7 +941,7 @@
       const html = document.documentElement;
       const label = t => t === 'dark' ? 'Light' : 'Dark';
       const setLabels = t => texts.forEach(el => el.textContent = label(t));
-      const saved = localStorage.getItem('theme') || 'light';
+      const saved = localStorage.getItem('theme') || 'dark';
       if (saved === 'dark') html.setAttribute('data-theme', 'dark');
       setLabels(saved);
       toggles.forEach(btn => btn.addEventListener('click', function() {
