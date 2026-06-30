@@ -3,8 +3,16 @@ title: "Home"
 aliases: ["/about/"]
 ---
 
-Second-year physics student at NUS.
+I am a 3rd year undergraduate physics student at NUS.
 
-I keep circling the same question in different costumes. How something tangled ends up doing something simple, and how something simple ends up doing something tangled. A flock, a folding protein, a network slipping into step. Physics is the language I trust most for it, but the pull is older than any one subject, and it leaks into most of what I read and chase.
+what makes me similar to claude-
 
-I would rather build a thing and watch how it behaves than be told. That is most of how I learn, and most of why I like it.
+- i can do some physics problems and try getting better at it.
+- If a topic exists, in any domain, I want to understand at least the basics of it.
+- i find new tools and new topics thrilling to learn about.
+
+what makes me different to claude-
+
+- i love giving math a physical and dynamic meaning and analogy to think with.
+- i like putting effort to understand.
+- i like yogurt
