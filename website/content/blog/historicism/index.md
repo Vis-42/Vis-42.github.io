@@ -15,14 +15,12 @@ in the 1800s, the idea of democracy was seen as absurd and especially the idea t
 
 in the 1950s, the existence of india as a unified state was popularly debated on in the anglosphere because they recognised its diversity to be a cause of divide and predicted balkanisation.
 
-all of these stories follow with the belief that history follows a 
+all of these stories follow with the belief that history follows a deterministic path and one can counter the above examples by saying that if people accounted for **other important factors** then they too could have predicted what came forth.
 
-retroscpect cherry picking
+this i will say i cherry-picking data retrospectively to fit a story u have designed.
 
 hegel - we cannot learn from history
 
-ultimately it is the idea of determinism
-
-pseudo-laplace's demon
+ultimately it is the idea of determinism here that bothers me. it is a very wannabe idea of laplace's demon
 
 which different from the determinism in physics since even the butterfly effect and chaos theory
