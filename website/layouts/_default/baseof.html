@@ -128,10 +128,10 @@
     }
 
     /* mono for structural chrome */
-    .ledger-header, .margin-rail, .colophon, .project-links, .contact,
+    .margin-rail, .colophon, .project-links, .contact,
     .catalog-no, .classification, .section-index, .meta, .stamp,
-    .theme-toggle, .menu-toggle, .nav-links, .card-tab, .toc-link,
-    .experiments-toggle, .assignments-toggle, .webring {
+    .theme-toggle, .card-tab, .toc-link,
+    .experiments-toggle, .webring {
       font-family: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
     }
 
@@ -139,45 +139,13 @@
     a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
     a:hover { color: var(--accent-2); }
 
-    /* ============================== LEDGER HEADER ============================== */
-    .ledger-header {
-      position: sticky; top: 0; z-index: 50;
-      background: var(--header-bg);
-      backdrop-filter: blur(6px);
-      border-bottom: 3px double var(--rule);
-    }
-    .ledger-header nav {
-      max-width: 1240px; margin: 0 auto;
-      display: flex; align-items: center; gap: 1.2rem;
-      padding: 0.55rem 1.4rem;
-    }
-    .nameplate {
-      font-weight: 600; font-size: 0.82rem; letter-spacing: 0.14em;
-      text-transform: uppercase; color: var(--ink); text-decoration: none;
-      white-space: nowrap;
-    }
-    .nameplate .mark { color: var(--accent); }
-    .nav-links {
-      list-style: none; display: flex; gap: 0.2rem; margin-left: auto;
-      font-size: 0.72rem; letter-spacing: 0.06em;
-    }
-    .nav-links a {
-      display: block; padding: 0.3rem 0.7rem; color: var(--ink-2);
-      text-decoration: none; text-transform: uppercase; border-radius: 2px;
-      transition: background 0.15s, color 0.15s;
-    }
-    .nav-links a:hover, .nav-links a.active {
-      color: var(--accent); background: var(--accent-soft);
-    }
-    .nav-actions { display: flex; align-items: center; gap: 0.5rem; }
-    .theme-toggle, .menu-toggle {
+    .theme-toggle {
       cursor: pointer; background: transparent;
       border: 1px solid var(--rule); color: var(--ink-2);
       padding: 0.3rem 0.7rem; font-size: 0.68rem; letter-spacing: 0.08em;
       text-transform: uppercase; border-radius: 2px; transition: all 0.15s;
     }
-    .theme-toggle:hover, .menu-toggle:hover { border-color: var(--accent); color: var(--accent); }
-    .menu-toggle { display: none; }
+    .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
 
     /* ============================== MAIN GRID ============================== */
     main {
@@ -647,36 +615,6 @@
     /* wider variant for card-grid pages (explorations, coursework) */
     .project-page.wide { max-width: 1000px; }
 
-    /* ===== home landing: the site index ===== */
-    .home-index {
-      margin: 1rem 0 2rem; max-width: 680px;
-      background: var(--panel);
-      backdrop-filter: blur(10px) saturate(1.06);
-      -webkit-backdrop-filter: blur(10px) saturate(1.06);
-      border: 1px solid var(--panel-border);
-      border-radius: 5px; box-shadow: 0 8px 34px var(--shadow);
-      overflow: hidden;
-    }
-    .hx-item {
-      display: flex; align-items: baseline; gap: 1rem;
-      padding: 1rem 1.4rem; text-decoration: none; color: var(--ink);
-      border-bottom: 1px solid var(--rule-soft);
-      transition: background 0.16s ease, padding-left 0.16s ease;
-    }
-    .hx-item:last-child { border-bottom: none; }
-    .hx-item:hover { background: var(--accent-soft); padding-left: 1.8rem; color: var(--ink); }
-    .hx-num {
-      font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;
-      color: var(--accent); flex: 0 0 auto; padding-top: 0.18rem;
-    }
-    .hx-main { display: flex; flex-direction: column; gap: 0.12rem; flex: 1 1 auto; min-width: 0; }
-    .hx-label {
-      font-family: 'IBM Plex Mono', monospace; font-size: 0.96rem;
-      letter-spacing: 0.01em; color: var(--ink);
-    }
-    .hx-desc { font-size: 0.8rem; color: var(--ink-muted); line-height: 1.4; }
-    .hx-arrow { color: var(--accent); font-size: 0.9rem; flex: 0 0 auto; opacity: 0; transition: opacity 0.16s; }
-    .hx-item:hover .hx-arrow { opacity: 1; }
 
     .about-prose p:first-child { font-size: 1.18rem; color: var(--ink); font-style: italic; margin-bottom: 1.1rem; }
     .about-contact { margin-top: 2rem; padding-top: 1.2rem; border-top: 1px dashed var(--rule-soft); }
@@ -862,7 +800,7 @@
       * { transition: none !important; scroll-behavior: auto !important; }
     }
     @media print {
-      .ledger-header, .colophon, .margin-rail, .sticker-field { display: none; }
+      .colophon, .margin-rail, .sticker-field { display: none; }
       .page-column { border-left: none; padding-left: 0; }
       body { background: #fff; }
     }
