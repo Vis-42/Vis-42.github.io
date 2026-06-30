@@ -35,19 +35,30 @@
        Hand-tuned single stylesheet. No framework, no trackers.
        ============================================================ */
 
+    /* Page transitions — gentle upward reveal like a new sheet of paper appearing.
+       Degrades gracefully: browsers without View Transitions do an instant switch. */
+    @view-transition { navigation: auto; }
+    @keyframes vt-out { to   { opacity: 0; transform: translateY(10px) scale(0.99); } }
+    @keyframes vt-in  { from { opacity: 0; transform: translateY(-8px); } }
+    ::view-transition-old(root) { animation: 240ms ease-in  vt-out; }
+    ::view-transition-new(root) { animation: 320ms ease-out vt-in; }
+    @media (prefers-reduced-motion: reduce) {
+      ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+    }
+
     :root {
       /* Paper (light) */
-      --ink:        #1a100a;
-      --ink-2:      #574c3d;
-      --ink-muted:  #8a7c66;
+      --ink:        #2c1507;   /* warm dark brown — ~10:1 on panel, easier on eyes than near-black */
+      --ink-2:      #5a4030;
+      --ink-muted:  #8c7560;
       --accent:     #9c3b2c;   /* oxblood — links, rules, marks */
       --accent-2:   #3c5469;   /* faded ink-blue */
       --accent-soft:#e7dcc6;
       --paper:      #ece2cd;   /* page base, mostly behind the scrim */
-      --paper-2:    rgba(244, 236, 219, 0.90);  /* cards / raised — translucent vellum */
-      --paper-3:    rgba(227, 215, 190, 0.84);  /* sunk / wells */
-      --panel:      rgba(243, 235, 217, 0.88);  /* main content sheet */
-      --panel-border: rgba(120, 100, 70, 0.20);
+      --paper-2:    rgba(246, 239, 223, 0.94);  /* cards / raised — vellum, mostly opaque */
+      --paper-3:    rgba(230, 218, 194, 0.89);  /* sunk / wells */
+      --panel:      rgba(245, 238, 220, 0.93);  /* main content sheet — opaque enough to read through */
+      --panel-border: rgba(110, 88, 60, 0.18);
       --rule:       #b9a787;
       --rule-soft:  #cbb99a;
       --margin-line:#c1584a;   /* the red notebook margin rule */
@@ -90,7 +101,8 @@
       font-family: 'IBM Plex Serif', 'Iowan Old Style', Georgia, serif;
       font-weight: 400;
       color: var(--ink);
-      line-height: 1.72;
+      line-height: 1.74;
+      letter-spacing: 0.01em;
       background-color: var(--paper);
       transition: background-color 0.3s ease, color 0.3s ease;
       overflow-x: hidden;
