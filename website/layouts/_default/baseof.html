@@ -671,6 +671,8 @@
       color: var(--ink-muted); margin-top: 0.5rem; letter-spacing: 0.02em;
     }
     .project-prose { font-size: 0.98rem; color: var(--ink-2); line-height: 1.78; margin-bottom: 2.2rem; }
+    .project-prose p { margin-bottom: 1.35rem; }
+    .project-prose p:last-child { margin-bottom: 0; }
     .project-prose em { color: var(--ink); font-style: italic; }
     .links-panel { border-top: 3px double var(--rule); padding-top: 1.5rem; }
     .links-head {
@@ -796,9 +798,12 @@
         border: none;
         box-shadow: none;
       }
+      .project-page { padding: 1.4rem 0 1.2rem; }
     }
     @media (max-width: 720px) {
       html { font-size: 16px; }
+      main { padding-left: 0.4rem; padding-right: 0.4rem; }
+      .page-column { padding-left: 0.7rem; padding-right: 0.7rem; }
       .hero-top { flex-direction: column; align-items: flex-start; gap: 1.2rem; }
       .hero-photo { width: 150px; align-self: center; }
       .hero-title { width: 100%; }

@@ -5,22 +5,22 @@ excerpt: "misguided determinism"
 tags: ["habits", "perspective"]
 ---
 
-our minds love and are swayed by 2 things, stories and patterns. historicism provides us with both of these plentifully. the dictionary defines it as "the theory that social and cultural phenomena are determined by history". it is a powerful tool used by people across the world, across history. and it is a strong fallacy.
+our minds are swayed by two things: stories and patterns. historicism gives you both. that's what makes it so seductive, and so wrong.
 
-in the 1890s, Max Planck's professors told him that physics was almost complete and it waas worthless to put time and effort into it, it was the prevalent sentiment among most scietists of that time. it was a reasonable sentiment when u saw how progress in physics worked each decade for the 4 centuries leading up to the 1900s. it was like looking at a exponential decay curve where the number of questions humans asked and didnt have the answer to just halfed very few decades. it was a good story of humanity's scientific progress post-reniessance (with the synthesis of knowledge across disciples and of knowledge across cultures from the world caused by the flow of trade and information from the invention of the steam engine, fitting with a narrative of modern civilsations). there were good and consistent patterns to relate the development of the scientific establishment from the previous year to the present year. certain theories and ideas were so established that no one would actively recognise them as assumptions at all.
+the theory is that social and cultural phenomena are determined by history — that the past has a logic to it, and studying it gives you leverage over the future. it sounds reasonable.
 
-what came later was a paradigm-shift, with quantum mechanics and relativity, everything discovered before was in question to be challenged.
+in the 1890s, Max Planck's professors told him physics was nearly complete. this wasn't ignorance — it was a reasonable extrapolation. for four centuries, the number of open questions had been shrinking decade by decade. each generation built on the last in a consistent way. the story fit. then quantum mechanics and relativity arrived, and everything before became an approximation at best.
 
-in the 1800s, the idea of democracy was seen as absurd and especially the idea that all people having an equal vote, since most people were ill-informed and uneducated, and good education was not even expected to reach till them in any future. So even mass education seemed like a fairy tale idea. 
+in the 1800s, democracy was considered logically broken. if most people were uneducated, how could their votes produce good outcomes? mass literacy itself seemed like a fantasy — the historical record gave no reason to expect it. then it happened.
 
-in the 1950s, the existence of india as a unified state was popularly debated on in the anglosphere because they recognised its diversity to be a cause of divide and predicted balkanisation.
+in the 1950s, India's survival as a unified state was openly questioned in the anglosphere. the diversity was real, the precedents for fragmentation were real, and the prediction was wrong.
 
-all of these stories follow with the belief that history follows a deterministic path and one can counter the above examples by saying that if people accounted for **other important factors** then they too could have predicted what came forth.
+the standard defense is that smarter analysts, accounting for all the right factors, could have seen these coming. but this is exactly the trick: you only know which factors mattered after the fact. picking them out retroactively and calling the outcome predictable is just fitting a curve to points you've already plotted.
 
-this i will say i cherry-picking data retrospectively to fit a narrative u have designed.
+what bothers me is the determinism underneath all of this. the belief that history follows a path — that the present is sufficient to determine the future, if only you model it well enough. this is a weakened version of Laplace's demon: the idea that a mind with perfect knowledge of the universe's current state could calculate its entire future.
 
-in his _philosophy of history_, Hegel says _"We learn from history that we do not learn from history."_ . here Hegel did not mean that history is pointless or that humans are doomed to repeat identical errors; actually, he argued that every historical era is strictly unique, and the past cannot be used as a simple, copy-paste template for solving modern problems.
+even in physics, where the equations are exact and the variables are measurable, we've shown this breaks down. chaos theory says infinitesimally small differences in initial conditions produce wildly different outcomes at scale. the butterfly effect is not a metaphor; it is a mathematical fact. if strict determinism fails in a world of clean equations, it has no business in a world of human decisions, cultural shifts, and ideas that arrive from nowhere.
 
-ultimately it is the idea of determinism here that bothers me. it is a very wannabe idea of laplace's demon
+Hegel's point in the _Philosophy of History_ was precisely this: every historical era is strictly unique. the past is not a template you can paste over the present and expect to fit.
 
-which different from the determinism in physics since even the butterfly effect and chaos theory
+history is data. it is not destiny.
