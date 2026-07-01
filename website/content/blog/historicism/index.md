@@ -17,9 +17,9 @@ in the 1950s, the existence of india as a unified state was popularly debated on
 
 all of these stories follow with the belief that history follows a deterministic path and one can counter the above examples by saying that if people accounted for **other important factors** then they too could have predicted what came forth.
 
-this i will say i cherry-picking data retrospectively to fit a story u have designed.
+this i will say i cherry-picking data retrospectively to fit a narrative u have designed.
 
-hegel - we cannot learn from history
+in his _philosophy of history_, Hegel says _"We learn from history that we do not learn from history."_ . here Hegel did not mean that history is pointless or that humans are doomed to repeat identical errors; actually, he argued that every historical era is strictly unique, and the past cannot be used as a simple, copy-paste template for solving modern problems.
 
 ultimately it is the idea of determinism here that bothers me. it is a very wannabe idea of laplace's demon
 
