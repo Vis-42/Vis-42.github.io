@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ .Site.LanguageCode }}">
+<html lang="{{ .Site.Language.Locale }}">
 <head>
   <meta charset="utf-8">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
@@ -8,21 +8,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  <title>{{ if .IsHome }}Parth Bhargava{{ else }}{{ .Title }} | Parth Bhargava{{ end }}</title>
-  <meta name="description" content="{{ if .Description }}{{ .Description }}{{ else }}{{ .Site.Params.description }}{{ end }}">
-  <meta name="author" content="{{ .Site.Params.profile.name }}">
+  {{ $name := .Site.Params.profile.name }}
+  {{ $title := cond .IsHome $name (printf "%s | %s" .Title $name) }}
+  {{ $desc := .Description | default .Site.Params.description }}
+  <title>{{ $title }}</title>
+  <meta name="description" content="{{ $desc }}">
+  <meta name="author" content="{{ $name }}">
   <meta name="keywords" content="physics, academic, research, experimental physics, complex systems, nonlinear dynamics, NUS">
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="{{ .Site.BaseURL }}">
-  <meta property="og:title" content="{{ .Site.Title }}">
-  <meta property="og:description" content="{{ .Site.Params.description }}">
+  <meta property="og:url" content="{{ .Permalink }}">
+  <meta property="og:title" content="{{ $title }}">
+  <meta property="og:description" content="{{ $desc }}">
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary">
-  <meta property="twitter:title" content="{{ .Site.Title }}">
-  <meta property="twitter:description" content="{{ .Site.Params.description }}">
+  <meta property="twitter:title" content="{{ $title }}">
+  <meta property="twitter:description" content="{{ $desc }}">
 
   <!-- Typography: serif body, mono for labels & marginalia -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -875,7 +878,7 @@
       <p><span class="accent">Colophon.</span> Set in IBM&nbsp;Plex Serif &amp; Mono. HTML/CSS
          built with <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>, served from GitHub Pages.</p>
       <p>No trackers, no cookies, no analytics. Just a notebook left open on the internet.</p>
-      <p>&copy; {{ now.Year }} {{ .Site.Title }} · last revised {{ now.Format "Jan 2006" }}</p>
+      <p>&copy; {{ now.Year }} {{ .Site.Params.profile.name }} · last revised {{ now.Format "Jan 2006" }}</p>
     </div>
     <div>
       <div class="webring">

@@ -1,1 +1,0 @@
-# Percolation on simplicial complexes

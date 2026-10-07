@@ -1,6 +1,6 @@
 # Website — parthbhargava.net
 
-Hugo static site, no theme, no framework. The deploy is fully automated: push to `parthb` and the GitHub Action on `Vis-42/Vis-42.github.io` runs Hugo and publishes to Pages. Never push the `public/` directory.
+Hugo static site, no theme, no framework. The deploy is fully automated: `../deploy-public.sh` pushes only the public files (website, notebooks, workflow) to `Vis-42/Vis-42.github.io`, and the GitHub Action there runs Hugo and publishes to Pages. Never push the `public/` directory.
 
 ```bash
 # preview locally
@@ -10,7 +10,7 @@ cd website && hugo server --port 1313
 cd website && hugo --minify
 
 # deploy
-git push origin main    # then: ./deploy-public.sh
+git push origin main && ./deploy-public.sh    # run from the repo root
 ```
 
 ---
@@ -24,24 +24,25 @@ Content you would actually read lives in `content/`:
 - `content/projects/<slug>/index.md` — each projects page (original independent work)
 - `content/blog/<slug>/index.md` — each blog post
 - `content/photographs/<slug>.md` — each photograph entry
-- `content/_index.md` — the homepage (just the title; body is in `layouts/_default/home.html`)
+- `content/_index.md` — the homepage "about" text; the hero card and sticker field around it are in `layouts/_default/home.html`
 
-The homepage (`layouts/_default/home.html`) has its own hardcoded copy of each exploration description. If you update a description in its `content/explorations/<slug>/index.md`, update it in `home.html` too — they are intentionally duplicated so the homepage renders without Hugo data pipelines.
+The `/explorations/` listing is generated from the front matter of each exploration page, so there is nothing to keep in sync by hand. Coursework is the exception: those cards are hardcoded in `layouts/coursework/list.html`.
 
 ---
 
 ## Adding or editing an exploration
 
-**Edit the write-up:** Open `content/explorations/<slug>/index.md`. The body after the `---` front matter is standard Markdown and renders on the exploration page. If you change the description, also update the matching paragraph in `layouts/_default/home.html`.
+**Edit the write-up:** Open `content/explorations/<slug>/index.md`. The body after the `---` front matter is standard Markdown and renders on the exploration page; its first 30 words are the summary on the `/explorations/` card.
 
-**Update the live notebook:** Edit `../py/<slug>/<slug>.py` in marimo, then rebuild:
+**Update the live notebook:** Edit `../py/<slug>/<slug>.py` in marimo, then rebuild. Both run from `py/` through uv, which keeps the pinned marimo version:
 ```bash
-marimo export html-wasm ../py/<slug>/<slug>.py -o static/apps/<slug> --mode edit
-# keep only index.html, delete the rest of the export
-find static/apps/<slug> -not -name "index.html" -not -path "static/apps/<slug>" -delete
-perl -i '' -e 's{"\./}{"../_assets/}g' static/apps/<slug>/index.html
+cd ../py
+uv run marimo edit <slug>/<slug>.py
+uv run build.py <slug>        # or with no arguments: every notebook on the site
 ```
-The `_assets/` directory is shared across all apps; do not rebuild it.
+This exports the notebook to `static/apps/<slug>/index.html`, refreshes the shared marimo frontend in `static/apps/assets/`, and copies `py/_shared/` to `static/apps/_shared/`. All apps share `assets/`, so they must come from the same marimo version: the version is pinned in `py/pyproject.toml`, and if you bump it, rebuild everything.
+
+The animations in every notebook are drawn by one shared engine, `py/_shared/canvas.html`. A notebook builds a spec (frames, panels, layout; the format is documented at the top of that file) and calls `canvas_anim(spec, height)`. To add a new kind of plot, add a branch to the engine. Use only `/* */` comments in it: `mo.iframe` puts the page on one line, so a `//` comment would break the script, and `build.py` refuses to build if it finds one.
 
 **Change the thumbnail:** Replace `static/media/thumbs/<slug>.jpg`. JPEG only; keep it under 200 KB. The front matter `thumb:` field is the path from `static/`.
 
@@ -64,8 +65,9 @@ links:
 Description paragraph here.
 ```
 2. Put the thumbnail at `static/media/thumbs/<new-slug>.jpg`
-3. Export the notebook following the steps above
-4. Add the exploration card and description to `layouts/_default/home.html` (copy the structure of an existing card)
+3. Run `uv run build.py <new-slug>` from `py/`
+4. Add `<new-slug>` to the `SLUGS` list in `../deploy-public.sh`, otherwise the notebook source is not published and the source link 404s
+5. Optionally add a sticker to `layouts/_default/home.html` (see Stickers below)
 
 **Add a new project** (original independent work):
 1. Create `content/projects/<new-slug>/index.md` with the same front matter structure
@@ -109,7 +111,8 @@ The photo appears on `/photographs/` in the grid. No other changes needed.
 
 1. Compile with Typst: `cd ../manuscripts/typst && typst compile --root . <exp>/<report>.typ <exp>/<report>.pdf`
 2. Copy the PDF to `static/pdfs/experiments/<slug>.pdf`
-3. Commit and push. The coursework link in `home.html` must match the path exactly or it 404s.
+3. Add or update the card in `layouts/coursework/list.html`. The link must match the path exactly or it 404s.
+4. Commit and deploy.
 
 ---
 
@@ -122,5 +125,5 @@ SVG doodles in `static/stickers/svg/` are used as CSS mask-image glyphs on the h
 ## If something doesn't update
 
 - A PDF or image returning 404: check that the file is committed and that the path in the HTML matches the filename exactly (case-sensitive on the server).
-- The live notebook doesn't load: check that `static/apps/<slug>/index.html` exists and that all `../_assets/` paths resolve. If the `_assets/` directory is missing from `website/static/apps/`, run `git checkout HEAD -- website/static/apps/_assets/` to restore it.
+- The live notebook doesn't load: check that `static/apps/<slug>/index.html` exists and that `static/apps/assets/` and `static/apps/_shared/canvas.html` exist. Rebuilding with `uv run build.py` (from `py/`) restores all three.
 - The site doesn't update after push: open `https://github.com/Vis-42/Vis-42.github.io/actions` and check that the Action passed. Make sure the Pages source is set to **GitHub Actions** in the Pages settings.

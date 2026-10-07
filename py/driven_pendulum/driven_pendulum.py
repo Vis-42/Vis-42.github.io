@@ -7,9 +7,11 @@ app = marimo.App(width="medium", app_title="Driven Quadruple Pendulum")
 @app.cell(hide_code=True)
 def _():
     import json
+
     import marimo as mo
+    import matplotlib.pyplot as plt
     import numpy as np
-    return json, mo, np
+    return json, mo, np, plt
 
 
 @app.cell(hide_code=True)
@@ -28,25 +30,15 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(mo):
-    tau0_sl = mo.ui.slider(0.0, 12.0, value=8.0, step=0.25, label="drive τ₀ (N·m)", show_value=True)
-    omega_sl = mo.ui.slider(1.0, 12.0, value=5.03, step=0.1, label="ω_d (rad/s)", show_value=True)
-    b_sl = mo.ui.slider(0.0, 0.3, value=0.10, step=0.01, label="damping b", show_value=True)
-    mo.md(f"""{mo.hstack([tau0_sl, omega_sl, b_sl], justify="start", gap=2)}""")
-    return tau0_sl, omega_sl, b_sl
+def _(np):
+    # Four rods hanging from pivot 1, torque tau0*cos(wd*t) applied there,
+    # viscous damping b on every joint.
+    G = 9.81
+    LENGTHS = [0.40, 0.35, 0.30, 0.25]
+    MASSES = [1.0, 1.0, 1.0, 1.0]
 
-
-@app.cell(hide_code=True)
-def _(np, tau0_sl, omega_sl, b_sl):
-    _g = 9.81
-    _L = [0.40, 0.35, 0.30, 0.25]
-    _m = [1.0, 1.0, 1.0, 1.0]
-    _tau0 = tau0_sl.value
-    _wd   = omega_sl.value
-    _b    = b_sl.value
-
-    def _M(th):
-        L, m = _L, _m
+    def mass_matrix(th):
+        L, m = LENGTHS, MASSES
         Mm = np.zeros((4, 4))
         cmsum = [sum(m[k:]) for k in range(4)]
         for i in range(4):
@@ -57,8 +49,8 @@ def _(np, tau0_sl, omega_sl, b_sl):
                 Mm[i, j] = Mm[j, i] = v
         return Mm
 
-    def _F(th, om, t):
-        L, m, g = _L, _m, _g
+    def forces(th, om, t, tau0, wd, b):
+        L, m, g = LENGTHS, MASSES, G
         F = np.zeros(4)
         cmsum = [sum(m[k:]) for k in range(4)]
         for i in range(4):
@@ -72,21 +64,35 @@ def _(np, tau0_sl, omega_sl, b_sl):
                     F[i] += c * om[j] ** 2 * np.sin(th[j] - th[i])
                 else:
                     F[i] -= c * om[j] ** 2 * np.sin(th[i] - th[j])
-        F[0] += _tau0 * np.cos(_wd * t)
-        F -= _b * om
+        F[0] += tau0 * np.cos(wd * t)
+        F -= b * om
         return F
 
-    def _derivs(t, y):
-        th, om = y[:4], y[4:]
-        return np.concatenate([om, np.linalg.solve(_M(th), _F(th, om, t))])
+    def rk4_step(t, y, dt, tau0, wd, b):
+        def derivs(t_, y_):
+            th, om = y_[:4], y_[4:]
+            return np.concatenate([om, np.linalg.solve(mass_matrix(th), forces(th, om, t_, tau0, wd, b))])
 
-    def _rk4(t, y, dt):
-        k1 = _derivs(t, y)
-        k2 = _derivs(t + dt / 2, y + dt / 2 * k1)
-        k3 = _derivs(t + dt / 2, y + dt / 2 * k2)
-        k4 = _derivs(t + dt, y + dt * k3)
+        k1 = derivs(t, y)
+        k2 = derivs(t + dt / 2, y + dt / 2 * k1)
+        k3 = derivs(t + dt / 2, y + dt / 2 * k2)
+        k4 = derivs(t + dt, y + dt * k3)
         return y + (dt / 6) * (k1 + 2 * k2 + 2 * k3 + k4)
 
+    return LENGTHS, rk4_step
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    tau0_sl = mo.ui.slider(0.0, 12.0, value=8.0, step=0.25, label="drive τ₀ (N·m)", show_value=True)
+    omega_sl = mo.ui.slider(1.0, 12.0, value=5.03, step=0.1, label="ω_d (rad/s)", show_value=True)
+    b_sl = mo.ui.slider(0.0, 0.3, value=0.10, step=0.01, label="damping b", show_value=True)
+    mo.md(f"""{mo.hstack([tau0_sl, omega_sl, b_sl], justify="start", gap=2)}""")
+    return tau0_sl, omega_sl, b_sl
+
+
+@app.cell(hide_code=True)
+def _(LENGTHS, b_sl, np, omega_sl, rk4_step, tau0_sl):
     DT = 0.01; T_END = 12.0; MAX_FRAMES = 800
     _n = int(T_END / DT)
     _step = max(1, _n // MAX_FRAMES)
@@ -95,9 +101,9 @@ def _(np, tau0_sl, omega_sl, b_sl):
     for _i in range(_n):
         if _i % _step == 0:
             _hist.append(_y[:4].tolist())
-        _y = _rk4(_t, _y, DT); _t += DT
+        _y = rk4_step(_t, _y, DT, tau0_sl.value, omega_sl.value, b_sl.value); _t += DT
 
-    sim = {"th": _hist, "n": len(_hist), "L": _L}
+    sim = {"th": _hist, "n": len(_hist), "L": LENGTHS}
     return (sim,)
 
 
@@ -288,50 +294,14 @@ def _(mo):
 
 
 @app.cell(hide_code=True)
-def _(bif_btn, mo, np, omega_sl, b_sl):
+def _(b_sl, bif_btn, mo, np, omega_sl, rk4_step):
     mo.stop(not bif_btn.value, mo.md("Press **Compute** above."))
-    _g   = 9.81
-    _L   = [0.40, 0.35, 0.30, 0.25]
-    _m   = [1.0,  1.0,  1.0,  1.0]
     _b   = float(b_sl.value)
     _wd  = float(omega_sl.value)
     _Td  = 2 * np.pi / _wd
     _DT  = 0.01
     _N_TRANS = 20   # periods discarded
     _N_REC   = 30   # periods recorded
-
-    def _M4(th):
-        Mm = np.zeros((4, 4))
-        cmsum = [sum(_m[k:]) for k in range(4)]
-        for i in range(4):
-            Mm[i, i] = cmsum[i] * _L[i] ** 2
-        for i in range(4):
-            for j in range(i + 1, 4):
-                v = sum(_m[k] for k in range(j, 4)) * _L[i] * _L[j] * np.cos(th[i] - th[j])
-                Mm[i, j] = Mm[j, i] = v
-        return Mm
-
-    def _F4(th, om, t, tau0):
-        F = np.zeros(4)
-        cmsum = [sum(_m[k:]) for k in range(4)]
-        for i in range(4):
-            F[i] -= cmsum[i] * _g * _L[i] * np.sin(th[i])
-        for i in range(4):
-            for j in range(4):
-                if i == j: continue
-                c = sum(_m[k] for k in range(max(i, j), 4)) * _L[i] * _L[j]
-                if j < i:
-                    F[i] += c * om[j] ** 2 * np.sin(th[j] - th[i])
-                else:
-                    F[i] -= c * om[j] ** 2 * np.sin(th[i] - th[j])
-        F[0] += tau0 * np.cos(_wd * t)
-        F -= _b * om
-        return F
-
-    def _rk4b(t, y, dt, tau0):
-        def d(t_, y_): return np.concatenate([y_[4:], np.linalg.solve(_M4(y_[:4]), _F4(y_[:4], y_[4:], t_, tau0))])
-        k1 = d(t, y); k2 = d(t+dt/2, y+dt/2*k1); k3 = d(t+dt/2, y+dt/2*k2); k4 = d(t+dt, y+dt*k3)
-        return y + (dt/6)*(k1+2*k2+2*k3+k4)
 
     _tau_vals = np.linspace(0, 12, 80)
     _bif_tau  = []
@@ -342,12 +312,12 @@ def _(bif_btn, mo, np, omega_sl, b_sl):
         # transient
         _n_trans = int(_N_TRANS * _Td / _DT)
         for _ in range(_n_trans):
-            _y = _rk4b(_t, _y, _DT, _tau0); _t += _DT
+            _y = rk4_step(_t, _y, _DT, _tau0, _wd, _b); _t += _DT
         # record stroboscopic samples
         _n_rec = int(_N_REC * _Td / _DT)
         _step  = max(1, int(_Td / _DT))
         for _i in range(_n_rec):
-            _y = _rk4b(_t, _y, _DT, _tau0); _t += _DT
+            _y = rk4_step(_t, _y, _DT, _tau0, _wd, _b); _t += _DT
             if _i % _step == 0:
                 _bif_tau.append(float(_tau0))
                 _bif_th1.append(float((_y[0] + np.pi) % (2 * np.pi) - np.pi))
@@ -357,7 +327,7 @@ def _(bif_btn, mo, np, omega_sl, b_sl):
 
 
 @app.cell(hide_code=True)
-def _(bif_data, mo, plt):
+def _(bif_data, mo, np, plt):
     fig_bif, ax_bif = plt.subplots(figsize=(7, 3.5))
     ax_bif.scatter(bif_data["tau"], bif_data["th1"],
                    s=0.6, color="#7dd3fc", alpha=0.5, linewidths=0)

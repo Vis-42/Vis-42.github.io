@@ -9,9 +9,10 @@ def _():
     import json
 
     import marimo as mo
+    import matplotlib.pyplot as plt
     import numpy as np
 
-    return json, mo, np
+    return json, mo, np, plt
 
 
 @app.cell(hide_code=True)

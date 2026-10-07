@@ -1,7 +1,15 @@
 baseURL = "https://parthbhargava.net/"
 locale = 'en-us'
-title = 'Parth Bhargava'
 disableKinds = ["taxonomy", "term"]
+enableRobotsTXT = true
+
+# These three reproduce what the old hugoblox config/_default/hugo.yaml enforced,
+# so the built site stays identical to the live one:
+# empty site title (page <title> comes from params.profile.name; RSS reads "Blog on"),
+# 30-word summaries, and aliases off (so the /about alias in content/_index.md is inert).
+title = ''
+summaryLength = 30
+disableAliases = true
 
 # Allow raw HTML in content (project descriptions use <sup>, entities, etc.)
 [markup.goldmark.renderer]
