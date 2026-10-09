@@ -6,192 +6,29 @@
     <p>Lab reports and analysis code from my physics degree at NUS.</p>
   </div>
 
+  {{/* Cards come from data/coursework.toml; files are copied from ~/-uni by sync_uni.py */}}
+  {{ $code := "https://github.com/Vis-42/Vis-42.github.io/blob/main/website/static/code" }}
   <div class="coursework-subsection">
     <h3>Experimental Work</h3>
     <div class="projects-grid experiments-preview">
-
+      {{ range hugo.Data.coursework.experiments }}
       <div class="project-card">
       <div class="card-thumb">
-      <img src="/media/thumbs/hall.png" alt="Scanning Hall probe microscopy: Hall cross sensor and superconducting vortex lattice maps" loading="lazy">
+      <img src="{{ .thumb }}" alt="{{ .alt }}" loading="lazy">
       </div>
       <div class="card-content">
-      <h4>hall effect in semiconductors</h4>
-      <p>Measured Hall voltage and magnetoresistance across temperature to extract carrier type, mobility, and the intrinsic transition; includes uncertainty analysis.</p>
+      <h4>{{ .title }}</h4>
+      <p>{{ .summary }}</p>
       <p class="project-links">
-      <a href="/pdfs/experiments/hall-effect.pdf" target="_blank">Report</a>
-      <a href="https://github.com/Vis-42/Vis-42.github.io/blob/main/manuscripts/typst/hall_effect/scripts/hall_effect_analysis.py" target="_blank">Analysis Code</a>
+      {{ $slug := .slug }}
+      <a href="/pdfs/experiments/{{ $slug }}.pdf" target="_blank">Report</a>
+      {{ with .slides }}<a href="/pdfs/experiments/{{ $slug }}-slides.pdf" target="_blank">Slides</a>{{ end }}
+      {{ range .code }}<a href="{{ $code }}/{{ $slug }}/{{ path.Base .src }}" target="_blank">{{ .label }}</a>
+      {{ end }}
       </p>
       </div>
       </div>
-
-      <div class="project-card">
-      <div class="card-thumb">
-      <img src="/media/thumbs/raman.png" alt="Raman spectrum of carbon allotropes" loading="lazy">
-      </div>
-      <div class="card-content">
-      <h4>raman spectroscopy</h4>
-      <p>Characterised carbon allotropes via D/G band ratios, estimated graphene layer count, and identified an unknown semiconductor wafer from its 521 cm⁻¹ mode.</p>
-      <p class="project-links">
-      <a href="/pdfs/experiments/raman-spectroscopy.pdf" target="_blank">Report</a>
-      <a href="/pdfs/experiments/raman-spectroscopy.pdf" target="_blank">Slides</a>
-      <a href="https://github.com/Vis-42/Vis-42.github.io/blob/main/manuscripts/typst/raman/scripts/analyze_raman.py" target="_blank">Analysis Code</a>
-      <a href="https://github.com/Vis-42/Vis-42.github.io/blob/main/manuscripts/typst/raman/scripts/analyze_dlc.py" target="_blank">DLC Analysis</a>
-      </p>
-      </div>
-      </div>
-
-      <div class="project-card">
-      <div class="card-thumb">
-      <img src="/media/thumbs/xrd.png" alt="Electron diffraction pattern from a silicon crystal (bulk spots and surface reconstruction)" loading="lazy">
-      </div>
-      <div class="card-content">
-      <h4>x-ray diffraction analysis</h4>
-      <p>Used Bragg peaks to determine lattice constants and identify an unknown crystal; report documents calibration limits.</p>
-      <p class="project-links">
-      <a href="/pdfs/experiments/xrd.pdf" target="_blank">Report</a>
-      <a href="https://github.com/Vis-42/Vis-42.github.io/blob/main/manuscripts/typst/xrd/scripts/xrd_final_corrected.py" target="_blank">Analysis Code</a>
-      </p>
-      </div>
-      </div>
-
-      <div class="project-card">
-      <div class="card-thumb">
-      <img src="/media/thumbs/magnetic.png" alt="Magnetic moment scaling laws" loading="lazy">
-      </div>
-      <div class="card-content">
-      <h4>magnetic moment in helmholtz field</h4>
-      <p>Calibrated Helmholtz field constant and tested scaling laws; corrected a model assumption during analysis.</p>
-      <p class="project-links">
-      <a href="/pdfs/experiments/magnetic-moment.pdf" target="_blank">Report</a>
-      <a href="/pdfs/magnetic-moment-slides.pdf" target="_blank">Slides</a>
-      <a href="https://github.com/Vis-42/Vis-42.github.io/blob/main/manuscripts/typst/magnetic_moment/scripts/mm_analysis.py" target="_blank">Analysis Code</a>
-      </p>
-      </div>
-      </div>
-
-      <div class="project-card">
-      <div class="card-thumb">
-      <img src="/media/thumbs/xrf.png" alt="Emission line spectra of the elements arranged as a periodic table" loading="lazy">
-      </div>
-      <div class="card-content">
-      <h4>x-ray fluorescence analysis</h4>
-      <p>Qualitative elemental identification of unknowns and quantitative brass composition via Gaussian deconvolution of overlapping K-lines.</p>
-      <p class="project-links">
-      <a href="/pdfs/experiments/xrf.pdf" target="_blank">Report</a>
-      <a href="https://github.com/Vis-42/Vis-42.github.io/blob/main/manuscripts/typst/xrf/scripts/analyze_xrf.py" target="_blank">Analysis Code</a>
-      </p>
-      </div>
-      </div>
-
-      <div class="project-card">
-      <div class="card-thumb">
-      <img src="/media/thumbs/paschen.png" alt="Paschen curve with Townsend theory" loading="lazy">
-      </div>
-      <div class="card-content">
-      <h4>paschen curve &amp; gas discharge</h4>
-      <p>Mapped breakdown voltage vs. electrode gap at three pressures; extracted the second Townsend coefficient and identified the avalanche-to-streamer transition.</p>
-      <p class="project-links">
-      <a href="/pdfs/experiments/paschen-curve.pdf" target="_blank">Report</a>
-      <a href="https://github.com/Vis-42/Vis-42.github.io/blob/main/manuscripts/typst/plasma/scripts/analyze_paschen.py" target="_blank">Analysis Code</a>
-      </p>
-      </div>
-      </div>
-
-      <div class="project-card">
-      <div class="card-thumb">
-      <img src="/media/thumbs/laue.png" alt="Laue diffraction pattern grid" loading="lazy">
-      </div>
-      <div class="card-content">
-      <h4>laue diffraction &amp; x-ray crystallography</h4>
-      <p>Indexed Laue back-reflection patterns and determined lattice parameters; combined with powder XRD for crystal identification.</p>
-      <p class="project-links">
-      <a href="/pdfs/experiments/laue-xrc.pdf" target="_blank">Report</a>
-      <a href="https://github.com/Vis-42/Vis-42.github.io/blob/main/manuscripts/typst/lau+xrc/scripts/analyze_xrc.py" target="_blank">Analysis Code</a>
-      </p>
-      </div>
-      </div>
-
-      <div class="project-card">
-      <div class="card-thumb">
-      <img src="/media/thumbs/pll.png" alt="Laser pointer beams red green violet" loading="lazy">
-      </div>
-      <div class="card-content">
-      <h4>propagation of laser light (pll)</h4>
-      <p>Measured Gaussian beam parameters and beam quality; report focuses on fitting and measurement limits.</p>
-      <p class="project-links">
-      <a href="/pdfs/experiments/pll.pdf" target="_blank">Report</a>
-      </p>
-      </div>
-      </div>
-
-      <div class="project-card">
-      <div class="card-thumb">
-      <img src="/media/thumbs/fluorescence.png" alt="Fluorescence emission spectra of BSA and lysozyme" loading="lazy">
-      </div>
-      <div class="card-content">
-      <h4>fluorescence spectroscopy: protein unfolding</h4>
-      <p>Tracked acid denaturation of BSA and lysozyme via intrinsic Trp/Tyr fluorescence; observed emission shifts and intensity changes tied to tertiary structure loss.</p>
-      <p class="project-links">
-      <a href="/pdfs/experiments/fluorescence-spectroscopy.pdf" target="_blank">Report</a>
-      <a href="https://github.com/Vis-42/Vis-42.github.io/blob/main/manuscripts/typst/bio-fluorescence/scripts/analyze_fluorescence.py" target="_blank">Analysis Code</a>
-      </p>
-      </div>
-      </div>
-
-      <div class="project-card">
-      <div class="card-thumb">
-      <img src="/media/thumbs/cd.png" alt="Circular dichroism spectra" loading="lazy">
-      </div>
-      <div class="card-content">
-      <h4>circular dichroism: protein secondary structure</h4>
-      <p>Monitored &alpha;-helical content of BSA and lysozyme under acid denaturation using far-UV CD; lysozyme's disulfide bonds preserved its secondary structure.</p>
-      <p class="project-links">
-      <a href="/pdfs/experiments/circular-dichroism.pdf" target="_blank">Report</a>
-      <a href="https://github.com/Vis-42/Vis-42.github.io/blob/main/manuscripts/typst/bio-cd/scripts/analyze_cd.py" target="_blank">Analysis Code</a>
-      </p>
-      </div>
-      </div>
-
-      <div class="project-card">
-      <div class="card-thumb">
-      <img src="/media/thumbs/esr.png" alt="EPR spectrometer" loading="lazy">
-      </div>
-      <div class="card-content">
-      <h4>electron spin resonance (esr)</h4>
-      <p>Extracted g-factor from frequency–field measurements; analyzed Zeeman splitting and systematics.</p>
-      <p class="project-links">
-      <a href="/pdfs/experiments/esr.pdf" target="_blank">Report</a>
-      </p>
-      </div>
-      </div>
-
-      <div class="project-card">
-      <div class="card-thumb">
-      <img src="/media/thumbs/trim.png" alt="TRIM ion transport simulation" loading="lazy">
-      </div>
-      <div class="card-content">
-      <h4>trim ion transport simulation</h4>
-      <p>Monte Carlo simulations of ion range, damage, and sputtering across nuclear microscopy, semiconductor implantation, and proton therapy applications.</p>
-      <p class="project-links">
-      <a href="/pdfs/experiments/trim-simulation.pdf" target="_blank">Report</a>
-      </p>
-      </div>
-      </div>
-
-      <div class="project-card">
-      <div class="card-thumb">
-      <img src="/media/thumbs/microscopy.png" alt="Fluorescence microscopy comparison panel" loading="lazy">
-      </div>
-      <div class="card-content">
-      <h4>fluorescence microscopy: cellular structure</h4>
-      <p>Imaged Hoechst-stained onion epidermal and cheek epithelial cells; compared brightfield and fluorescence contrast for nuclear localisation.</p>
-      <p class="project-links">
-      <a href="/pdfs/experiments/fluorescence-microscopy.pdf" target="_blank">Report</a>
-      <a href="https://github.com/Vis-42/Vis-42.github.io/blob/main/manuscripts/typst/bio-microscopy/scripts/process_images.py" target="_blank">Analysis Code</a>
-      </p>
-      </div>
-      </div>
-
+      {{ end }}
     </div>
   </div>
 

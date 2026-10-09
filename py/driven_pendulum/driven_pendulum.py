@@ -37,41 +37,46 @@ def _(np):
     LENGTHS = [0.40, 0.35, 0.30, 0.25]
     MASSES = [1.0, 1.0, 1.0, 1.0]
 
+    # Every function takes a single state or a batch: th, om have shape (..., 4).
+    # float_power squares the same way scalar ** did before batching, so results are
+    # bit-identical to the original one-amplitude-at-a-time code.
     def mass_matrix(th):
         L, m = LENGTHS, MASSES
-        Mm = np.zeros((4, 4))
+        Mm = np.zeros(th.shape[:-1] + (4, 4))
         cmsum = [sum(m[k:]) for k in range(4)]
         for i in range(4):
-            Mm[i, i] = cmsum[i] * L[i] ** 2
+            Mm[..., i, i] = cmsum[i] * L[i] ** 2
         for i in range(4):
             for j in range(i + 1, 4):
-                v = sum(m[k] for k in range(j, 4)) * L[i] * L[j] * np.cos(th[i] - th[j])
-                Mm[i, j] = Mm[j, i] = v
+                v = sum(m[k] for k in range(j, 4)) * L[i] * L[j] * np.cos(th[..., i] - th[..., j])
+                Mm[..., i, j] = Mm[..., j, i] = v
         return Mm
 
     def forces(th, om, t, tau0, wd, b):
         L, m, g = LENGTHS, MASSES, G
-        F = np.zeros(4)
+        F = np.zeros(th.shape)
         cmsum = [sum(m[k:]) for k in range(4)]
         for i in range(4):
-            F[i] -= cmsum[i] * g * L[i] * np.sin(th[i])
+            F[..., i] -= cmsum[i] * g * L[i] * np.sin(th[..., i])
         for i in range(4):
             for j in range(4):
                 if i == j:
                     continue
                 c = sum(m[k] for k in range(max(i, j), 4)) * L[i] * L[j]
                 if j < i:
-                    F[i] += c * om[j] ** 2 * np.sin(th[j] - th[i])
+                    F[..., i] += c * np.float_power(om[..., j], 2) * np.sin(th[..., j] - th[..., i])
                 else:
-                    F[i] -= c * om[j] ** 2 * np.sin(th[i] - th[j])
-        F[0] += tau0 * np.cos(wd * t)
+                    F[..., i] -= c * np.float_power(om[..., j], 2) * np.sin(th[..., i] - th[..., j])
+        F[..., 0] += tau0 * np.cos(wd * t)
         F -= b * om
         return F
 
     def rk4_step(t, y, dt, tau0, wd, b):
+        """One RK4 step for y of shape (8,), or (N, 8) with tau0 of shape (N,)."""
         def derivs(t_, y_):
-            th, om = y_[:4], y_[4:]
-            return np.concatenate([om, np.linalg.solve(mass_matrix(th), forces(th, om, t_, tau0, wd, b))])
+            th, om = y_[..., :4], y_[..., 4:]
+            acc = np.linalg.solve(mass_matrix(th), forces(th, om, t_, tau0, wd, b)[..., None])[..., 0]
+            return np.concatenate([om, acc], axis=-1)
 
         k1 = derivs(t, y)
         k2 = derivs(t + dt / 2, y + dt / 2 * k1)
@@ -303,24 +308,25 @@ def _(b_sl, bif_btn, mo, np, omega_sl, rk4_step):
     _N_TRANS = 20   # periods discarded
     _N_REC   = 30   # periods recorded
 
+    # All 80 drive amplitudes are integrated together, one batched RK4 step at a time.
     _tau_vals = np.linspace(0, 12, 80)
-    _bif_tau  = []
-    _bif_th1  = []
-    for _tau0 in _tau_vals:
-        _y = np.zeros(8); _y[0] = 0.3; _y[1] = 0.1
-        _t = 0.0
-        # transient
-        _n_trans = int(_N_TRANS * _Td / _DT)
-        for _ in range(_n_trans):
-            _y = rk4_step(_t, _y, _DT, _tau0, _wd, _b); _t += _DT
-        # record stroboscopic samples
-        _n_rec = int(_N_REC * _Td / _DT)
-        _step  = max(1, int(_Td / _DT))
-        for _i in range(_n_rec):
-            _y = rk4_step(_t, _y, _DT, _tau0, _wd, _b); _t += _DT
-            if _i % _step == 0:
-                _bif_tau.append(float(_tau0))
-                _bif_th1.append(float((_y[0] + np.pi) % (2 * np.pi) - np.pi))
+    _y = np.zeros((len(_tau_vals), 8)); _y[:, 0] = 0.3; _y[:, 1] = 0.1
+    _t = 0.0
+    # transient
+    _n_trans = int(_N_TRANS * _Td / _DT)
+    for _ in range(_n_trans):
+        _y = rk4_step(_t, _y, _DT, _tau_vals, _wd, _b); _t += _DT
+    # record stroboscopic samples
+    _n_rec = int(_N_REC * _Td / _DT)
+    _step  = max(1, int(_Td / _DT))
+    _samples = []
+    for _i in range(_n_rec):
+        _y = rk4_step(_t, _y, _DT, _tau_vals, _wd, _b); _t += _DT
+        if _i % _step == 0:
+            _samples.append((_y[:, 0] + np.pi) % (2 * np.pi) - np.pi)
+    _samples = np.array(_samples).T          # (amplitude, sample)
+    _bif_tau = np.repeat(_tau_vals, _samples.shape[1]).tolist()
+    _bif_th1 = _samples.ravel().tolist()
 
     bif_data = {"tau": _bif_tau, "th1": _bif_th1}
     return (bif_data,)

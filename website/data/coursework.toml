@@ -1,0 +1,144 @@
+# Cards on /coursework/, in display order.
+#
+# report, slides and code are paths inside ~/-uni, which is the source of truth.
+# `python3 website/sync_uni.py` copies them into the site:
+#   report -> static/pdfs/experiments/<slug>.pdf
+#   slides -> static/pdfs/experiments/<slug>-slides.pdf
+#   code   -> static/code/<slug>/<file name>   (linked on GitHub through the public mirror)
+# Edit a report in ~/-uni, recompile it, run the sync, commit, deploy.
+
+[[experiments]]
+slug = "hall-effect"
+title = "hall effect in semiconductors"
+thumb = "/media/thumbs/hall.png"
+alt = "Scanning Hall probe microscopy: Hall cross sensor and superconducting vortex lattice maps"
+summary = "Measured Hall voltage and magnetoresistance across temperature to extract carrier type, mobility, and the intrinsic transition; includes uncertainty analysis."
+report = "Sem3/pc2193-ep1/hall_effect/report/report.pdf"
+code = [
+  { label = "Analysis Code", src = "Sem3/pc2193-ep1/hall_effect/scripts/hall_effect_analysis.py" },
+]
+
+[[experiments]]
+slug = "raman-spectroscopy"
+title = "raman spectroscopy"
+thumb = "/media/thumbs/raman.png"
+alt = "Raman spectrum of carbon allotropes"
+summary = "Characterised carbon allotropes via D/G band ratios, estimated graphene layer count, and identified an unknown semiconductor wafer from its 521 cm⁻¹ mode."
+report = "Sem4/pc3193-ep2/raman/report/report.pdf"
+code = [
+  { label = "Analysis Code", src = "Sem4/pc3193-ep2/raman/scripts/analyze_raman.py" },
+  { label = "DLC Analysis", src = "Sem4/pc3193-ep2/raman/scripts/analyze_dlc.py" },
+]
+
+[[experiments]]
+slug = "xrd"
+title = "x-ray diffraction analysis"
+thumb = "/media/thumbs/xrd.png"
+alt = "Electron diffraction pattern from a silicon crystal (bulk spots and surface reconstruction)"
+summary = "Used Bragg peaks to determine lattice constants and identify an unknown crystal; report documents calibration limits."
+report = "Sem3/pc2193-ep1/xrd/report/report.pdf"
+code = [
+  { label = "Analysis Code", src = "Sem3/pc2193-ep1/xrd/scripts/xrd_final_corrected.py" },
+]
+
+[[experiments]]
+slug = "magnetic-moment"
+title = "magnetic moment in helmholtz field"
+thumb = "/media/thumbs/magnetic.png"
+alt = "Magnetic moment scaling laws"
+summary = "Calibrated Helmholtz field constant and tested scaling laws; corrected a model assumption during analysis."
+report = "Sem3/pc2193-ep1/magnetic_moment/report/report.pdf"
+slides = "Sem3/pc2193-ep1/magnetic_moment/mm_pres.pdf"
+code = [
+  { label = "Analysis Code", src = "Sem3/pc2193-ep1/magnetic_moment/scripts/mm_analysis.py" },
+]
+
+[[experiments]]
+slug = "xrf"
+title = "x-ray fluorescence analysis"
+thumb = "/media/thumbs/xrf.png"
+alt = "Emission line spectra of the elements arranged as a periodic table"
+summary = "Qualitative elemental identification of unknowns and quantitative brass composition via Gaussian deconvolution of overlapping K-lines."
+report = "Sem4/pc3193-ep2/xrf/report/report.pdf"
+code = [
+  { label = "Analysis Code", src = "Sem4/pc3193-ep2/xrf/scripts/analyze_xrf.py" },
+]
+
+[[experiments]]
+slug = "paschen-curve"
+title = "paschen curve & gas discharge"
+thumb = "/media/thumbs/paschen.png"
+alt = "Paschen curve with Townsend theory"
+summary = "Mapped breakdown voltage vs. electrode gap at three pressures; extracted the second Townsend coefficient and identified the avalanche-to-streamer transition."
+report = "Sem4/pc3193-ep2/plasma/report/report.pdf"
+code = [
+  { label = "Analysis Code", src = "Sem4/pc3193-ep2/plasma/scripts/analyze_paschen.py" },
+]
+
+[[experiments]]
+slug = "laue-xrc"
+title = "laue diffraction & x-ray crystallography"
+thumb = "/media/thumbs/laue.png"
+alt = "Laue diffraction pattern grid"
+summary = "Indexed Laue back-reflection patterns and determined lattice parameters; combined with powder XRD for crystal identification."
+report = "Sem4/pc3193-ep2/lau+xrc/report/report.pdf"
+code = [
+  { label = "Analysis Code", src = "Sem4/pc3193-ep2/lau+xrc/scripts/analyze_xrc.py" },
+]
+
+[[experiments]]
+slug = "pll"
+title = "propagation of laser light (pll)"
+thumb = "/media/thumbs/pll.png"
+alt = "Laser pointer beams red green violet"
+summary = "Measured Gaussian beam parameters and beam quality; report focuses on fitting and measurement limits."
+report = "Sem3/pc2193-ep1/ExpB_PLL_ParthBhargava.pdf"
+
+[[experiments]]
+slug = "fluorescence-spectroscopy"
+title = "fluorescence spectroscopy: protein unfolding"
+thumb = "/media/thumbs/fluorescence.png"
+alt = "Fluorescence emission spectra of BSA and lysozyme"
+summary = "Tracked acid denaturation of BSA and lysozyme via intrinsic Trp/Tyr fluorescence; observed emission shifts and intensity changes tied to tertiary structure loss."
+report = "Sem4/pc3267-bp2/bio-fluorescence/report/report.pdf"
+code = [
+  { label = "Analysis Code", src = "Sem4/pc3267-bp2/bio-fluorescence/scripts/analyze_fluorescence.py" },
+]
+
+[[experiments]]
+slug = "circular-dichroism"
+title = "circular dichroism: protein secondary structure"
+thumb = "/media/thumbs/cd.png"
+alt = "Circular dichroism spectra"
+summary = "Monitored α-helical content of BSA and lysozyme under acid denaturation using far-UV CD; lysozyme's disulfide bonds preserved its secondary structure."
+report = "Sem4/pc3267-bp2/bio-cd/report/report.pdf"
+code = [
+  { label = "Analysis Code", src = "Sem4/pc3267-bp2/bio-cd/scripts/analyze_cd.py" },
+]
+
+[[experiments]]
+slug = "esr"
+title = "electron spin resonance (esr)"
+thumb = "/media/thumbs/esr.png"
+alt = "EPR spectrometer"
+summary = "Extracted g-factor from frequency–field measurements; analyzed Zeeman splitting and systematics."
+report = "Sem3/pc2193-ep1/ExpA_ESR_ParthBhargava_v2.pdf"
+
+[[experiments]]
+slug = "trim-simulation"
+title = "trim ion transport simulation"
+thumb = "/media/thumbs/trim.png"
+alt = "TRIM ion transport simulation"
+summary = "Monte Carlo simulations of ion range, damage, and sputtering across nuclear microscopy, semiconductor implantation, and proton therapy applications."
+report = "Sem4/pc3193-ep2/trim/report/report.pdf"
+
+[[experiments]]
+slug = "fluorescence-microscopy"
+title = "fluorescence microscopy: cellular structure"
+thumb = "/media/thumbs/microscopy.png"
+alt = "Fluorescence microscopy comparison panel"
+summary = "Imaged Hoechst-stained onion epidermal and cheek epithelial cells; compared brightfield and fluorescence contrast for nuclear localisation."
+report = "Sem4/pc3267-bp2/bio-microscopy/report/report.pdf"
+code = [
+  { label = "Analysis Code", src = "Sem4/pc3267-bp2/bio-microscopy/scripts/process_images.py" },
+]

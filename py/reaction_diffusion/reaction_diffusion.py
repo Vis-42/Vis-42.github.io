@@ -92,24 +92,30 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(np):
     def laplacian(a):
-        return (np.roll(a, 1, 0) + np.roll(a, -1, 0) +
-                np.roll(a, 1, 1) + np.roll(a, -1, 1) - 4 * a)
+        return (np.roll(a, 1, -2) + np.roll(a, -1, -2) +
+                np.roll(a, 1, -1) + np.roll(a, -1, -1) - 4 * a)
 
-    def gray_scott(n, F, k, steps, store_every, Du=0.16, Dv=0.08, seed=0):
+    def gray_scott(n, F, k, steps, store_every=None, Du=0.16, Dv=0.08, seed=0):
+        """Returns v every `store_every` steps, or only the final v if store_every
+        is None. F and k may be arrays: every (F, k) pair then runs at once,
+        stacked along the leading axes, from the same seeded initial condition."""
+        F = np.asarray(F, dtype=float)[..., None, None]
+        k = np.asarray(k, dtype=float)[..., None, None]
         rng = np.random.default_rng(seed)
-        u = np.ones((n, n)); v = np.zeros((n, n))
+        shape = np.broadcast_shapes(F.shape, k.shape)[:-2] + (n, n)
+        u = np.ones(shape); v = np.zeros(shape)
         r = max(3, n // 12); c = n // 2
-        u[c - r:c + r, c - r:c + r] = 0.50
-        v[c - r:c + r, c - r:c + r] = 0.25
+        u[..., c - r:c + r, c - r:c + r] = 0.50
+        v[..., c - r:c + r, c - r:c + r] = 0.25
         v += 0.02 * rng.random((n, n))
         frames = []
         for s in range(steps):
             uvv = u * v * v
             u += Du * laplacian(u) - uvv + F * (1 - u)
             v += Dv * laplacian(v) + uvv - (F + k) * v
-            if s % store_every == 0:
+            if store_every and s % store_every == 0:
                 frames.append(v.copy())
-        return np.array(frames)
+        return np.array(frames) if store_every else v
     return (gray_scott,)
 
 
@@ -205,7 +211,7 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     pearson_btn = mo.ui.run_button(label="Compute Pearson diagram (10x10 grid)")
-    mo.md(f"Takes ~15 seconds. {pearson_btn}")
+    mo.md(f"Takes a few seconds. {pearson_btn}")
     return (pearson_btn,)
 
 
@@ -214,11 +220,10 @@ def _(gray_scott, mo, np, pearson_btn):
     mo.stop(not pearson_btn.value, mo.md("Press **Compute** to run the scan."))
     _F_vals = np.linspace(0.010, 0.062, 10)
     _k_vals = np.linspace(0.045, 0.075, 10)
-    _std_map = np.zeros((10, 10))
-    for _fi, _F in enumerate(_F_vals):
-        for _ki, _k in enumerate(_k_vals):
-            _frames = gray_scott(n=32, F=float(_F), k=float(_k), steps=2000, store_every=2000)
-            _std_map[_fi, _ki] = float(_frames[-1].std())
+    # All 100 (F, k) pairs run together as one stacked (10, 10, 32, 32) grid.
+    _Fg, _kg = np.meshgrid(_F_vals, _k_vals, indexing="ij")
+    _final = gray_scott(n=32, F=_Fg, k=_kg, steps=2000)
+    _std_map = np.array([[float(_g.std()) for _g in _row] for _row in _final])
     pearson_data = {"F_vals": _F_vals.tolist(), "k_vals": _k_vals.tolist(), "std_map": _std_map.tolist()}
     return (pearson_data,)
 

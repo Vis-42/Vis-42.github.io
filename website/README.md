@@ -26,7 +26,7 @@ Content you would actually read lives in `content/`:
 - `content/photographs/<slug>.md` — each photograph entry
 - `content/_index.md` — the homepage "about" text; the hero card and sticker field around it are in `layouts/_default/home.html`
 
-The `/explorations/` listing is generated from the front matter of each exploration page, so there is nothing to keep in sync by hand. Coursework is the exception: those cards are hardcoded in `layouts/coursework/list.html`.
+The `/explorations/` listing is generated from the front matter of each exploration page, and `/coursework/` from `data/coursework.toml`, so there is nothing to keep in sync by hand.
 
 ---
 
@@ -107,12 +107,17 @@ The photo appears on `/photographs/` in the grid. No other changes needed.
 
 ---
 
-## Publishing a lab report PDF
+## Coursework (lab reports and analysis code)
 
-1. Compile with Typst: `cd ../manuscripts/typst && typst compile --root . <exp>/<report>.typ <exp>/<report>.pdf`
-2. Copy the PDF to `static/pdfs/experiments/<slug>.pdf`
-3. Add or update the card in `layouts/coursework/list.html`. The link must match the path exactly or it 404s.
+Reports and analysis scripts live in `~/-uni` (the private repo `Vis-42/-uni`), which is the source of truth. The site keeps published copies, and `data/coursework.toml` lists every card on `/coursework/` with the `~/-uni` paths of its report, optional slides, and code.
+
+To update a report or add one:
+1. Compile it in `~/-uni` as usual (e.g. `typst compile --root . report/report.typ report/report.pdf`).
+2. New report: add a card to `data/coursework.toml` (copy an existing one) and put its thumbnail in `static/media/thumbs/`.
+3. From the repo root, run `uv run website/sync_uni.py`. It copies the report to `static/pdfs/experiments/<slug>.pdf`, slides to `<slug>-slides.pdf`, and scripts to `static/code/<slug>/`. Embedded photos larger than 2000 px are scaled down on the way (text, vector figures and links are untouched), because full-resolution phone photos made some reports 20–80 MB.
 4. Commit and deploy.
+
+`uv run website/sync_uni.py --check` lists anything out of date without changing files. The "Analysis Code" links point at the copies in `static/code/` on the public mirror on GitHub, so scripts must be synced before they show up there.
 
 ---
 
