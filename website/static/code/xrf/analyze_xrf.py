@@ -12,7 +12,7 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))  # plotstyle.py lives next to this script
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # local helper modules (plotstyle comes from ~/-uni/_shared/python)
 from plotstyle import COL, BLUE, RED, GOLD, PURPLE, TEAL, GREY, INK, LIGHT, apply_style, save  # noqa: E402
 
 apply_style()

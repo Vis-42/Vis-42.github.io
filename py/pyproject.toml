@@ -1,0 +1,23 @@
+[project]
+name = "py"
+version = "0.1.0"
+description = "Python workspace for data analysis, simulations, and visualizations"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    # Pinned: every app on the site shares one exported marimo frontend, so the
+    # notebooks are edited and built with exactly this version. Bump it, then
+    # rebuild every app with `uv run build.py`.
+    "marimo==0.25.1",
+    "numpy>=2.0.0",
+    "matplotlib>=3.10.6",
+    "pillow>=11.3.0",
+    "scipy>=1.16.2",
+    "pandas>=2.0.0",
+    "openpyxl>=3.1.0",
+    "scikit-learn>=1.8.0",
+]
+
+[tool.uv]
+# A workspace of notebooks and scripts, not an installable package.
+package = false

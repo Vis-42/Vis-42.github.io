@@ -21,28 +21,9 @@
   </section>
   {{ end }}
 
-  {{ with .Params.widget }}
-  <section class="sim-widget-section">
-    <h2 class="links-head">Interactive · runs live in your browser</h2>
-    <iframe class="sim-widget" src="{{ . }}" loading="lazy" title="Interactive simulation for {{ $.Title }}"
-      scrolling="no"
-      onload="try{this.style.height=(this.contentWindow.document.body.scrollHeight+8)+'px'}catch(e){}"></iframe>
-    <p class="sim-widget-note">Drag the sliders and the simulation responds in real time, right here. No install, nothing to run.</p>
-  </section>
-  {{ end }}
-
   <div class="project-prose">
     {{ .Content }}
   </div>
-
-  {{ with .Params.explainer }}
-  <figure class="explainer">
-    <video controls preload="none" playsinline poster="{{ $.Params.thumb }}">
-      <source src="{{ . }}" type="video/mp4">
-    </video>
-    <figcaption>fig. animated walkthrough · the figures from the notebook, in motion</figcaption>
-  </figure>
-  {{ end }}
 
   <section class="links-panel">
     <h2 class="links-head">Code &amp; resources</h2>

@@ -11,7 +11,7 @@ from pathlib import Path
 from scipy.optimize import curve_fit
 import sys
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))  # plotstyle.py lives next to this script
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # local helper modules (plotstyle comes from ~/-uni/_shared/python)
 from plotstyle import COL, BLUE, GOLD, RED, GREY, INK, apply_style, save  # noqa: E402
 
 apply_style()

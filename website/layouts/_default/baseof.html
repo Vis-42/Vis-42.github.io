@@ -133,10 +133,8 @@
     }
 
     /* mono for structural chrome */
-    .margin-rail, .colophon, .project-links, .contact,
-    .catalog-no, .classification, .section-index, .meta, .stamp,
-    .theme-toggle, .card-tab, .toc-link,
-    .experiments-toggle, .webring {
+    .margin-rail, .colophon, .project-links, .contact, .classification, .stamp,
+    .theme-toggle, .webring {
       font-family: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
     }
 
@@ -199,24 +197,6 @@
       transition: border-color 0.15s, color 0.15s;
     }
     .rail-theme:hover { border-color: var(--accent); color: var(--accent); }
-    .rail-label {
-      text-transform: uppercase; letter-spacing: 0.18em;
-      font-size: 0.62rem; color: var(--accent); margin-bottom: 0.8rem;
-    }
-    .section-index { list-style: none; display: flex; flex-direction: column; gap: 0.1rem; }
-    .toc-link {
-      display: block; padding: 0.25rem 0; color: var(--ink-2);
-      text-decoration: none; letter-spacing: 0.04em;
-      border-right: 2px solid transparent; padding-right: 0.6rem;
-      transition: color 0.15s, border-color 0.15s;
-    }
-    .toc-link:hover, .toc-link.active { color: var(--accent); border-right-color: var(--accent); }
-    .toc-link .num { color: var(--ink-muted); margin-right: 0.4em; }
-    .rail-note {
-      margin-top: 2rem; padding-top: 1rem; border-top: 1px dashed var(--rule-soft);
-      font-style: italic; font-family: 'IBM Plex Serif', serif; line-height: 1.5;
-      color: var(--ink-muted); font-size: 0.78rem;
-    }
     .rail-stamp {
       margin-top: 1.6rem; font-size: 0.6rem; letter-spacing: 0.1em;
       color: var(--ink-muted); text-transform: uppercase;
@@ -236,7 +216,6 @@
       color: var(--ink-muted); margin-bottom: 1.2rem;
       display: flex; gap: 0.6rem; align-items: center;
     }
-    .classification .sep { color: var(--accent); }
     /* Hero: tilted framed photo + title card, then a full-width about card */
     .hero-top {
       display: flex; align-items: center; gap: 2rem;
@@ -318,44 +297,11 @@
     .contact a:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
 
     /* ============================== SECTIONS ============================== */
-    .section-split { padding: 2.4rem 0 0.6rem; scroll-margin-top: 5rem; }
-    .section-title { margin-bottom: 1.4rem; }
-    .section-title h2 {
-      font-family: 'IBM Plex Serif', serif; font-weight: 600;
-      font-size: 1.7rem; color: var(--ink); display: flex; align-items: baseline;
-      gap: 0.6rem; padding-bottom: 0.5rem; position: relative;
-    }
-    .section-title h2::before {
-      counter-increment: sec; content: "§" counter(sec);
-      font-family: 'IBM Plex Mono', monospace; font-size: 0.92rem;
-      color: var(--accent); font-weight: 500; letter-spacing: 0.02em;
-    }
-    .section-title h2::after {
-      content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 4px;
-      background:
-        repeating-linear-gradient(90deg, var(--rule) 0 8px, transparent 8px 14px);
-      opacity: 0.7;
-    }
-    .summary-lead { font-size: 1.12rem; color: var(--ink); margin-bottom: 1rem; }
-    .section-body p { margin-bottom: 0.9rem; color: var(--ink-2); }
-    .section-body > p:last-child { margin-bottom: 0; }
-    .section-placeholder {
-      color: var(--ink-muted); font-style: italic;
-      font-family: 'IBM Plex Mono', monospace; font-size: 0.84rem;
-      padding: 0.9rem 0; border-top: 1px solid var(--rule-soft);
-    }
+
     /* ---- shared pieces for Publications / Blog / Photographs ---- */
     .section-note { color: var(--ink-muted); font-style: italic; font-size: 0.86rem; margin-bottom: 1.2rem; }
-    .section-action { margin-top: 1.4rem; font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; }
-    .section-action a { color: var(--accent-2); text-decoration: none; }
-    .section-action a:hover { color: var(--accent); }
     /* a ghost slot that shows the format a real entry will take */
-    .is-placeholder { opacity: 0.7; }
-    .ph-tag {
-      display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 0.56rem;
-      letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted);
-      border: 1px dashed var(--rule); border-radius: 2px; padding: 1px 6px; margin-bottom: 0.5rem;
-    }
+
     /* show-more toggle (used in several sections) */
     .show-more { margin-top: 1.2rem; }
     .show-more > summary {
@@ -370,16 +316,7 @@
     .show-more[open] > summary .more-label::after { content: "less ↑"; }
     .show-more > summary .more-label::after { content: "show more ↓"; }
     /* Publications: numbered reference list */
-    .pub-list { list-style: none; display: flex; flex-direction: column; gap: 1.4rem; }
-    .pub-item { display: grid; grid-template-columns: 2.2rem 1fr; gap: 0.5rem; }
-    .pub-marker { font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; color: var(--accent); padding-top: 0.15rem; }
-    .pub-title { font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 1.02rem; color: var(--ink); margin-bottom: 0.2rem; line-height: 1.3; }
-    .pub-meta { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--ink-muted); margin-bottom: 0.4rem; }
-    .pub-meta .pub-authors { color: var(--ink-2); }
-    .pub-abstract { font-size: 0.88rem; color: var(--ink-2); line-height: 1.55; margin-bottom: 0.45rem; }
-    .pub-links { display: flex; gap: 0.7rem; font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; }
-    .pub-links a { color: var(--accent-2); text-decoration: none; }
-    .pub-links a:hover { color: var(--accent); }
+
     /* Blog: dated entries */
     .post-list { list-style: none; display: flex; flex-direction: column; gap: 1.5rem; }
     .post-item { border-left: 2px solid var(--rule-soft); padding-left: 1.1rem; }
@@ -506,39 +443,8 @@
     .project-links a:hover { border-color: var(--accent); color: var(--accent); }
 
     /* collapsibles */
-    .experiments-collapsible, .assignments-collapsible { margin-top: 1.4rem; }
-    .experiments-toggle, .assignments-toggle {
-      cursor: pointer; display: inline-block; list-style: none;
-      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em;
-      color: var(--accent); border: 1px dashed var(--rule);
-      padding: 0.4rem 0.9rem; border-radius: 2px; background: var(--paper-2);
-      transition: all 0.15s;
-    }
-    .experiments-toggle:hover, .assignments-toggle:hover {
-      border-style: solid; border-color: var(--accent); background: var(--accent-soft);
-    }
-    .experiments-toggle::before, .assignments-toggle::before { content: "▸ "; }
-    details[open] .experiments-toggle::before, details[open] .assignments-toggle::before { content: "▾ "; }
-    .experiments-collapsible[open] .experiments-toggle,
-    .assignments-collapsible[open] .assignments-toggle { margin-bottom: 1.2rem; }
-    .experiments-toggle::-webkit-details-marker, .assignments-toggle::-webkit-details-marker { display: none; }
 
     /* notes / assignments */
-    .notes-list h4 {
-      font-family: 'IBM Plex Serif', serif; font-weight: 600; font-size: 0.98rem;
-      text-transform: none; letter-spacing: 0; color: var(--ink);
-      border: none; margin: 1.2rem 0 0.5rem;
-    }
-    .notes-list ul {
-      list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem;
-    }
-    .notes-list li a {
-      display: block; font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
-      text-decoration: none; color: var(--accent-2);
-      border: 1px solid var(--rule-soft); border-radius: 2px;
-      padding: 0.2rem 0.55rem; background: var(--paper-2); transition: all 0.15s;
-    }
-    .notes-list li a:hover { border-color: var(--accent); color: var(--accent); }
 
     /* ============================== COLOPHON FOOTER ============================== */
     .colophon {
@@ -591,23 +497,6 @@
       pointer-events: none;
     }
     /* photo specimen — a taped print of a real physical artifact, organic (non-rectangular) edge */
-    .sticker.photo {
-      background: var(--paper-2); padding: 7px;
-      box-shadow: 0 4px 12px var(--shadow);
-      border-radius: 46% 54% 67% 33% / 36% 44% 56% 64%;
-    }
-    .sticker.photo::before {
-      content: ""; position: absolute; top: -8px; left: 50%;
-      transform: translateX(-50%) rotate(-4deg);
-      width: 52px; height: 18px; background: var(--tape);
-      border: 1px solid rgba(0,0,0,0.04);
-    }
-    .sticker.photo img {
-      filter: contrast(1.04) saturate(0.92);
-      border-radius: 44% 56% 63% 37% / 38% 46% 54% 62%;
-      display: block;
-    }
-    .sticker.photo figcaption { margin-top: 0.3rem; }
 
     /* ============================== PROJECT DETAIL PAGE ============================== */
     .project-page {
@@ -622,10 +511,6 @@
     }
     /* wider variant for card-grid pages (explorations, coursework) */
     .project-page.wide { max-width: 1000px; }
-
-
-    .about-prose p:first-child { font-size: 1.1rem; color: var(--ink); font-style: italic; margin-bottom: 1.1rem; }
-    .about-contact { margin-top: 2rem; padding-top: 1.2rem; border-top: 1px dashed var(--rule-soft); }
     .project-title {
       font-family: 'IBM Plex Serif', serif; font-weight: 700;
       font-size: 2.2rem; line-height: 1.08; color: var(--ink);
@@ -642,18 +527,6 @@
       color: var(--ink-muted); padding: 0.45rem 0.8rem;
       border-top: 1px solid var(--rule-soft); letter-spacing: 0.03em;
     }
-    .explainer {
-      margin: 0 0 2.2rem; border: 1px solid var(--rule-soft);
-      background: #0b0d10; border-radius: 2px; overflow: hidden;
-      box-shadow: 0 4px 14px var(--shadow);
-    }
-    .explainer video { width: 100%; display: block; background: #0b0d10; }
-    .explainer figcaption {
-      font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem;
-      color: var(--ink-muted); padding: 0.45rem 0.8rem;
-      border-top: 1px solid var(--rule-soft); letter-spacing: 0.03em;
-      background: var(--paper-3);
-    }
     .live-app { margin: 0 0 2.4rem; }
     .live-app-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
     .app-fullscreen { font-family: 'IBM Plex Mono', monospace; font-size: 0.74rem; color: var(--accent-2); text-decoration: none; white-space: nowrap; }
@@ -661,12 +534,6 @@
     .app-frame {
       width: 100%; height: 82vh; min-height: 680px; margin-top: 0.6rem;
       border: 1px solid var(--rule-soft); border-radius: 4px; background: #fff;
-      box-shadow: 0 4px 14px var(--shadow);
-    }
-    .sim-widget-section { margin: 0 0 2.4rem; }
-    .sim-widget {
-      width: 100%; border: 1px solid var(--rule-soft); border-radius: 4px;
-      background: #0f1117; min-height: 620px; display: block;
       box-shadow: 0 4px 14px var(--shadow);
     }
     .sim-widget-note {

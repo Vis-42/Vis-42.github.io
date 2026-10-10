@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))  # plotstyle.py lives next to this script
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # local helper modules (plotstyle comes from ~/-uni/_shared/python)
 from plotstyle import COL, BLUE, RED, apply_style, save  # noqa: E402
 
 apply_style()

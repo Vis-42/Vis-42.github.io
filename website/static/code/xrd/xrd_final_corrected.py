@@ -810,7 +810,7 @@ print("=" * 80)
 # REPORT FIGURES (printed size, shared plot style)
 # ============================================================================
 import sys as _sys
-_sys.path.insert(0, str(Path(__file__).resolve().parent))  # plotstyle.py lives next to this script
+_sys.path.insert(0, str(Path(__file__).resolve().parent))  # local helper modules (plotstyle comes from ~/-uni/_shared/python)
 from plotstyle import *  # noqa: E402,F403
 
 apply_style()

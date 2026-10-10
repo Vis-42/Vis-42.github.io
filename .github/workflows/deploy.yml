@@ -5,7 +5,8 @@ name: Deploy Website to GitHub Pages
 # peaceiris-only gh-branch pushes did not replace an older Actions deploy (stale hall.png).
 #
 # This job runs only on Vis-42/Vis-42.github.io so pushes to Vis-42/_space do not deploy a
-# duplicate project site. After changing the website, run: git push origin main && git push parthb main
+# duplicate project site. To publish, run ./deploy-public.sh from _space: it pushes only the
+# public files (website/, jl/, the site notebooks) to that repo, which triggers this job.
 on:
   push:
     branches:
@@ -37,7 +38,8 @@ jobs:
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
         with:
-          hugo-version: "latest"
+          # Pinned to the version used locally; bump both together.
+          hugo-version: "0.167.0"
           extended: true
 
       - name: Build site
