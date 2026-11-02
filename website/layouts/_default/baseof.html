@@ -70,6 +70,7 @@
       --margin-line:#9c3b2c;   /* oxblood rule — matches accent */
       --tape:       rgba(180, 180, 196, 0.45);
       --shadow:     rgba(40, 40, 60, 0.16);
+      --link-blue:  #1d43c8;   /* arXiv-style PDF links on /coursework/ */
     }
 
     [data-theme="dark"] {
@@ -90,6 +91,7 @@
       --margin-line:#7d5b46;
       --tape:       rgba(160, 150, 120, 0.18);
       --shadow:     rgba(0, 0, 0, 0.45);
+      --link-blue:  #8db4ff;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -355,7 +357,27 @@
       margin: 2rem 0 1rem; padding-bottom: 0.4rem;
       border-bottom: 1px solid var(--rule-soft);
     }
-    .coursework-subsection + .coursework-subsection { margin-top: 1rem; }
+    /* ============================== COURSEWORK (arXiv listing) ============================== */
+    .cw-course + .cw-course { margin-top: 2.4rem; }
+    .cw-course h3 { margin-bottom: 0.2rem; }
+    .cw-term {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem;
+      color: var(--ink-muted); letter-spacing: 0.03em; margin-bottom: 1.1rem;
+    }
+    .cw-list dt {
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; color: var(--ink-2);
+      display: flex; gap: 0.7rem; align-items: baseline;
+    }
+    .cw-list dt:not(:first-child) { margin-top: 1.25rem; }
+    .cw-n { color: var(--ink-muted); flex: 0 0 2.4rem; }
+    .cw-links a { color: var(--link-blue); text-decoration: none; }
+    .cw-links a:hover { text-decoration: underline; color: var(--link-blue); }
+    .cw-list dd { margin-left: 3.1rem; }
+    @media (max-width: 560px) { .cw-list dd { margin-left: 0; } }
+    .cw-title { font-weight: 600; font-size: 1.04rem; line-height: 1.35; color: var(--ink); margin: 0.15rem 0 0.2rem; }
+    .cw-meta { font-size: 0.8rem; color: var(--ink-2); }
+    .cw-meta span { font-weight: 600; }
+    .cw-abstract { font-size: 0.86rem; color: var(--ink-2); line-height: 1.6; margin-top: 0.3rem; }
 
     /* ============================== INDEX-CARD PROJECTS ============================== */
     .projects-grid {

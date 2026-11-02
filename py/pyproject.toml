@@ -3,7 +3,7 @@ name = "py"
 version = "0.1.0"
 description = "Python workspace for data analysis, simulations, and visualizations"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 dependencies = [
     # Pinned: every app on the site shares one exported marimo frontend, so the
     # notebooks are edited and built with exactly this version. Bump it, then
@@ -16,6 +16,7 @@ dependencies = [
     "pandas>=2.0.0",
     "openpyxl>=3.1.0",
     "scikit-learn>=1.8.0",
+    "manimgx>=0.1.1",
 ]
 
 [tool.uv]

@@ -1,144 +1,121 @@
-# Cards on /coursework/, in display order.
+# The /coursework/ page: courses in display order, then the reports.
 #
-# report, slides and code are paths inside ~/-uni, which is the source of truth.
-# `python3 website/sync_uni.py` copies them into the site:
+# A report is listed under the course whose `folder` its `report` path starts with.
+# Paths are inside ~/-uni, the source of truth. `uv run website/sync_uni.py` copies
+# the committed PDFs into the site and reads each one's title and page count:
 #   report -> static/pdfs/experiments/<slug>.pdf
 #   slides -> static/pdfs/experiments/<slug>-slides.pdf
-#   code   -> static/code/<slug>/<file name>   (linked on GitHub through the public mirror)
-# Edit a report in ~/-uni, recompile it, run the sync, commit, deploy.
+#
+# New report: add a [[reports]] entry (slug, report, summary; slides if any), run the
+# sync, commit, deploy. `title` is only needed when the PDF has no title of its own.
 
-[[experiments]]
-slug = "hall-effect"
-title = "hall effect in semiconductors"
-thumb = "/media/thumbs/hall.png"
-alt = "Scanning Hall probe microscopy: Hall cross sensor and superconducting vortex lattice maps"
-summary = "Measured Hall voltage and magnetoresistance across temperature to extract carrier type, mobility, and the intrinsic transition; includes uncertainty analysis."
-report = "Sem3/pc2193-ep1/hall_effect/report/report.pdf"
-code = [
-  { label = "Analysis Code", src = "Sem3/pc2193-ep1/hall_effect/scripts/hall_effect_analysis.py" },
-]
+[[courses]]
+folder = "Sem5_exchange/phy474--advanced-lab-I"
+code = "PHY 474"
+name = "Advanced Laboratory I"
+term = "The University of Texas at Austin · Fall 2026"
 
-[[experiments]]
+[[courses]]
+folder = "Sem4/pc3193-ep2"
+code = "PC3193"
+name = "Experimental Physics II"
+term = "National University of Singapore · AY2025/26, Semester 2"
+
+[[courses]]
+folder = "Sem4/pc3267-bp2"
+code = "PC3267"
+name = "Biophysics II"
+term = "National University of Singapore · AY2025/26, Semester 2"
+
+[[courses]]
+folder = "Sem3/pc2193-ep1"
+code = "PC2193"
+name = "Experimental Physics I"
+term = "National University of Singapore · AY2025/26, Semester 1"
+
+# ---------------------------------------------------------------- PHY 474
+
+[[reports]]
+slug = "muon-lifetime"
+report = "Sem5_exchange/phy474--advanced-lab-I/muon-lifetime/muon-lifetime-report.pdf"
+slides = "Sem5_exchange/phy474--advanced-lab-I/muon-lifetime/presentation/slides.pdf"
+summary = "Timed the decays of cosmic-ray muons stopped in lead glass. Two acquisitions that pass the shape and stability tests give τ = 2.19 ± 0.04 (stat.) ± 0.06 (syst.) µs, in agreement with the free-muon lifetime of 2.197 µs."
+
+[[reports]]
+slug = "mechanical-chaos"
+report = "Sem5_exchange/phy474--advanced-lab-I/mechanical-chaos/mechanical-chaos-report.pdf"
+slides = "Sem5_exchange/phy474--advanced-lab-I/mechanical-chaos/presentation/slides.pdf"
+summary = "A driven spring pendulum as a Duffing-like oscillator. In the longest driven recording the angular spread at a fixed motor phase fell by a factor of 4.6 (95% interval 4.0–5.2), a resolved transition towards repeatable motion; noise and motor-speed drift prevent a unique attribution to deterministic chaos."
+
+# ---------------------------------------------------------------- PC3193
+
+[[reports]]
 slug = "raman-spectroscopy"
-title = "raman spectroscopy"
-thumb = "/media/thumbs/raman.png"
-alt = "Raman spectrum of carbon allotropes"
-summary = "Characterised carbon allotropes via D/G band ratios, estimated graphene layer count, and identified an unknown semiconductor wafer from its 521 cm⁻¹ mode."
 report = "Sem4/pc3193-ep2/raman/report/report.pdf"
-code = [
-  { label = "Analysis Code", src = "Sem4/pc3193-ep2/raman/scripts/analyze_raman.py" },
-  { label = "DLC Analysis", src = "Sem4/pc3193-ep2/raman/scripts/analyze_dlc.py" },
-]
+summary = "Distinguished carbon allotropes by their D/G band ratios: HOPG shows no D band, the carbon rod D/G = 0.13 ± 0.02, nanotubes 1.24 ± 0.08. No diamond-like sample shows the diamond line, the graphene film is thicker than a monolayer, and the unknown wafer is silicon (520.9 ± 1.0 cm⁻¹)."
 
-[[experiments]]
-slug = "xrd"
-title = "x-ray diffraction analysis"
-thumb = "/media/thumbs/xrd.png"
-alt = "Electron diffraction pattern from a silicon crystal (bulk spots and surface reconstruction)"
-summary = "Used Bragg peaks to determine lattice constants and identify an unknown crystal; report documents calibration limits."
-report = "Sem3/pc2193-ep1/xrd/report/report.pdf"
-code = [
-  { label = "Analysis Code", src = "Sem3/pc2193-ep1/xrd/scripts/xrd_final_corrected.py" },
-]
-
-[[experiments]]
-slug = "magnetic-moment"
-title = "magnetic moment in helmholtz field"
-thumb = "/media/thumbs/magnetic.png"
-alt = "Magnetic moment scaling laws"
-summary = "Calibrated Helmholtz field constant and tested scaling laws; corrected a model assumption during analysis."
-report = "Sem3/pc2193-ep1/magnetic_moment/report/report.pdf"
-slides = "Sem3/pc2193-ep1/magnetic_moment/mm_pres.pdf"
-code = [
-  { label = "Analysis Code", src = "Sem3/pc2193-ep1/magnetic_moment/scripts/mm_analysis.py" },
-]
-
-[[experiments]]
+[[reports]]
 slug = "xrf"
-title = "x-ray fluorescence analysis"
-thumb = "/media/thumbs/xrf.png"
-alt = "Emission line spectra of the elements arranged as a periodic table"
-summary = "Qualitative elemental identification of unknowns and quantitative brass composition via Gaussian deconvolution of overlapping K-lines."
 report = "Sem4/pc3193-ep2/xrf/report/report.pdf"
-code = [
-  { label = "Analysis Code", src = "Sem4/pc3193-ep2/xrf/scripts/analyze_xrf.py" },
-]
+summary = "Identified the elements in brass, a magnetic sample and four Singapore coins, and measured the leaded brass as Cu (60 ± 3)%, Zn (37 ± 2)%, Pb (2.5 ± 0.9)% by mass by deconvolving overlapping K-lines."
 
-[[experiments]]
+[[reports]]
 slug = "paschen-curve"
-title = "paschen curve & gas discharge"
-thumb = "/media/thumbs/paschen.png"
-alt = "Paschen curve with Townsend theory"
-summary = "Mapped breakdown voltage vs. electrode gap at three pressures; extracted the second Townsend coefficient and identified the avalanche-to-streamer transition."
 report = "Sem4/pc3193-ep2/plasma/report/report.pdf"
-code = [
-  { label = "Analysis Code", src = "Sem4/pc3193-ep2/plasma/scripts/analyze_paschen.py" },
-]
+summary = "Breakdown voltage of air against electrode gap at 8, 6 and 4 hPa. At 8 hPa the minimum breakdown voltage is 416.8 ± 0.5 V, at pd = 0.764 ± 0.015 Pa·m; the two routes to the Townsend coefficient γ disagree, and the three pressures do not collapse onto one Paschen curve."
 
-[[experiments]]
+[[reports]]
 slug = "laue-xrc"
-title = "laue diffraction & x-ray crystallography"
-thumb = "/media/thumbs/laue.png"
-alt = "Laue diffraction pattern grid"
-summary = "Indexed Laue back-reflection patterns and determined lattice parameters; combined with powder XRD for crystal identification."
 report = "Sem4/pc3193-ep2/lau+xrc/report/report.pdf"
-code = [
-  { label = "Analysis Code", src = "Sem4/pc3193-ep2/lau+xrc/scripts/analyze_xrc.py" },
-]
+summary = "Laue back-reflection of LiF, orientation in drawn polyethylene, and powder diffraction of two unknowns: diamond-cubic silicon, a = 5.4311(2) Å, and BCC molybdenum, a = 3.1480(13) Å, with strong {100} preferred orientation."
 
-[[experiments]]
-slug = "pll"
-title = "propagation of laser light (pll)"
-thumb = "/media/thumbs/pll.png"
-alt = "Laser pointer beams red green violet"
-summary = "Measured Gaussian beam parameters and beam quality; report focuses on fitting and measurement limits."
-report = "Sem3/pc2193-ep1/ExpB_PLL_ParthBhargava.pdf"
-
-[[experiments]]
-slug = "fluorescence-spectroscopy"
-title = "fluorescence spectroscopy: protein unfolding"
-thumb = "/media/thumbs/fluorescence.png"
-alt = "Fluorescence emission spectra of BSA and lysozyme"
-summary = "Tracked acid denaturation of BSA and lysozyme via intrinsic Trp/Tyr fluorescence; observed emission shifts and intensity changes tied to tertiary structure loss."
-report = "Sem4/pc3267-bp2/bio-fluorescence/report/report.pdf"
-code = [
-  { label = "Analysis Code", src = "Sem4/pc3267-bp2/bio-fluorescence/scripts/analyze_fluorescence.py" },
-]
-
-[[experiments]]
-slug = "circular-dichroism"
-title = "circular dichroism: protein secondary structure"
-thumb = "/media/thumbs/cd.png"
-alt = "Circular dichroism spectra"
-summary = "Monitored α-helical content of BSA and lysozyme under acid denaturation using far-UV CD; lysozyme's disulfide bonds preserved its secondary structure."
-report = "Sem4/pc3267-bp2/bio-cd/report/report.pdf"
-code = [
-  { label = "Analysis Code", src = "Sem4/pc3267-bp2/bio-cd/scripts/analyze_cd.py" },
-]
-
-[[experiments]]
-slug = "esr"
-title = "electron spin resonance (esr)"
-thumb = "/media/thumbs/esr.png"
-alt = "EPR spectrometer"
-summary = "Extracted g-factor from frequency–field measurements; analyzed Zeeman splitting and systematics."
-report = "Sem3/pc2193-ep1/ExpA_ESR_ParthBhargava_v2.pdf"
-
-[[experiments]]
+[[reports]]
 slug = "trim-simulation"
-title = "trim ion transport simulation"
-thumb = "/media/thumbs/trim.png"
-alt = "TRIM ion transport simulation"
-summary = "Monte Carlo simulations of ion range, damage, and sputtering across nuclear microscopy, semiconductor implantation, and proton therapy applications."
 report = "Sem4/pc3193-ep2/trim/report/report.pdf"
+summary = "Monte Carlo (TRIM) simulations of ion ranges, damage and sputtering for six applied problems, from 1 GeV protons in air to placing a proton Bragg peak in a brain tumour."
 
-[[experiments]]
+# ---------------------------------------------------------------- PC3267
+
+[[reports]]
+slug = "fluorescence-spectroscopy"
+report = "Sem4/pc3267-bp2/bio-fluorescence/report/report.pdf"
+summary = "Acid denaturation of BSA and lysozyme followed by intrinsic Trp/Tyr fluorescence: in acid BSA loses (23.6 ± 0.4)% of its intensity with a (19 ± 2) nm blue shift, while lysozyme loses (28.0 ± 0.4)% with no measurable shift."
+
+[[reports]]
+slug = "circular-dichroism"
+report = "Sem4/pc3267-bp2/bio-cd/report/report.pdf"
+summary = "Far-UV circular dichroism of BSA and lysozyme under acid: BSA's helix bands weaken by (21.4 ± 0.3)% at the minimum and (23.1 ± 0.3)% at 222 nm, while lysozyme's minimum changes by only (1.0 ± 0.7)%."
+
+[[reports]]
 slug = "fluorescence-microscopy"
-title = "fluorescence microscopy: cellular structure"
-thumb = "/media/thumbs/microscopy.png"
-alt = "Fluorescence microscopy comparison panel"
-summary = "Imaged Hoechst-stained onion epidermal and cheek epithelial cells; compared brightfield and fluorescence contrast for nuclear localisation."
 report = "Sem4/pc3267-bp2/bio-microscopy/report/report.pdf"
-code = [
-  { label = "Analysis Code", src = "Sem4/pc3267-bp2/bio-microscopy/scripts/process_images.py" },
-]
+summary = "Brightfield and Hoechst fluorescence imaging of onion epidermal and cheek epithelial cells: cell dimensions, nuclear sizes (about 29 µm in onion, 8 µm in cheek cells) and nuclear contrast."
+
+# ---------------------------------------------------------------- PC2193
+
+[[reports]]
+slug = "hall-effect"
+report = "Sem3/pc2193-ep1/hall_effect/report/report.pdf"
+summary = "Hall voltage and magnetoresistance of n- and p-type germanium: carrier densities of 6.25 × 10²⁰ and 8.60 × 10²⁰ m⁻³ and Hall mobilities of 0.363 and 0.287 m² V⁻¹ s⁻¹; the p-type Hall voltage reverses sign at 105.2 °C as intrinsic conduction takes over."
+
+[[reports]]
+slug = "xrd"
+report = "Sem3/pc2193-ep1/xrd/report/report.pdf"
+summary = "Bragg spectra of a Cu tube identify the unknown crystal as KBr, a = (6.604 ± 0.002) Å; the 25 kV bremsstrahlung cut-off gives Planck's constant h = (6.35 ± 0.15) × 10⁻³⁴ J s."
+
+[[reports]]
+slug = "magnetic-moment"
+report = "Sem3/pc2193-ep1/magnetic_moment/report/report.pdf"
+summary = "Torque on current loops in a Helmholtz field: the field constant c = (7.03 ± 0.11) × 10⁻⁴ T A⁻¹ from five sweeps, in agreement with the coil formula, and an effective area of (106 ± 3) cm² for a star-shaped loop."
+
+[[reports]]
+slug = "esr"
+title = "Electron Spin Resonance"
+report = "Sem3/pc2193-ep1/ExpA_ESR_ParthBhargava_v2.pdf"
+summary = "Extracted the electron g-factor from resonance frequency against magnetic field; Zeeman splitting and systematics."
+
+[[reports]]
+slug = "pll"
+title = "Propagation of Laser Light"
+report = "Sem3/pc2193-ep1/ExpB_PLL_ParthBhargava.pdf"
+summary = "Measured Gaussian beam parameters and beam quality of a laser, with emphasis on fitting and measurement limits."
