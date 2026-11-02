@@ -1,5 +1,5 @@
 ---
-title: "critical theory and me"
+title: "understanding the world apparently"
 date: 2026-06-19
 excerpt: "everyone loves a story"
 tags: ["historicism", "identity", "determinism"]
