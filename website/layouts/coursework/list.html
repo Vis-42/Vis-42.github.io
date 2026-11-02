@@ -3,14 +3,18 @@
   <p class="classification">{{ with .Params.filed }}{{ . }}{{ else }}Coursework{{ end }}</p>
   <h1 class="project-title">coursework</h1>
   <div class="project-prose">
-    <p>Lab reports from my physics degree at NUS and an exchange semester at UT Austin, by course, newest first.</p>
+    <p>Lab reports and projects from my degree at NUS and an exchange semester at UT Austin, by course, newest first.</p>
   </div>
 
   {{/* Entries come from data/coursework.toml; PDFs, titles and page counts from sync_uni.py */}}
   {{ $meta := index hugo.Data "coursework-sources" }}
   {{ $reports := hugo.Data.coursework.reports }}
   {{ $n := 0 }}
+  {{ range (slice "Experimental work" "Projects") }}
+  {{ $kind := . }}
+  <h2 class="cw-group">{{ $kind }}</h2>
   {{ range hugo.Data.coursework.courses }}
+  {{ if eq .kind $kind }}
   {{ $prefix := printf "%s/" .folder }}
   <section class="cw-course">
     <h3>{{ .code }} · {{ .name }}</h3>
@@ -35,6 +39,8 @@
       {{ end }}
     </dl>
   </section>
+  {{ end }}
+  {{ end }}
   {{ end }}
 
   <p class="project-back"><a href="/">← back to home</a></p>

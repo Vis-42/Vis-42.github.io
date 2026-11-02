@@ -4,6 +4,11 @@
   "title": "Circular Dichroism: Protein Secondary Structure",
   "pages": 4
  },
+ "static/pdfs/experiments/driven-quadruple-pendulum.pdf": {
+  "sha256": "1fef4ec0fc88e33a2dcc64b18a0807651b552de1f4fc4d15eba722d1a80d6fc5",
+  "title": "Oscillations of a Driven Quadruple Pendulum",
+  "pages": 7
+ },
  "static/pdfs/experiments/esr.pdf": {
   "sha256": "6f6f3590835b492e1d79f47f313ef9879d73392164678a4e43ceb1cec410b088",
   "title": "",
@@ -20,7 +25,7 @@
   "pages": 3
  },
  "static/pdfs/experiments/hall-effect.pdf": {
-  "sha256": "ce7dd7e73d060dee2d611f9697074e04ecf08076532c0270e6e6b0f52824d716",
+  "sha256": "03631cd425dd849d7d1479d2dc7b11522f47644770e6ba31f152b57eadad4d99",
   "title": "Hall Effect in n- and p-Type Germanium",
   "pages": 5
  },
@@ -28,6 +33,11 @@
   "sha256": "ad47dbf3f21b43379104f6de6de89d5d09df076e3f018769490d95d3fb76004e",
   "title": "Laue Diffraction and X-Ray Crystallography",
   "pages": 6
+ },
+ "static/pdfs/experiments/magnetic-moment-slides.pdf": {
+  "sha256": "cd064f5769817f434406be2fc8bb6221c6b03abb051ae3d68ebf5ce51b026226",
+  "title": "PowerPoint Presentation",
+  "pages": 18
  },
  "static/pdfs/experiments/magnetic-moment.pdf": {
   "sha256": "6d4497f8efaf263a42f5979c5c05368852967f9c61283164ab1d5d45e231ea74",
@@ -44,11 +54,6 @@
   "title": "Mechanical Chaos: A Spring Pendulum as a Duffing Oscillator",
   "pages": 7
  },
- "static/pdfs/experiments/muon-lifetime-slides.pdf": {
-  "sha256": "8b00867eb1b5c1de55c02442b35675c51c8a75e55a8beab7cfff6096fa97cea3",
-  "title": "Muon Lifetime",
-  "pages": 14
- },
  "static/pdfs/experiments/muon-lifetime.pdf": {
   "sha256": "ed5965f9956cad2d177a823c7015d51a40ddba27f1cf568e14281caec1a15f98",
   "title": "The Lifetime of Cosmic-Ray Muons Stopped in Lead Glass",
@@ -64,10 +69,20 @@
   "title": "",
   "pages": 14
  },
+ "static/pdfs/experiments/raman-spectroscopy-slides.pdf": {
+  "sha256": "c40d9e538487cf551914863ac4292a4b1c0128fd408c06ccc5a40a4e0c924f61",
+  "title": "",
+  "pages": 22
+ },
  "static/pdfs/experiments/raman-spectroscopy.pdf": {
   "sha256": "0b999ca61e80517fba6e2d35378e9da9f686a1dfdf9f99377d6cf7c56bf1d25a",
   "title": "Raman Spectroscopy",
   "pages": 8
+ },
+ "static/pdfs/experiments/term-deposit-prediction.pdf": {
+  "sha256": "4553b6aa5c3987931d5fcb57b632d1d99dc2120b286abd0e0565fb2c63003432",
+  "title": "",
+  "pages": 3
  },
  "static/pdfs/experiments/trim-simulation.pdf": {
   "sha256": "fd687d9a34d23beae5b6a58e1f42c4f49b8f9495db65fba58df20dbcc72cf231",

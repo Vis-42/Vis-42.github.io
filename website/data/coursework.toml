@@ -1,6 +1,7 @@
 # The /coursework/ page: courses in display order, then the reports.
 #
 # A report is listed under the course whose `folder` its `report` path starts with.
+# `kind` groups the courses on the page: "Experimental work" or "Projects".
 # Paths are inside ~/-uni, the source of truth. `uv run website/sync_uni.py` copies
 # the committed PDFs into the site and reads each one's title and page count:
 #   report -> static/pdfs/experiments/<slug>.pdf
@@ -12,24 +13,42 @@
 [[courses]]
 folder = "Sem5_exchange/phy474--advanced-lab-I"
 code = "PHY 474"
+kind = "Experimental work"
 name = "Advanced Laboratory I"
 term = "The University of Texas at Austin · Fall 2026"
 
 [[courses]]
 folder = "Sem4/pc3193-ep2"
 code = "PC3193"
+kind = "Experimental work"
 name = "Experimental Physics II"
 term = "National University of Singapore · AY2025/26, Semester 2"
 
 [[courses]]
 folder = "Sem4/pc3267-bp2"
 code = "PC3267"
+kind = "Experimental work"
 name = "Biophysics II"
+term = "National University of Singapore · AY2025/26, Semester 2"
+
+[[courses]]
+folder = "Sem4/it1244-ai"
+code = "IT1244"
+kind = "Projects"
+name = "Artificial Intelligence: Technology and Impact"
+term = "National University of Singapore · AY2025/26, Semester 2"
+
+[[courses]]
+folder = "Sem4/pc3236-cmp1"
+code = "PC3236"
+kind = "Projects"
+name = "Computational Methods in Physics"
 term = "National University of Singapore · AY2025/26, Semester 2"
 
 [[courses]]
 folder = "Sem3/pc2193-ep1"
 code = "PC2193"
+kind = "Experimental work"
 name = "Experimental Physics I"
 term = "National University of Singapore · AY2025/26, Semester 1"
 
@@ -38,7 +57,6 @@ term = "National University of Singapore · AY2025/26, Semester 1"
 [[reports]]
 slug = "muon-lifetime"
 report = "Sem5_exchange/phy474--advanced-lab-I/muon-lifetime/muon-lifetime-report.pdf"
-slides = "Sem5_exchange/phy474--advanced-lab-I/muon-lifetime/presentation/slides.pdf"
 summary = "Timed the decays of cosmic-ray muons stopped in lead glass. Two acquisitions that pass the shape and stability tests give τ = 2.19 ± 0.04 (stat.) ± 0.06 (syst.) µs, in agreement with the free-muon lifetime of 2.197 µs."
 
 [[reports]]
@@ -52,6 +70,7 @@ summary = "A driven spring pendulum as a Duffing-like oscillator. In the longest
 [[reports]]
 slug = "raman-spectroscopy"
 report = "Sem4/pc3193-ep2/raman/report/report.pdf"
+slides = "Sem4/pc3193-ep2/raman/raman_final.pdf"
 summary = "Distinguished carbon allotropes by their D/G band ratios: HOPG shows no D band, the carbon rod D/G = 0.13 ± 0.02, nanotubes 1.24 ± 0.08. No diamond-like sample shows the diamond line, the graphene film is thicker than a monolayer, and the unknown wafer is silicon (520.9 ± 1.0 cm⁻¹)."
 
 [[reports]]
@@ -91,6 +110,21 @@ slug = "fluorescence-microscopy"
 report = "Sem4/pc3267-bp2/bio-microscopy/report/report.pdf"
 summary = "Brightfield and Hoechst fluorescence imaging of onion epidermal and cheek epithelial cells: cell dimensions, nuclear sizes (about 29 µm in onion, 8 µm in cheek cells) and nuclear contrast."
 
+# ---------------------------------------------------------------- IT1244
+
+[[reports]]
+slug = "term-deposit-prediction"
+title = "Predicting Term-Deposit Subscription Before the Call: Leakage-Free Models and Cost-Aware Thresholds"
+report = "Sem4/it1244-ai/it1244/report/report.pdf"
+summary = "Predicts term-deposit subscription from features known before the call, dropping call duration, which leaks the outcome. Logistic regression, LightGBM and an MLP reach ROC AUC 0.784, and LightGBM has the best PR-AUC (0.450). A cost-based threshold calls 41.5% of clients, reaches 76% of subscribers and saves 15% against calling everyone."
+
+# ---------------------------------------------------------------- PC3236
+
+[[reports]]
+slug = "driven-quadruple-pendulum"
+report = "Sem4/pc3236-cmp1/pc3236/report/report.pdf"
+summary = "A driven, damped chain of four pendulums, solved with a self-written fourth-order Runge–Kutta integrator. The largest Lyapunov exponent at the nominal drive is (1.03 ± 0.02) s⁻¹, so the motion is chaotic and trajectories are reliable only for about 20 s; the response runs from periodic, through quasi-periodic, to chaotic above 6.55 N m."
+
 # ---------------------------------------------------------------- PC2193
 
 [[reports]]
@@ -106,6 +140,7 @@ summary = "Bragg spectra of a Cu tube identify the unknown crystal as KBr, a = (
 [[reports]]
 slug = "magnetic-moment"
 report = "Sem3/pc2193-ep1/magnetic_moment/report/report.pdf"
+slides = "Sem3/pc2193-ep1/magnetic_moment/slides/mm.pdf"
 summary = "Torque on current loops in a Helmholtz field: the field constant c = (7.03 ± 0.11) × 10⁻⁴ T A⁻¹ from five sweeps, in agreement with the coil formula, and an effective area of (106 ± 3) cm² for a star-shaped loop."
 
 [[reports]]
