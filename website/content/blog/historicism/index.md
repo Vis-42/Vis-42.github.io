@@ -1,8 +1,8 @@
 ---
-title: "historicism as justification"
+title: "critical theory and me"
 date: 2026-06-19
-excerpt: "misguided determinism"
-tags: ["habits", "perspective"]
+excerpt: "everyone loves a story"
+tags: ["historicism", "identity", "determinism"]
 ---
 
 Our brains are story-telling machines and they really like a protagonist with a concrete identity. A prominent example of this is how we see ourselves. The "default mode network" is a linked system of brain regions that is like a continuously running loop. Your brain tells itself who it is, which makes it who it is. All traits about you have no physiological reason to attach to you, Its what neuroplasticity is all about, you don't have to stay the person who is late to class, it is the illusion of "who I am" in your head that allows you to slip into certain tendencies so easily. Your brain cherry-picks data and emotions to stutch a manufactured story about you that it tells you to make you you. An interpretation of this has also been creatively explored in the movie "Inside out 2", which shows how the same memories and emotions can be stitched together totally differently to give someone a an alltogether separate identity (it is fictional but the allegory stands). The point is that this process of stitching a story has way too much power over you. The same experience can be dealt with in so many ways when different perspectives(filters) are brought in. The process of stitching holds so much power because it gets to cherry-pick data and dictate the processing/interpretation of the data. Raw information supplies no meaning, so we filter out some stuff to work with our filterate. An interpretation of this has also been thoughtfully discussed by Varun Mayya in his Cero Season 2 podcast. Sometimems different experiences, professions, languages or skills bring in new possible filters to work with. The coolest was you can realise this live, by yourself, is the use of metaphors that are bought about when you learn something new. Like how a CS student can see their laundary management as managing cache in computer memory, like how the mathematician Jim Simmons could think of the stock market as a point in an n-dimensional complex space.
