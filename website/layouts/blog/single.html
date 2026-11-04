@@ -10,4 +10,128 @@
 
   <p class="project-back"><a href="/blog/">← back to blog</a></p>
 </article>
+
+{{ if in .Content "footnote-ref" }}
+<style>
+  /* footnotes: plain endnotes by default; the script below lifts them into the
+     right margin when the window is wide enough to hold them */
+  .project-page { position: relative; }
+  .project-prose sup { line-height: 0; }
+  .project-prose .footnote-ref { text-decoration: none; font-family: 'IBM Plex Mono', monospace; font-size: 0.72em; padding: 0 0.1em; }
+  .project-prose .footnotes { font-size: 0.86rem; color: var(--ink-muted); margin-top: 2.4rem; }
+  .project-prose .footnotes hr { border: none; border-top: 1px solid var(--rule-soft); margin-bottom: 1rem; }
+  .project-prose .footnotes p { margin-bottom: 0.6rem; }
+
+  .sidenote {
+    position: absolute; left: calc(100% + 1.6rem);
+    font-size: 0.78rem; line-height: 1.55; color: var(--ink-muted);
+    border-left: 1px solid var(--rule-soft); padding-left: 0.7rem;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .sidenote p { margin: 0 0 0.4rem; }
+  .sidenote p:last-child { margin-bottom: 0; }
+  .sidenote .sn-num { font-family: 'IBM Plex Mono', monospace; color: var(--accent); margin-right: 0.35em; }
+  .sidenote.hot { color: var(--ink-2); border-color: var(--accent); }
+  .has-sidenotes .footnotes { display: none; }
+</style>
+<script>
+(function () {
+  var article = document.querySelector('.project-page');
+  var prose = article && article.querySelector('.project-prose');
+  var list = prose && prose.querySelector('.footnotes ol');
+  if (!list) return;
+
+  var noteFor = function (ref) {
+    return document.getElementById(ref.getAttribute('href').slice(1));
+  };
+
+  // Goldmark numbers footnotes in odd orders when one note references another.
+  // Renumber in reading order: each note, then any notes it points to.
+  var order = [];
+  (function walk(root) {
+    root.querySelectorAll('a.footnote-ref').forEach(function (ref) {
+      if (root === prose && ref.closest('.footnotes')) return;
+      var li = noteFor(ref);
+      if (!li || order.indexOf(li) !== -1) return;
+      order.push(li);
+      walk(li);
+    });
+  })(prose);
+  order.forEach(function (li, i) {
+    list.appendChild(li);
+    document.querySelectorAll('a.footnote-ref[href="#' + li.id + '"]').forEach(function (a) {
+      a.textContent = i + 1;
+    });
+  });
+
+  // Margin copies, built once and shown only when there is room.
+  var notes = order.map(function (li, i) {
+    var aside = document.createElement('aside');
+    aside.className = 'sidenote';
+    aside.hidden = true;
+    var body = li.cloneNode(true);
+    body.querySelectorAll('.footnote-backref').forEach(function (b) { b.remove(); });
+    body.querySelectorAll('[id]').forEach(function (el) { el.removeAttribute('id'); });
+    var num = document.createElement('span');
+    num.className = 'sn-num';
+    num.textContent = i + 1;
+    var first = body.querySelector('p') || body;
+    first.insertBefore(num, first.firstChild);
+    while (body.firstChild) aside.appendChild(body.firstChild);
+    article.appendChild(aside);
+    return { li: li, aside: aside };
+  });
+
+  function refFor(li) {
+    return prose.querySelector('a.footnote-ref[href="#' + li.id + '"]');
+  }
+
+  function layout() {
+    var GAP = 26, EDGE = 24, MIN = 160, MAX = 270;
+    var rect = article.getBoundingClientRect();
+    var room = document.documentElement.clientWidth - rect.right - GAP - EDGE;
+    var on = room >= MIN;
+    article.classList.toggle('has-sidenotes', on);
+    if (!on) { notes.forEach(function (n) { n.aside.hidden = true; }); return; }
+
+    var width = Math.min(MAX, room);
+    var floor = 0;
+    notes.forEach(function (n) {
+      n.aside.hidden = false;
+      n.aside.style.width = width + 'px';
+      // a note referenced from inside another note has no anchor in the text,
+      // so it simply stacks under the one that cites it
+      var ref = refFor(n.li);
+      var want = ref ? ref.getBoundingClientRect().top - rect.top - 4 : floor;
+      var top = Math.max(want, floor);
+      n.aside.style.top = top + 'px';
+      floor = top + n.aside.offsetHeight + 14;
+    });
+  }
+
+  // clicking a number: highlight the margin note instead of jumping to the bottom
+  prose.addEventListener('click', function (e) {
+    var ref = e.target.closest('a.footnote-ref');
+    if (!ref || !article.classList.contains('has-sidenotes')) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    var n = notes.find(function (n) { return n.li === noteFor(ref); });
+    if (!n) return;
+    n.aside.classList.add('hot');
+    setTimeout(function () { n.aside.classList.remove('hot'); }, 1400);
+  }, true);
+  notes.forEach(function (n) {
+    var ref = refFor(n.li);
+    if (!ref) return;
+    ref.addEventListener('mouseenter', function () { n.aside.classList.add('hot'); });
+    ref.addEventListener('mouseleave', function () { n.aside.classList.remove('hot'); });
+  });
+
+  layout();
+  window.addEventListener('resize', layout);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
+  window.addEventListener('load', layout);
+})();
+</script>
+{{ end }}
 {{ end }}
