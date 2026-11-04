@@ -32,7 +32,20 @@
   .sidenote p:last-child { margin-bottom: 0; }
   .sidenote .sn-num { font-family: 'IBM Plex Mono', monospace; color: var(--accent); margin-right: 0.35em; }
   .sidenote.hot { color: var(--ink-2); border-color: var(--accent); }
-  .has-sidenotes .footnotes { display: none; }
+  .fn-js .footnotes { display: none; }
+
+  /* narrow screens: tapping a number opens the note in place, under the line */
+  .sn-inline {
+    display: block; margin: 0.55rem 0 0.75rem;
+    padding: 0.55rem 0.8rem; border-left: 2px solid var(--accent);
+    background: var(--accent-soft); border-radius: 0 3px 3px 0;
+    font-size: 0.84rem; line-height: 1.55; color: var(--ink-2);
+  }
+  .sn-inline[hidden], .has-sidenotes .sn-inline { display: none; }
+  .sn-inline > span { display: block; }
+  .sn-inline > span + span { margin-top: 0.4rem; }
+  .sn-inline .sn-num { font-family: 'IBM Plex Mono', monospace; color: var(--accent); margin-right: 0.35em; }
+  .footnote-ref.open { background: var(--accent-soft); border-radius: 2px; }
 </style>
 <script>
 (function () {
@@ -40,6 +53,7 @@
   var prose = article && article.querySelector('.project-prose');
   var list = prose && prose.querySelector('.footnotes ol');
   if (!list) return;
+  article.classList.add('fn-js');
 
   var noteFor = function (ref) {
     return document.getElementById(ref.getAttribute('href').slice(1));
@@ -109,16 +123,52 @@
     });
   }
 
-  // clicking a number: highlight the margin note instead of jumping to the bottom
-  prose.addEventListener('click', function (e) {
+  // narrow screens: open the note right where it was tapped, as a block under
+  // the line (spans only, since it sits inside a <p>)
+  function inlineFor(ref) {
+    var sup = ref.parentNode;
+    var box = sup.nextElementSibling;
+    if (box && box.classList.contains('sn-inline')) return box;
+    var li = noteFor(ref);
+    box = document.createElement('span');
+    box.className = 'sn-inline';
+    box.hidden = true;
+    var paras = li.querySelectorAll('p');
+    (paras.length ? Array.prototype.slice.call(paras) : [li]).forEach(function (p, i) {
+      var line = document.createElement('span');
+      line.innerHTML = p.innerHTML;
+      line.querySelectorAll('.footnote-backref').forEach(function (b) { b.remove(); });
+      line.querySelectorAll('[id]').forEach(function (el) { el.removeAttribute('id'); });
+      if (i === 0) {
+        var num = document.createElement('span');
+        num.className = 'sn-num';
+        num.textContent = ref.textContent;
+        line.insertBefore(num, line.firstChild);
+      }
+      box.appendChild(line);
+    });
+    sup.parentNode.insertBefore(box, sup.nextSibling);
+    return box;
+  }
+
+  // clicking a number never jumps to the bottom: on wide screens it highlights
+  // the margin note, on narrow ones it opens/closes the note in place
+  article.addEventListener('click', function (e) {
     var ref = e.target.closest('a.footnote-ref');
-    if (!ref || !article.classList.contains('has-sidenotes')) return;
+    if (!ref || !noteFor(ref)) return;
     e.preventDefault();
     e.stopImmediatePropagation();
-    var n = notes.find(function (n) { return n.li === noteFor(ref); });
-    if (!n) return;
-    n.aside.classList.add('hot');
-    setTimeout(function () { n.aside.classList.remove('hot'); }, 1400);
+    if (article.classList.contains('has-sidenotes')) {
+      var n = notes.find(function (n) { return n.li === noteFor(ref); });
+      if (!n) return;
+      n.aside.classList.add('hot');
+      setTimeout(function () { n.aside.classList.remove('hot'); }, 1400);
+    } else {
+      var box = inlineFor(ref);
+      box.hidden = !box.hidden;
+      ref.classList.toggle('open', !box.hidden);
+      ref.setAttribute('aria-expanded', box.hidden ? 'false' : 'true');
+    }
   }, true);
   notes.forEach(function (n) {
     var ref = refFor(n.li);
