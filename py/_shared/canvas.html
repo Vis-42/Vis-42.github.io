@@ -24,7 +24,7 @@ canvas { display: block; width: 100vw; height: 100vh; cursor: grab; }
 
    Spec (top level)
      frames      number of animation frames
-     dt          ms per frame
+     dt          ms per frame (default 50)
      panels[]    one object per plot, see below
      layout[]    one [x, y, w, h] per panel, as fractions of the canvas
      bg          optional background colour, default #0f1117
@@ -1054,6 +1054,9 @@ function drawPanel(p, pi, lx, ly, lw, lh) {
   }
   /* ─────────────── CHAIN (protein folding) ─── */
   else if (p.kind === "chain") {
+    /* fields: x[frame][n], y[frame][n], optional native [[i,j],...] with rn [d_ij],
+       span (fixed view size in data units; auto per frame otherwise).
+       A native contact is drawn while its beads are within 1.2 rn of each other. */
     const xs = p.x[f],
       ys = p.y[f],
       n = xs.length;
@@ -1067,30 +1070,25 @@ function drawPanel(p, pi, lx, ly, lw, lh) {
       if (ys[i] < ymin) ymin = ys[i];
       if (ys[i] > ymax) ymax = ys[i];
     }
-    const span = Math.max(xmax - xmin, ymax - ymin, 1) * 1.4;
+    const span = p.span || Math.max(xmax - xmin, ymax - ymin, 1) * 1.4;
     const cxc = (xmin + xmax) / 2,
       cyc = (ymin + ymax) / 2;
-    const sc = (Math.min(pw, ph) * 0.85) / span,
-      oxc = px + pw / 2,
-      oyc = py + ph / 2;
+    const sc = ((Math.min(pw, ph) * 0.85) / span) * vp.zoom,
+      oxc = px + pw / 2 + vp.px,
+      oyc = py + ph / 2 + vp.py;
     function ts(x, y) {
       return [oxc + (x - cxc) * sc, oyc - (y - cyc) * sc];
     }
-    ctx.strokeStyle = "#4a5568";
-    ctx.lineWidth = 2 * DPR;
-    ctx.beginPath();
-    for (let i = 0; i < n - 1; i++) {
-      const [ax, ay] = ts(xs[i], ys[i]);
-      const [bx, by] = ts(xs[i + 1], ys[i + 1]);
-      i === 0 ? ctx.moveTo(ax, ay) : ctx.lineTo(bx, by);
-    }
-    ctx.stroke();
     if (p.native) {
-      ctx.strokeStyle = "#9c3b2c";
-      ctx.lineWidth = 0.8 * DPR;
-      ctx.setLineDash([2, 2]);
+      ctx.strokeStyle = "#e0635a";
+      ctx.lineWidth = 1.2 * DPR;
+      ctx.setLineDash([3 * DPR, 2 * DPR]);
       ctx.beginPath();
-      for (const [a, b] of p.native) {
+      for (let k = 0; k < p.native.length; k++) {
+        const a = p.native[k][0],
+          b = p.native[k][1];
+        const d = Math.hypot(xs[a] - xs[b], ys[a] - ys[b]);
+        if (p.rn && d > 1.2 * p.rn[k]) continue;
         const [ax, ay] = ts(xs[a], ys[a]);
         const [bx, by] = ts(xs[b], ys[b]);
         ctx.moveTo(ax, ay);
@@ -1099,6 +1097,14 @@ function drawPanel(p, pi, lx, ly, lw, lh) {
       ctx.stroke();
       ctx.setLineDash([]);
     }
+    ctx.strokeStyle = "#8a93a6";
+    ctx.lineWidth = 2 * DPR;
+    ctx.beginPath();
+    for (let i = 0; i < n; i++) {
+      const [sx, sy] = ts(xs[i], ys[i]);
+      i === 0 ? ctx.moveTo(sx, sy) : ctx.lineTo(sx, sy);
+    }
+    ctx.stroke();
     for (let i = 0; i < n; i++) {
       const [sx, sy] = ts(xs[i], ys[i]);
       ctx.fillStyle = i === 0 ? "#f97316" : i === n - 1 ? "#a855f7" : "#7dd3fc";
@@ -1115,42 +1121,44 @@ function drawPanel(p, pi, lx, ly, lw, lh) {
   }
   /* ─────────────── FREE ENERGY F(Q) ─── */
   else if (p.kind === "freeenergy") {
+    /* fields: Q_bins[], F_vals[] (sampled bins only), optional Q_now[frame] */
     const qb = p.Q_bins,
       fv = p.F_vals,
       qn = p.Q_now ? p.Q_now[f] : null;
-    const ymin = Math.min(...fv),
-      ymax = Math.max(...fv) + 0.5;
-    const pnl = {
-      kind: "scatter",
-      title: p.title || "Free energy F(Q)",
-      xlabel: "Q (native fraction)",
-      ylabel: "F (kT)",
-      x: qb,
-      y: fv,
-      ymin,
-      ymax,
-      color: "#9c3b2c",
-    };
-    drawPanel(pnl, pi, lx, ly, lw, lh);
-    if (qn !== null) {
-      /* overlay moving dot */
-      const ML = 46 * DPR,
-        MT = 22 * DPR,
-        mw2 = Math.round(lw * cv.width) - ML - 8 * DPR,
-        mh2 = Math.round(lh * cv.height) - MT - 28 * DPR;
-      const mx2 = Math.round(lx * cv.width) + ML,
-        my2 = Math.round(ly * cv.height) + MT;
-      const toX2 = (v) => mx2 + (mw2 * (v - qb[0])) / (qb[qb.length - 1] - qb[0]);
-      const toY2 = (v) => my2 + mh2 * (1 - (v - ymin) / (ymax - ymin));
-      /* find F at Q=qn by interpolation */
-      let fi = 0;
-      for (let i = 0; i < qb.length; i++) if (qb[i] <= qn) fi = i;
-      const fAtQ = fv[fi];
-      ctx.fillStyle = "#f97316";
+    const fmax = Math.max(...fv);
+    const xd = { min: 0, max: 1, log: false },
+      yd = { min: 0, max: fmax * 1.1 + 0.2, log: false };
+    const { mx, my, mw, mh, toX, toY } = axes2D(
+      { title: p.title || "Free energy F(Q)", xlabel: p.xlabel || "Q", ylabel: p.ylabel || "F" },
+      lx, ly, lw, lh, xd, yd, vp);
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(mx, my, mw, mh);
+    ctx.clip();
+    ctx.strokeStyle = "#e0635a";
+    ctx.lineWidth = 2 * DPR;
+    ctx.beginPath();
+    for (let i = 0; i < qb.length; i++) {
+      const X = toX(qb[i]),
+        Y = toY(fv[i]);
+      i === 0 ? ctx.moveTo(X, Y) : ctx.lineTo(X, Y);
+    }
+    ctx.stroke();
+    ctx.fillStyle = "#e0635a";
+    for (let i = 0; i < qb.length; i++) {
       ctx.beginPath();
-      ctx.arc(toX2(qn), toY2(fAtQ), 5 * DPR, 0, 7);
+      ctx.arc(toX(qb[i]), toY(fv[i]), 2.5 * DPR, 0, 7);
       ctx.fill();
     }
+    if (qn !== null) {
+      let best = 0;
+      for (let i = 1; i < qb.length; i++) if (Math.abs(qb[i] - qn) < Math.abs(qb[best] - qn)) best = i;
+      ctx.fillStyle = "#f97316";
+      ctx.beginPath();
+      ctx.arc(toX(qn), toY(fv[best]), 5 * DPR, 0, 7);
+      ctx.fill();
+    }
+    ctx.restore();
   }
   /* ─────────────── SWEEP CURVE (percolation S(p) / chi(p)) ─── */
   else if (p.kind === "sweep_curve") {
@@ -1509,18 +1517,6 @@ function drawPanel(p, pi, lx, ly, lw, lh) {
       ctx.fill();
     }
     ctx.restore();
-    if (p.title) {
-      ctx.fillStyle = "#9aa3b0";
-      ctx.font = 10 * DPR + "px monospace";
-      ctx.textAlign = "center";
-      ctx.fillText(p.title, px + pw / 2, py + 12 * DPR);
-    }
-    if (p.xlabel) {
-      ctx.fillStyle = "#626b7c";
-      ctx.font = 9 * DPR + "px monospace";
-      ctx.textAlign = "center";
-      ctx.fillText(p.xlabel, px + pw / 2, py + ph - 3 * DPR);
-    }
   }
   /* ─────────────── SPACE-TIME (chimera heatmap building frame-by-frame) ─── */
   else if (p.kind === "space_time") {
@@ -1677,7 +1673,7 @@ function drawPanel(p, pi, lx, ly, lw, lh) {
     ctx.fill();
     legend(px, py, pw, ph, [
       ["true (now)", "#7dd3fc"],
-      ["inferred (" + p.delay + " frames lag)", "#f97316"],
+      [p.delay ? "inferred (" + p.delay + " frames lag)" : "inferred", "#f97316"],
     ]);
   }
   /* ─────────────── GEOMETRIC GRAPH PERCOLATION ─── */
@@ -1903,18 +1899,6 @@ function drawPanel(p, pi, lx, ly, lw, lh) {
       if (h > 0) ctx.fillRect(x, y, bw, h);
     }
     ctx.restore();
-    if (p.title) {
-      ctx.fillStyle = "#9aa3b0";
-      ctx.font = 10 * DPR + "px monospace";
-      ctx.textAlign = "center";
-      ctx.fillText(p.title, px + pw / 2, py + 12 * DPR);
-    }
-    if (p.xlabel) {
-      ctx.fillStyle = "#626b7c";
-      ctx.font = 9 * DPR + "px monospace";
-      ctx.textAlign = "center";
-      ctx.fillText(p.xlabel, px + pw / 2, py + ph - 3 * DPR);
-    }
   }
   /* ─────────────── CD INVERSION (loss · predicted vs true bars · spectrum fit) ───
      fields: loss[], pred[frame][3], true[3], recon[frame][], meas[], helix_basis[], sheet_basis[] */
@@ -2138,7 +2122,7 @@ cv.addEventListener(
 );
 /* ── Animation loop ─────────────────────────────────────────── */
 function loop(t) {
-  if (playing && t - last > S.dt / speed) {
+  if (playing && t - last > (S.dt || 50) / speed) {
     frame = (frame + 1) % S.frames;
     last = t;
   }
