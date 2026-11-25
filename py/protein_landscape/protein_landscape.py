@@ -16,17 +16,18 @@ def _():
 def _(mo):
     mo.md(
         r"""
-        # Protein folding: the Go model and free-energy funnels
+        # Protein folding: the Gō model and its free-energy landscape
 
-        A 24-bead chain in 2D explores configuration space by Metropolis Monte Carlo.
-        The Hamiltonian is a Go model: pairs of beads that are close in the native structure
-        feel an attractive 12-10 Lennard-Jones well of depth epsilon; all other non-bonded
-        pairs see only a repulsive r^-12 excluded-volume wall. Because only native contacts
-        attract, the landscape is a single funnel toward the native state rather than a rugged
-        multi-minima landscape.
+        A 24-bead chain in 2D, simulated by Metropolis Monte Carlo. The Hamiltonian is a Gō
+        model: pairs of beads that touch in the native structure attract through a 12-10
+        Lennard-Jones well of depth $\varepsilon$, and every other non-bonded pair only repels.
+        Because only native contacts attract, the native fold is the single lowest-energy
+        state and the landscape is a funnel rather than a rugged maze.
 
-        Q = (native contacts formed) / (total native contacts) is the reaction coordinate.
-        F(Q) = -kT ln P(Q) is recovered by Boltzmann inversion of the sampled histogram.
+        The reaction coordinate is $Q$, the fraction of native contacts formed. The free
+        energy $F(Q) = -k_BT \ln P(Q)$ comes from the histogram of $Q$ over many independent
+        replicas once they have equilibrated. Near the folding temperature it has two basins,
+        folded and unfolded, separated by a barrier: the signature of two-state folding.
         """
     )
     return
@@ -55,246 +56,207 @@ def _(json, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    T_sl   = mo.ui.slider(0.3, 3.0, value=0.7,  step=0.1,  label="temperature T (kB units)", show_value=True)
-    eps_sl = mo.ui.slider(0.2, 3.0, value=1.0,  step=0.2,  label="well depth epsilon",        show_value=True)
-    nst_sl = mo.ui.slider(100, 2000, value=800, step=100,  label="MC steps",                  show_value=True)
+    T_sl = mo.ui.slider(0.10, 0.60, value=0.27, step=0.01, label="temperature k_BT / ε", show_value=True)
+    start_sl = mo.ui.dropdown(["native", "extended"], value="native", label="animated chain starts")
+    nst_sl = mo.ui.slider(1000, 6000, value=3000, step=500, label="MC steps", show_value=True)
     mo.md(
         f"""
-        **Controls.** Temperature T in units of epsilon/kB. Below the folding temperature
-        (~0.8 for this model) the chain collapses to the native state. Epsilon sets the depth
-        of native-contact wells; higher epsilon strengthens the funnel. MC steps controls how
-        long the trajectory runs (more steps = better sampling of F(Q)).
+        **Controls.** Temperature is in units of the contact energy ε, so ε itself is not a
+        separate knob. Below the folding temperature (marked on the melting curve, about 0.27)
+        the native state is stable; above it the chain unfolds. The animated chain can start
+        folded or fully extended; the free energy always comes from 12 replicas started in the
+        native state.
 
-        {mo.hstack([T_sl, eps_sl, nst_sl], justify="start", gap=2)}
+        {mo.hstack([T_sl, start_sl, nst_sl], justify="start", gap=2)}
         """
     )
-    return T_sl, eps_sl, nst_sl
+    return T_sl, nst_sl, start_sl
 
 
 @app.cell(hide_code=True)
 def _(np):
-    def _make_native(n=24):
-        # compact 2D spiral native structure -- same as before but kept as a helper
-        t = np.linspace(0, 3.0 * np.pi, n)
-        r = 0.28 + 0.042 * t
-        pos = np.c_[r * np.cos(t), r * np.sin(t)]
-        return pos - pos.mean(0)
+    # Native fold: a compact meander, four rows of six beads with bond length A, like a
+    # four-stranded sheet. Its 15 native contacts are the beads facing each other across
+    # neighbouring rows.
+    A, ROWS, COLS = 0.3, 4, 6
+    N_BEADS = ROWS * COLS
+    NATIVE = np.array([[(c if r % 2 == 0 else COLS - 1 - c) * A, r * A]
+                       for r in range(ROWS) for c in range(COLS)])
+    NATIVE = NATIVE - NATIVE.mean(0)
+    _I, _J = np.triu_indices(N_BEADS, 3)                 # non-bonded pairs, |i - j| >= 3
+    _dn = np.linalg.norm(NATIVE[_I] - NATIVE[_J], axis=1)
+    _is_nat = _dn < 1.05 * A
+    CONTACTS = np.c_[_I[_is_nat], _J[_is_nat]]
+    RN = _dn[_is_nat]
+    _rn_all = np.where(_is_nat, _dn, 1.0)
+    K_BOND, SIGMA = 100.0, 0.22
 
-    def _native_contacts(nat, sep=3, cutoff=0.55):
-        n = len(nat)
-        C = []
-        for i in range(n):
-            for j in range(i + sep, n):
-                if np.linalg.norm(nat[i] - nat[j]) < cutoff:
-                    C.append((i, j))
-        return C
+    def go_energy(pos):
+        """Energy of conformations pos with shape (..., N_BEADS, 2), in units of ε."""
+        bl = np.linalg.norm(np.diff(pos, axis=-2), axis=-1)
+        e_bond = 0.5 * K_BOND * ((bl - A) ** 2).sum(-1)
+        d = np.maximum(np.linalg.norm(pos[..., _I, :] - pos[..., _J, :], axis=-1), 0.05)
+        x = _rn_all / d
+        e_pair = np.where(_is_nat, 5 * x ** 12 - 6 * x ** 10, (SIGMA / d) ** 12)
+        return e_bond + e_pair.sum(-1)
 
-    def _go_energy(pos, nat, C, r0=0.28, k_bond=80.0, eps=1.0, sigma=0.15):
-        # backbone harmonic bonds
-        d = pos[1:] - pos[:-1]
-        E = 0.5 * k_bond * np.sum((np.linalg.norm(d, axis=1) - r0) ** 2)
-        # native contact attractions (12-10 LJ)
-        nc_set = set(C)
-        for i, j in C:
-            r = max(np.linalg.norm(pos[i] - pos[j]), 1e-6)
-            rn = max(np.linalg.norm(nat[i] - nat[j]), 0.05)
-            x = rn / r
-            E += eps * (5 * x ** 12 - 6 * x ** 10)
-        # non-native excluded volume (r^-12)
-        n = len(pos)
-        for i in range(n):
-            for j in range(i + 3, n):
-                if (i, j) not in nc_set:
-                    r = max(np.linalg.norm(pos[i] - pos[j]), 0.02)
-                    E += eps * (sigma / r) ** 12
-        return E
+    def frac_Q(pos):
+        d = np.linalg.norm(pos[..., CONTACTS[:, 0], :] - pos[..., CONTACTS[:, 1], :], axis=-1)
+        return (d < 1.2 * RN).mean(-1)
 
-    def _frac_Q(pos, nat, C, tol=1.25):
-        if not C:
-            return 0.0
-        formed = sum(
-            np.linalg.norm(pos[i] - pos[j]) < tol * max(np.linalg.norm(nat[i] - nat[j]), 0.05)
-            for i, j in C
-        )
-        return formed / len(C)
-
-    def _free_energy(Q_traj, T, n_bins=20):
-        edges = np.linspace(0.0, 1.0, n_bins + 1)
-        centers = 0.5 * (edges[:-1] + edges[1:])
-        counts = np.zeros(n_bins)
-        for q in Q_traj:
-            idx = min(int(q * n_bins), n_bins - 1)
-            counts[idx] += 1
-        counts += 0.5  # Jeffreys prior to avoid log(0)
-        P = counts / counts.sum()
-        F = -T * np.log(P)
-        F -= F.min()
-        return centers.tolist(), F.tolist()
-
-    def run_go_mc(T, n_steps, eps, seed=42):
-        rng = np.random.default_rng(seed)
-        nat = _make_native(24)
-        C = _native_contacts(nat)
-        n = len(nat)
-        # start from extended chain to see folding
-        pos = np.c_[np.linspace(-1.5, 1.5, n), 0.05 * rng.standard_normal(n)]
-        E = _go_energy(pos, nat, C, eps=eps)
-        store_every = max(1, n_steps // 300)
-        frame_xs, frame_ys, Q_traj, E_traj = [], [], [], []
-        step_size = 0.10
+    def mc_run(pos, T, n_steps, rng, store_every=10):
+        """Metropolis on R replicas at once: pos (R, N, 2), T scalar or shape (R,).
+        Each step, every replica proposes either a single-bead nudge (70%) or a pivot (30%):
+        the shorter end of the chain is rotated rigidly about a random bead. Pivots move
+        whole segments at once, which local moves alone would take ages to do."""
+        R = pos.shape[0]; ar = np.arange(R); idx = np.arange(N_BEADS)[None, :]
+        T = np.broadcast_to(np.asarray(T, float), (R,))
+        E = go_energy(pos); out_pos, out_Q, out_E = [], [], []
         for s in range(n_steps):
-            i = int(rng.integers(n))
             trial = pos.copy()
-            trial[i] += step_size * rng.standard_normal(2)
-            Et = _go_energy(trial, nat, C, eps=eps)
-            dE = Et - E
-            if dE <= 0 or rng.random() < np.exp(-dE / max(T, 1e-6)):
-                pos = trial
-                E = Et
+            pivot = rng.random(R) < 0.3
+            i = rng.integers(N_BEADS, size=R)
+            trial[ar, i] += np.where(pivot[:, None], 0.0, 0.07 * rng.standard_normal((R, 2)))
+            k = rng.integers(1, N_BEADS - 1, size=R)
+            th = rng.normal(0.0, 0.6, R); c, sn = np.cos(th)[:, None], np.sin(th)[:, None]
+            side = np.where((k < N_BEADS // 2)[:, None], idx < k[:, None], idx > k[:, None]) & pivot[:, None]
+            o = trial[ar, k][:, None, :]; rel = trial - o
+            rot = o + np.stack([c * rel[..., 0] - sn * rel[..., 1], sn * rel[..., 0] + c * rel[..., 1]], -1)
+            trial = np.where(side[..., None], rot, trial)
+            Et = go_energy(trial)
+            ok = (Et <= E) | (rng.random(R) < np.exp(-np.clip((Et - E) / T, 0, 700)))
+            pos = np.where(ok[:, None, None], trial, pos); E = np.where(ok, Et, E)
             if s % store_every == 0:
-                frame_xs.append(np.round(pos[:, 0], 3).tolist())
-                frame_ys.append(np.round(pos[:, 1], 3).tolist())
-                Q_traj.append(_frac_Q(pos, nat, C))
-                E_traj.append(float(E))
-        Q_bins, F_vals = _free_energy(Q_traj, T)
-        return {
-            "nat": nat,
-            "C": C,
-            "frame_xs": frame_xs,
-            "frame_ys": frame_ys,
-            "Q_traj": np.array(Q_traj),
-            "E_traj": np.array(E_traj),
-            "Q_bins": Q_bins,
-            "F_vals": F_vals,
-        }
+                out_pos.append(pos[0].copy()); out_Q.append(frac_Q(pos)); out_E.append(E.copy())
+        return np.array(out_pos), np.array(out_Q), np.array(out_E)
 
-    return run_go_mc,
+    def extended_chain():
+        return np.c_[np.arange(N_BEADS) * A - (N_BEADS - 1) * A / 2, np.zeros(N_BEADS)]
+
+    return A, CONTACTS, NATIVE, N_BEADS, RN, extended_chain, mc_run
 
 
 @app.cell(hide_code=True)
-def _(T_sl, eps_sl, nst_sl, run_go_mc):
-    _T   = float(T_sl.value)
-    _eps = float(eps_sl.value)
-    _nst = int(nst_sl.value)
-    go_result = run_go_mc(_T, _nst, _eps, seed=42)
+def _(NATIVE, mc_run, np):
+    # Melting curve: 3 replicas at each of 9 temperatures, all in one batch, started native.
+    _temps = np.linspace(0.12, 0.52, 9)
+    _T = np.repeat(_temps, 3)
+    _, _Q, _ = mc_run(np.repeat(NATIVE[None], len(_T), 0), _T, 3000, np.random.default_rng(1))
+    _mq = _Q[len(_Q) // 2:].mean(0).reshape(len(_temps), 3).mean(1)
+    # folding temperature: where <Q> crosses 1/2
+    _k = int(np.argmax(_mq < 0.5)) if np.any(_mq < 0.5) else len(_mq) - 1
+    _Tf = float(np.interp(0.5, [_mq[_k], _mq[_k - 1]], [_temps[_k], _temps[_k - 1]])) if _k > 0 else float(_temps[0])
+    melt = {"T": _temps.tolist(), "Q": _mq.tolist(), "Tf": _Tf}
+    return (melt,)
+
+
+@app.cell(hide_code=True)
+def _(NATIVE, T_sl, extended_chain, mc_run, nst_sl, np, start_sl):
+    _T = float(T_sl.value); _n = int(nst_sl.value); _R = 12
+    _rng = np.random.default_rng(42)
+    _pos0 = np.repeat(NATIVE[None], _R + 1, 0)
+    if start_sl.value == "extended":
+        _pos0[0] = extended_chain() + 0.01 * _rng.standard_normal(NATIVE.shape)
+    _store = max(1, _n // 300)
+    _frames, _Q, _E = mc_run(_pos0, _T, _n, _rng, store_every=_store)
+
+    # F(Q) from the 12 native-started replicas (index 1..12), second half of the run only
+    _q_eq = _Q[len(_Q) // 2:, 1:].ravel()
+    _edges = np.linspace(0, 1, 17); _cnt, _ = np.histogram(_q_eq, _edges)
+    _centres = 0.5 * (_edges[1:] + _edges[:-1]); _m = _cnt > 0
+    _F = -_T * np.log(_cnt[_m] / _cnt.sum()); _F -= _F.min()
+    _qb, _Fv = _centres[_m], _F
+
+    # barrier: needs a basin below Q = 0.5 and one above 0.6
+    _lo = _qb < 0.5; _hi = _qb > 0.6
+    if _lo.any() and _hi.any():
+        _ilo = np.where(_lo)[0][np.argmin(_Fv[_lo])]; _ihi = np.where(_hi)[0][np.argmin(_Fv[_hi])]
+        _top = _Fv[_ilo:_ihi + 1].max()
+        _barrier = float(_top - max(_Fv[_ilo], _Fv[_ihi]))
+        _dF = float(_Fv[_ihi] - _Fv[_ilo])
+        _two_state = _barrier > 0.2 * _T
+    else:
+        _barrier = _dF = 0.0; _two_state = False
+
+    go_result = {
+        "frames": _frames, "Q_anim": _Q[:, 0], "E_anim": _E[:, 0],
+        "Q_bins": _qb.tolist(), "F_vals": _Fv.tolist(),
+        "mean_Q": float(_q_eq.mean()), "barrier": _barrier, "dF": _dF,
+        "two_state": bool(_two_state), "T": _T, "start": start_sl.value,
+    }
     return (go_result,)
 
 
 @app.cell(hide_code=True)
-def _(T_sl, eps_sl, go_result, mo, np):
-    _Q  = go_result["Q_traj"]
-    _E  = go_result["E_traj"]
-    _F  = go_result["F_vals"]
-    _T  = float(T_sl.value)
-    _eps = float(eps_sl.value)
-
-    _mQ  = float(np.mean(_Q))
-    _sQ  = float(np.std(_Q))
-    _mE  = float(np.mean(_E))
-    _dF  = float(max(_F) - min(_F))
-    _nc  = len(go_result["C"])
-
-    _col = "#57c98a" if _mQ > 0.6 else ("#e6a356" if _mQ > 0.4 else "#8a92a3")
-
+def _(go_result, melt, mo):
+    _g = go_result
+    _mQ = _g["mean_Q"]
+    _col = "#57c98a" if _mQ > 0.6 else ("#e6a356" if _mQ > 0.35 else "#8a92a3")
+    _state = "folded" if _mQ > 0.6 else ("coexistence" if _mQ > 0.35 else "unfolded")
+    _bar = (f"{_g['barrier']:.2f} ε" if _g["two_state"] else "one basin")
+    _cells = [
+        ("state", _state, _col),
+        ("mean Q (replicas)", f"{_mQ:.2f}", "#eef0f5"),
+        ("T / T_f", f"{_g['T'] / melt['Tf']:.2f}  (T_f ≈ {melt['Tf']:.2f})", "#eef0f5"),
+        ("barrier ΔF‡", _bar, "#eef0f5"),
+        ("F(folded) − F(unfolded)", f"{_g['dF']:+.2f} ε" if _g["two_state"] else "n/a", "#eef0f5"),
+    ]
+    _html = "".join(
+        f'<div style="padding:12px 16px;{"border-right:1px solid #2f3645;" if i < len(_cells) - 1 else ""}">'
+        f'<div style="font-size:10px;color:#626b7c;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;">{l}</div>'
+        f'<div style="font-size:14px;color:{c};font-weight:600;font-family:ui-monospace,monospace;">{v}</div></div>'
+        for i, (l, v, c) in enumerate(_cells))
     mo.md(
-        f"""
-        <div style="background:#161a23;border:1px solid #2f3645;border-radius:8px;
-                    overflow:hidden;margin:4px 0 8px;font-family:ui-sans-serif,system-ui,sans-serif;
-                    display:grid;grid-template-columns:repeat(5,1fr);">
-          <div style="padding:12px 16px;border-right:1px solid #2f3645;">
-            <div style="font-size:10px;color:#626b7c;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;">mean Q</div>
-            <div style="font-size:14px;color:{_col};font-weight:600;font-family:ui-monospace,monospace;">{_mQ:.3f}</div>
-          </div>
-          <div style="padding:12px 16px;border-right:1px solid #2f3645;">
-            <div style="font-size:10px;color:#626b7c;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;">sigma(Q)</div>
-            <div style="font-size:14px;color:#eef0f5;font-family:ui-monospace,monospace;">{_sQ:.3f}</div>
-          </div>
-          <div style="padding:12px 16px;border-right:1px solid #2f3645;">
-            <div style="font-size:10px;color:#626b7c;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;">mean E</div>
-            <div style="font-size:14px;color:#eef0f5;font-family:ui-monospace,monospace;">{_mE:.3g}</div>
-          </div>
-          <div style="padding:12px 16px;border-right:1px solid #2f3645;">
-            <div style="font-size:10px;color:#626b7c;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;">native contacts</div>
-            <div style="font-size:14px;color:#eef0f5;font-family:ui-monospace,monospace;">{_nc}</div>
-          </div>
-          <div style="padding:12px 16px;">
-            <div style="font-size:10px;color:#626b7c;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;">dF barrier</div>
-            <div style="font-size:14px;color:#eef0f5;font-family:ui-monospace,monospace;">{_dF:.3f}</div>
-          </div>
-        </div>
-        """
+        '<div style="background:#161a23;border:1px solid #2f3645;border-radius:8px;overflow:hidden;'
+        'margin:4px 0 8px;font-family:ui-sans-serif,system-ui,sans-serif;display:grid;'
+        f'grid-template-columns:repeat(5,1fr);">{_html}</div>'
     )
     return
 
 
 @app.cell(hide_code=True)
-def _(canvas_anim, go_result, mo, np):
-    _d  = go_result
-    _NF = len(_d["frame_xs"])
-    _Q  = _d["Q_traj"].tolist()
-    _E  = _d["E_traj"].tolist()
-
-    _nat_x = np.round(_d["nat"][:, 0], 4).tolist()
-    _nat_y = np.round(_d["nat"][:, 1], 4).tolist()
-
-    _E_min = float(min(_E))
-    _E_max = float(max(_E))
-    _E_pad = (_E_max - _E_min) * 0.05 + 0.1
-
+def _(A, CONTACTS, N_BEADS, RN, canvas_anim, go_result, melt, mo, np):
+    _d = go_result
+    _fr = _d["frames"]; _NF = len(_fr)
+    _Q = np.round(_d["Q_anim"], 3).tolist()
+    _span = (A * (N_BEADS - 1) + 0.4) if _d["start"] == "extended" else 2.4
     _spec = {
-        "frames": _NF, "dt": 80,
+        "frames": _NF, "dt": 70,
         "panels": [
             {
-                "kind": "chain", "title": "Chain conformation",
-                "x": _d["frame_xs"],
-                "y": _d["frame_ys"],
-                "nat_x": _nat_x,
-                "nat_y": _nat_y,
-                "native_contacts": _d["C"],
-                "Q_per_frame": [round(float(q), 3) for q in _Q],
+                "kind": "chain", "title": f"Chain at T = {_d['T']:.2f} (red: native contacts formed)",
+                "x": np.round(_fr[:, :, 0], 3).tolist(), "y": np.round(_fr[:, :, 1], 3).tolist(),
+                "native": CONTACTS.tolist(), "rn": np.round(RN, 4).tolist(), "span": _span,
             },
             {
-                "kind": "timeseries",
-                "ys": [[round(float(q), 4) for q in _Q]],
-                "colors": ["#7dd3fc"],
-                "ylabel": "Q", "title": "Q(t) — fraction native contacts", "xlabel": "MC sample",
-                "dot": 0,
-                "grow": True,
-                "ymin": 0.0,
-                "ymax": 1.0,
+                "kind": "timeseries", "ys": [_Q], "colors": ["#7dd3fc"],
+                "ylabel": "Q", "title": "Q(t), fraction of native contacts", "xlabel": "MC sample",
+                "dot": 0, "grow": True, "ymin": 0.0, "ymax": 1.0,
             },
             {
-                "kind": "freeenergy", "title": "Free energy F(Q)  (kT units)", "xlabel": "Q (native contacts fraction)", "ylabel": "F (kT)",
-                "Q_bins": _d["Q_bins"],
-                "F_vals": _d["F_vals"],
-                "Q_now": [round(float(q), 4) for q in _Q],
+                "kind": "freeenergy", "title": "F(Q) from 12 replicas", "xlabel": "Q", "ylabel": "F (ε)",
+                "Q_bins": _d["Q_bins"], "F_vals": _d["F_vals"], "Q_now": _Q,
             },
             {
-                "kind": "timeseries",
-                "ys": [[round(float(e), 4) for e in _E]],
-                "colors": ["#f87171"],
-                "ylabel": "E", "title": "Energy E(t)", "xlabel": "MC sample",
-                "dot": 0,
-                "grow": True,
-                "ymin": _E_min - _E_pad,
-                "ymax": _E_max + _E_pad,
+                "kind": "scatter_vline", "title": "Melting curve <Q> vs T", "xlabel": "k_BT / ε", "ylabel": "<Q>",
+                "ymin": 0.0, "ymax": 1.05, "x": melt["T"], "y": melt["Q"],
+                "dot_x": [_d["T"]] * _NF, "dot_y": _Q,
             },
         ],
         "layout": [
-            [0.00, 0.00, 0.42, 1.00],
-            [0.42, 0.00, 0.58, 0.34],
-            [0.42, 0.34, 0.58, 0.33],
-            [0.42, 0.67, 0.58, 0.33],
+            [0.00, 0.00, 0.40, 1.00],
+            [0.40, 0.00, 0.60, 0.34],
+            [0.40, 0.34, 0.30, 0.66],
+            [0.70, 0.34, 0.30, 0.66],
         ],
     }
     mo.vstack([
         mo.md(
-            "**Live animation.** Left: chain beads coloured by local Q (blue = non-native contacts, "
-            "red = native contacts formed). Dashed cyan lines show currently formed native contacts. "
-            "Right panels: Q(t) time series (top), F(Q) free energy with amber dot tracking current Q (middle), "
-            "and E(t) energy (bottom). All panels share one clock."
+            "**Live animation.** Left: the chain, with native contacts drawn in red while they are "
+            "formed. Right: Q(t) for the animated chain; F(Q) with an orange dot at its current Q; "
+            "and the melting curve with the current temperature marked. All panels share one clock."
         ),
-        canvas_anim(_spec, height="520px"),
+        canvas_anim(_spec, height="540px"),
     ])
     return
 
@@ -303,27 +265,32 @@ def _(canvas_anim, go_result, mo, np):
 def _(mo):
     mo.md(
         r"""
-        **Model details.** The 24-bead chain lives in 2D. The native structure is a compact
-        Archimedean spiral. The Go Hamiltonian has three terms:
+        **Model details.** The native structure is a meander: four rows of six beads with bond
+        length 0.3, like a small four-stranded sheet. The Hamiltonian has three terms:
 
-        1. Backbone harmonic spring with equilibrium length r0 = 0.28 and stiffness k = 80,
-           keeping adjacent beads connected.
+        1. Harmonic bonds of rest length 0.3 and stiffness 100 between consecutive beads.
+        2. For each of the 15 native contacts (beads facing each other across neighbouring rows),
+           a 12-10 well $\varepsilon\,[5(r_n/r)^{12} - 6(r_n/r)^{10}]$ with its minimum, $-\varepsilon$,
+           at the native distance $r_n$.
+        3. For every other pair with $|i-j| \ge 3$, pure repulsion $\varepsilon(0.22/r)^{12}$.
 
-        2. Native-contact attraction: a 12-10 Lennard-Jones well of depth epsilon for each
-           pair (i, j) with |i-j| >= 3 that are within 0.55 units in the native structure.
-           The potential is eps*(5*(rn/r)^12 - 6*(rn/r)^10), with minimum at r = rn.
+        A contact counts as formed when its beads are within $1.2\,r_n$. Each Monte Carlo step
+        proposes either a small move of one bead or a pivot that rotates one end of the chain
+        about a bead, and accepts it with probability $\min(1, e^{-\Delta E/k_BT})$.
 
-        3. Non-native excluded volume: a purely repulsive (sigma/r)^12 term for all other
-           non-bonded pairs. No attraction -- this asymmetry is the whole Go model.
+        **Reading the panels.** The melting curve comes from 27 replicas at nine temperatures,
+        each started folded, with the first half of each run discarded. $\langle Q\rangle$ drops
+        steeply around $T_f \approx 0.27$: the chain melts cooperatively instead of losing its
+        contacts one at a time. At the chosen temperature, $F(Q)$ uses 12 more replicas the same
+        way. Well below $T_f$ it has one basin near $Q = 1$; well above, one basin at low $Q$;
+        near $T_f$ the two basins coexist with a barrier between them, and the animated chain
+        can be seen hopping across it.
 
-        Metropolis MC picks a bead at random, proposes a Gaussian displacement, and accepts
-        with probability min(1, exp(-dE/T)). Q is histogrammed over the trajectory and
-        F(Q) = -T * ln P(Q) gives the free energy profile. The Jeffreys prior (+0.5 per bin)
-        prevents log(0) in sparsely sampled regions.
-
-        At low T the chain folds (Q -> 1, F(Q) slopes down to Q=1). At high T the chain is
-        denatured (Q fluctuates near 0, flat F(Q)). Near the folding temperature a barrier
-        appears in F(Q) at intermediate Q, giving cooperative two-state folding kinetics.
+        **What this does not show.** Folding from a fully extended chain. Set the animated chain
+        to start extended and lower the temperature: it collapses and forms some contacts, then
+        stalls at $Q \approx 0.3$ to $0.5$ with a partly zipped structure that cannot rearrange.
+        Escaping those traps takes far more steps than a browser can run in a few seconds, so
+        the free energy here is measured from the folded side, as in a melting simulation.
         """
     )
     return
